@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html class="js" lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Termos de Serviço — Lótus Clock</title>
+    <meta name="description" content="Leia os Termos de Serviço da Lótus Clock. Saiba seus direitos e responsabilidades ao usar nosso site e adquirir nossos produtos.">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+    <!-- Google Fonts: Figtree -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <style>
+      /* ── Terms Page Specific Styles ── */
+
+      .terms-header {
+        padding: 48px 24px 40px;
+        border-bottom: 1px solid var(--color-divider-dark);
+        max-width: 800px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      .terms-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 24px;
+        font-size: 1.3rem;
+        color: var(--color-text-dark-secondary);
+      }
+
+      .terms-breadcrumb a {
+        color: var(--color-text-dark-secondary);
+        transition: color 0.2s ease;
+      }
+
+      .terms-breadcrumb a:hover {
+        color: var(--color-text-dark-primary);
+      }
+
+      .terms-breadcrumb .sep {
+        font-size: 1.1rem;
+        opacity: 0.5;
+      }
+
+      .terms-header h1 {
+        font-family: var(--font-heading-family);
+        font-size: clamp(2.8rem, 5vw, 4.2rem);
+        font-weight: 400;
+        color: var(--color-text-dark-primary);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        margin: 0 0 16px;
+      }
+
+      .terms-meta {
+        font-size: 1.3rem;
+        color: var(--color-text-dark-secondary);
+        margin: 0;
+      }
+
+      /* ── Main Content Layout ── */
+      .terms-layout {
+        display: flex;
+        max-width: 1100px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 0 24px;
+        gap: 64px;
+        align-items: flex-start;
+      }
+
+      /* ── Sticky Table of Contents ── */
+      .terms-toc {
+        display: none;
+        flex: 0 0 220px;
+        position: sticky;
+        top: 80px;
+        padding: 40px 0;
+      }
+
+      @media screen and (min-width: 1024px) {
+        .terms-toc {
+          display: block;
+        }
+      }
+
+      .terms-toc h2 {
+        font-family: var(--font-body-family);
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--color-text-dark-secondary);
+        margin: 0 0 16px;
+      }
+
+      .terms-toc ol {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .terms-toc li a {
+        font-size: 1.3rem;
+        color: var(--color-text-dark-secondary);
+        line-height: 1.4;
+        display: block;
+        padding: 4px 0;
+        border-left: 2px solid transparent;
+        padding-left: 12px;
+        transition: color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .terms-toc li a:hover,
+      .terms-toc li a.active {
+        color: var(--color-text-dark-primary);
+        border-left-color: var(--color-text-dark-primary);
+      }
+
+      /* ── Article Body ── */
+      .terms-body {
+        flex: 1 1 auto;
+        padding: 40px 0 80px;
+        min-width: 0;
+      }
+
+      .terms-section {
+        margin-bottom: 48px;
+        scroll-margin-top: 80px;
+      }
+
+      .terms-section h2 {
+        font-family: var(--font-body-family);
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--color-text-dark-secondary);
+        margin: 0 0 12px;
+      }
+
+      .terms-section h3 {
+        font-family: var(--font-heading-family);
+        font-size: clamp(1.8rem, 3vw, 2.4rem);
+        font-weight: 400;
+        color: var(--color-text-dark-primary);
+        margin: 0 0 20px;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+      }
+
+      .terms-section p {
+        font-size: 1.5rem;
+        color: var(--color-text-dark-primary);
+        line-height: 1.7;
+        margin: 0 0 16px;
+      }
+
+      .terms-section p:last-child {
+        margin-bottom: 0;
+      }
+
+      .terms-section ul,
+      .terms-section ol {
+        padding-left: 20px;
+        margin: 0 0 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .terms-section li {
+        font-size: 1.5rem;
+        color: var(--color-text-dark-primary);
+        line-height: 1.7;
+      }
+
+      .terms-divider {
+        border: none;
+        border-top: 1px solid var(--color-divider-dark);
+        margin: 0 0 48px;
+      }
+
+      /* Contact block */
+      .terms-contact-block {
+        background: rgba(0, 0, 0, 0.03);
+        border-radius: 12px;
+        padding: 24px;
+        margin-top: 16px;
+      }
+
+      .terms-contact-block p {
+        margin: 0 0 8px;
+      }
+
+      .terms-contact-block p:last-child {
+        margin-bottom: 0;
+      }
+
+      .terms-contact-block a {
+        color: var(--color-highlight);
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+
+      .terms-contact-block a:hover {
+        opacity: 0.8;
+      }
+
+      /* Back to top */
+      .back-to-top {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--color-text-dark-secondary);
+        margin-top: 32px;
+        transition: color 0.2s ease;
+      }
+
+      .back-to-top:hover {
+        color: var(--color-text-dark-primary);
+      }
+
+      .back-to-top svg {
+        transition: transform 0.2s ease;
+      }
+
+      .back-to-top:hover svg {
+        transform: translateY(-2px);
+      }
+
+      @media screen and (min-width: 768px) {
+        .terms-header {
+          padding: 64px 48px 48px;
+        }
+
+        .terms-layout {
+          padding: 0 48px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Skip to content link for accessibility -->
+    <a class="skip-to-content-link" href="#MainContent">Skip to content</a>
+
+    <!-- Main Navigation Header -->
+    <header class="custom-header">
+      <div class="header-container">
+        <div class="header-left">
+          <div class="header-logo">
+            <a href="index.html">
+              <img src="assets/logo_lotus.jpg" alt="Lótus Alarm Clock">
+            </a>
+          </div>
+          <nav class="header-nav">
+            <ul>
+              <li><a href="index.html#" class="text-body">Comprar</a></li>
+              <li><a href="index.html#" class="text-body">Sobre Nós</a></li>
+            </ul>
+          </nav>
+        </div>
+
+        <div class="header-icons" style="display: none;">
+          <a href="#" class="header-icon">
+            <img src="assets/icon-account.svg" alt="Account icon" width="32" height="32">
+          </a>
+          <a href="#" class="header-icon">
+            <img src="assets/icon-cart-empty.svg" alt="Cart icon" width="32" height="32">
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main id="MainContent" class="content-for-layout focus-none" tabindex="-1">
+
+      <!-- Page Header -->
+      <div class="terms-header">
+        <div class="terms-breadcrumb">
+          <a href="index.html">Início</a>
+          <span class="sep">›</span>
+          <span>Termos de Serviço</span>
+        </div>
+        <h1>Termos de Serviço</h1>
+        <p class="terms-meta">Última atualização: junho de 2026</p>
+      </div>
+
+      <!-- Layout: TOC + Body -->
+      <div class="terms-layout">
+
+        <!-- Table of Contents (sticky, desktop only) -->
+        <nav class="terms-toc" aria-label="Sumário">
+          <h2>Sumário</h2>
+          <ol>
+            <li><a href="#visao-geral">Visão Geral</a></li>
+            <li><a href="#s1">1. Termos da Loja Online</a></li>
+            <li><a href="#s2">2. Condições Gerais</a></li>
+            <li><a href="#s3">3. Precisão das Informações</a></li>
+            <li><a href="#s4">4. Modificações e Preços</a></li>
+            <li><a href="#s5">5. Produtos ou Serviços</a></li>
+            <li><a href="#s6">6. Faturamento e Conta</a></li>
+            <li><a href="#s7">7. Ferramentas Opcionais</a></li>
+            <li><a href="#s8">8. Links de Terceiros</a></li>
+            <li><a href="#s9">9. Comentários e Submissões</a></li>
+            <li><a href="#s10">10. Informações Pessoais</a></li>
+            <li><a href="#s11">11. Erros e Omissões</a></li>
+            <li><a href="#s12">12. Usos Proibidos</a></li>
+            <li><a href="#s13">13. Isenção de Garantias</a></li>
+            <li><a href="#s14">14. Indenização</a></li>
+            <li><a href="#s15">15. Independência das Disposições</a></li>
+            <li><a href="#s16">16. Rescisão</a></li>
+            <li><a href="#s17">17. Acordo Integral</a></li>
+            <li><a href="#s18">18. Lei Aplicável</a></li>
+            <li><a href="#s19">19. Alterações nos Termos</a></li>
+            <li><a href="#s20">20. Informações de Contato</a></li>
+          </ol>
+        </nav>
+
+        <!-- Terms Content -->
+        <article class="terms-body">
+
+          <!-- Visão Geral -->
+          <section class="terms-section" id="visao-geral">
+            <h2>Visão Geral</h2>
+            <h3>Lótus Termos de Serviço</h3>
+            <p>Este site é operado pela Lótus. Em todo o site, os termos "nós", "nos" e "nosso" referem-se à Lótus. A Lótus disponibiliza este site, incluindo todas as informações, ferramentas e Serviços nele disponíveis para você, o usuário, mediante a sua aceitação de todos os termos, condições, políticas e avisos aqui declarados.</p>
+            <p>Ao visitar nosso site e/ou comprar algo de nós, você utiliza nossos "Serviços" e concorda em cumprir os seguintes termos e condições ("Termos de Serviço", "Termos"), incluindo os termos, condições e políticas adicionais mencionados aqui e/ou disponíveis por hiperlink. Estes Termos de Serviço aplicam-se a todos os usuários do site, incluindo, sem limitação, navegadores, fornecedores, clientes, lojistas e/ou colaboradores de conteúdo.</p>
+            <p>Por favor, leia estes Termos de Serviço cuidadosamente antes de acessar ou usar nosso site. Ao acessar ou usar qualquer parte do site, você concorda em cumprir estes Termos de Serviço. Se você não concordar com todos os termos e condições deste contrato, não poderá acessar o site ou usar quaisquer Serviços.</p>
+            <p>Quaisquer novos recursos ou ferramentas adicionados à loja atual também estarão sujeitos aos Termos de Serviço. Você pode revisar a versão mais atual dos Termos de Serviço a qualquer momento nesta página. Reservamo-nos o direito de atualizar, alterar ou substituir qualquer parte destes Termos de Serviço ao publicar atualizações e/ou alterações em nosso site. É sua responsabilidade verificar esta página periodicamente para acompanhar as mudanças.</p>
+            <p>Nossa loja é hospedada na plataforma Yampi. Eles nos fornecem a plataforma de e-commerce online que nos permite vender nossos produtos e Serviços para você.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 1 -->
+          <section class="terms-section" id="s1">
+            <h2>Seção 1</h2>
+            <h3>Termos da Loja Online</h3>
+            <p>Ao concordar com estes Termos de Serviço, você declara que é maior de idade em seu estado ou província de residência, ou que é maior de idade e nos deu seu consentimento para permitir que qualquer um de seus dependentes menores de idade utilize este site.</p>
+            <ul>
+              <li>Você não pode usar nossos produtos para qualquer fim ilegal ou não autorizado, nem pode, ao usar o Serviço, violar quaisquer leis em sua jurisdição (incluindo, mas não se limitando a, leis de direitos autorais).</li>
+              <li>Você não deve transmitir nenhum vírus ou código de natureza destrutiva.</li>
+              <li>A violação de qualquer um dos Termos resultará na rescisão imediata dos seus Serviços.</li>
+            </ul>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 2 -->
+          <section class="terms-section" id="s2">
+            <h2>Seção 2</h2>
+            <h3>Condições Gerais</h3>
+            <ul>
+              <li>Reservamo-nos o direito de recusar o Serviço a qualquer pessoa, por qualquer motivo, a qualquer momento.</li>
+              <li>Você entende que o seu conteúdo (não incluindo informações de cartão de crédito) pode ser transferido sem criptografia e envolver: (a) transmissões por várias redes; e (b) alterações para se conformar e adaptar aos requisitos técnicos de conexão de redes ou dispositivos. As informações de cartão de crédito são sempre criptografadas durante a transferência entre redes.</li>
+              <li>Você concorda em não reproduzir, duplicar, copiar, vender, revender ou explorar qualquer parte do Serviço, uso do Serviço ou acesso ao Serviço, ou qualquer contato no site através do qual o Serviço é fornecido, sem nossa permissão expressa por escrito.</li>
+            </ul>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 3 -->
+          <section class="terms-section" id="s3">
+            <h2>Seção 3</h2>
+            <h3>Precisão, Integralidade e Atualidade das Informações</h3>
+            <p>Não nos responsabilizamos se as informações disponibilizadas neste site não forem precisas, completas ou atuais. O material deste site é fornecido apenas para informação geral e não deve ser utilizado como única base para tomar decisões sem consultar fontes de informação primárias, mais precisas, completas ou atuais. Qualquer confiança no material deste site é por sua conta e risco.</p>
+            <p>Reservamo-nos o direito de modificar o conteúdo deste site a qualquer momento, mas não temos a obrigação de atualizar nenhuma informação. Você concorda que é sua responsabilidade monitorar as alterações em nosso site.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 4 -->
+          <section class="terms-section" id="s4">
+            <h2>Seção 4</h2>
+            <h3>Modificações no Serviço e Preços</h3>
+            <ul>
+              <li>Os preços dos nossos produtos estão sujeitos a alterações sem aviso prévio.</li>
+              <li>Reservamo-nos o direito de, a qualquer momento, modificar ou descontinuar o Serviço (ou qualquer parte ou conteúdo dele) sem aviso prévio.</li>
+              <li>Não seremos responsáveis perante você ou terceiros por qualquer modificação, alteração de preço, suspensão ou descontinuação do Serviço.</li>
+            </ul>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 5 -->
+          <section class="terms-section" id="s5">
+            <h2>Seção 5</h2>
+            <h3>Produtos ou Serviços</h3>
+            <p>Certos produtos ou Serviços podem estar disponíveis exclusivamente online através do site. Esses produtos ou Serviços podem ter quantidades limitadas e estão sujeitos a devolução ou troca apenas de acordo com nossa Política de Reembolso.</p>
+            <p>Fizemos todos os esforços para exibir com a maior precisão possível as cores e imagens de nossos produtos que aparecem na loja. Não podemos garantir que a exibição de qualquer cor no monitor do seu computador ou tela do celular seja perfeitamente precisa.</p>
+            <p>Reservamo-nos o direito de descontinuar qualquer produto a qualquer momento.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 6 -->
+          <section class="terms-section" id="s6">
+            <h2>Seção 6</h2>
+            <h3>Precisão de Faturamento e Informações de Conta</h3>
+            <p>Reservamo-nos o direito de recusar qualquer pedido que você fizer conosco. Podemos, a nosso exclusivo critério, limitar ou cancelar quantidades compradas por pessoa, por domicílio ou por pedido. Estas restrições podem incluir pedidos feitos por ou sob a mesma conta de cliente, o mesmo cartão de crédito e/ou pedidos que usam o mesmo endereço de faturamento e/ou envio. No caso de alteração ou cancelamento de um pedido, tentaremos notificá-lo entrando em contato com o e-mail e/ou endereço de faturamento/número de telefone fornecido no momento em que o pedido foi feito.</p>
+            <p>Você concorda em fornecer informações de conta e compra atuais, completas e precisas para todas as compras feitas em nossa loja. Você concorda em atualizar prontamente sua conta e outras informações, incluindo seu e-mail, números de cartão de crédito e datas de validade, para que possamos concluir suas transações e contatá-lo conforme necessário.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 7 -->
+          <section class="terms-section" id="s7">
+            <h2>Seção 7</h2>
+            <h3>Ferramentas Opcionais</h3>
+            <p>Podemos fornecer a você acesso a ferramentas de terceiros sobre as quais não temos controle ou monitoramento.</p>
+            <p>Você reconhece e concorda que fornecemos acesso a tais ferramentas "no estado em que se encontram" e "conforme disponíveis", sem quaisquer garantias, representações ou condições de qualquer tipo. Não teremos qualquer responsabilidade decorrente ou relacionada ao seu uso de ferramentas opcionais de terceiros.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 8 -->
+          <section class="terms-section" id="s8">
+            <h2>Seção 8</h2>
+            <h3>Links de Terceiros</h3>
+            <p>Certos conteúdos, produtos e Serviços disponíveis através do nosso Serviço podem incluir materiais de terceiros.</p>
+            <p>Links de terceiros neste site podem direcioná-lo para sites que não são afiliados a nós. Não somos responsáveis por examinar ou avaliar o conteúdo ou sua precisão, e não garantimos e não teremos qualquer responsabilidade por materiais ou sites de terceiros.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 9 -->
+          <section class="terms-section" id="s9">
+            <h2>Seção 9</h2>
+            <h3>Comentários, Feedback e Outras Submissões de Usuários</h3>
+            <p>Se, a nosso pedido ou sem ele, você enviar ideias criativas, sugestões, propostas, planos ou outros materiais (coletivamente, 'comentários'), você concorda que podemos, a qualquer momento, sem restrições, editar, copiar, publicar, distribuir, traduzir e usar em qualquer meio quaisquer comentários que você nos enviar. Não teremos obrigação de: (1) manter quaisquer comentários em sigilo; (2) pagar compensação por quaisquer comentários; ou (3) responder a quaisquer comentários.</p>
+            <p>Podemos, mas não temos a obrigação de, monitorar, editar ou remover conteúdo que determinemos, a nosso exclusivo critério, ser ilegal, ofensivo, ameaçador, calunioso, difamatório, pornográfico, obsceno ou que viole a propriedade intelectual de qualquer parte ou estes Termos de Serviço.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 10 -->
+          <section class="terms-section" id="s10">
+            <h2>Seção 10</h2>
+            <h3>Informações Pessoais</h3>
+            <p>O envio de suas informações pessoais através da loja é regido pela nossa Política de Privacidade.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 11 -->
+          <section class="terms-section" id="s11">
+            <h2>Seção 11</h2>
+            <h3>Erros, Incorreções e Omissões</h3>
+            <p>Ocasionalmente, pode haver informações em nosso site ou no Serviço que contenham erros tipográficos, incorreções ou omissões relacionadas a descrições de produtos, preços, promoções, ofertas, taxas de envio, prazos de entrega e disponibilidade. Reservamo-nos o direito de corrigir quaisquer erros, incorreções ou omissões, e de alterar ou atualizar informações ou cancelar pedidos se qualquer informação no Serviço ou em qualquer site relacionado for imprecisa, a qualquer momento e sem aviso prévio (inclusive após o envio do seu pedido).</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 12 -->
+          <section class="terms-section" id="s12">
+            <h2>Seção 12</h2>
+            <h3>Usos Proibidos</h3>
+            <p>Além de outras proibições estabelecidas nos Termos de Serviço, você está proibido de usar o site ou seu conteúdo:</p>
+            <ul>
+              <li>(a) para qualquer finalidade ilegal;</li>
+              <li>(b) para solicitar que outros realizem ou participem de atos ilegais;</li>
+              <li>(c) para violar quaisquer regulamentos, regras, leis internacionais ou nacionais, ou decretos locais;</li>
+              <li>(d) para infringir ou violar nossos direitos de propriedade intelectual ou os direitos de propriedade intelectual de terceiros;</li>
+              <li>(e) para assediar, abusar, insultar, prejudicar, difamar, caluniar, desacreditar, intimidar ou discriminar com base no gênero, orientação sexual, religião, etnia, raça, idade, nacionalidade ou deficiência;</li>
+              <li>(f) para enviar informações falsas ou enganosas;</li>
+              <li>(g) para enviar ou transmitir vírus ou qualquer outro tipo de código malicioso;</li>
+              <li>(h) para coletar ou rastrear informações pessoais de terceiros;</li>
+              <li>(i) para práticas de spam, phishing, pharm, pretext, spider, crawl ou scrape;</li>
+              <li>(j) para qualquer finalidade obscena ou imoral; ou</li>
+              <li>(k) para interferir ou contornar os recursos de segurança do Serviço ou de qualquer site relacionado.</li>
+            </ul>
+            <p>Reservamo-nos o direito de rescindir o seu uso do Serviço por violar qualquer um dos usos proibidos.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 13 -->
+          <section class="terms-section" id="s13">
+            <h2>Seção 13</h2>
+            <h3>Isenção de Garantias; Limitação de Responsabilidade</h3>
+            <p>Não garantimos que o uso do nosso Serviço será ininterrupto, seguro ou livre de erros.</p>
+            <p>Você concorda que, de tempos em tempos, podemos remover o Serviço por períodos indefinidos ou cancelar o Serviço a qualquer momento, sem aviso prévio.</p>
+            <p>Você concorda expressamente que o uso ou a incapacidade de usar o Serviço é por sua conta e risco. O Serviço e todos os produtos entregues a você são fornecidos 'no estado em que se encontram' e 'conforme disponíveis' para seu uso, sem qualquer representação, garantias ou condições de qualquer tipo, expressas ou implícitas, incluindo todas as garantias implícitas de comercialização, adequação a uma finalidade específica, durabilidade, título e não violação.</p>
+            <p>Em nenhum caso a Lótus, nossos diretores, funcionários, parceiros, contratados, fornecedores ou prestadores de serviços serão responsáveis por qualquer dano, perda, reivindicação ou danos diretos, indiretos, incidentais, punitivos, especiais ou consequentes de qualquer tipo, incluindo, sem limitação, lucros cessantes, perda de receita, perda de dados, custos de substituição ou quaisquer danos semelhantes, decorrentes do uso do Serviço ou de quaisquer produtos adquiridos por meio do Serviço.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 14 -->
+          <section class="terms-section" id="s14">
+            <h2>Seção 14</h2>
+            <h3>Indenização</h3>
+            <p>Você concorda em indenizar, defender e isentar de responsabilidade a Lótus e nossas afiliadas, parceiros, diretores, contratados, prestadores de serviços e funcionários de qualquer reivindicação ou demanda, incluindo honorários advocatícios razoáveis, feitos por terceiros devido a ou decorrentes de sua violação destes Termos de Serviço ou dos documentos que incorporam por referência, ou de sua violação de qualquer lei ou dos direitos de terceiros.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 15 -->
+          <section class="terms-section" id="s15">
+            <h2>Seção 15</h2>
+            <h3>Independência das Disposições</h3>
+            <p>No caso de qualquer disposição destes Termos de Serviço ser determinada como ilegal, nula ou inexequível, tal disposição será, não obstante, exequível na extensão máxima permitida pela lei aplicável, e a parte inexequível será considerada separada destes Termos de Serviço. Esta determinação não afetará a validade e exequibilidade de quaisquer outras disposições restantes.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 16 -->
+          <section class="terms-section" id="s16">
+            <h2>Seção 16</h2>
+            <h3>Rescisão</h3>
+            <p>As obrigações e responsabilidades das partes incorridas antes da data de rescisão sobreviverão à rescisão deste contrato para todos os fins.</p>
+            <p>Estes Termos de Serviço são eficazes a menos que e até que sejam rescindidos por você ou por nós. Você pode rescindir estes Termos de Serviço a qualquer momento, notificando-nos que não deseja mais usar nossos Serviços ou quando cessar o uso do nosso site.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 17 -->
+          <section class="terms-section" id="s17">
+            <h2>Seção 17</h2>
+            <h3>Acordo Integral</h3>
+            <p>O fato de não exercermos ou aplicarmos qualquer direito ou disposição destes Termos de Serviço não constituirá uma renúncia a tal direito ou disposição.</p>
+            <p>Estes Termos de Serviço e quaisquer políticas ou regras operacionais postadas por nós neste site constituem o acordo integral entre você e nós, superando quaisquer acordos anteriores (incluindo, mas não se limitando a, versões anteriores dos Termos de Serviço).</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 18 -->
+          <section class="terms-section" id="s18">
+            <h2>Seção 18</h2>
+            <h3>Lei Aplicável</h3>
+            <p>Estes Termos de Serviço e quaisquer acordos separados em que lhe forneçamos Serviços serão regidos e interpretados de acordo com as leis da República Federativa do Brasil.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 19 -->
+          <section class="terms-section" id="s19">
+            <h2>Seção 19</h2>
+            <h3>Alterações nos Termos de Serviço</h3>
+            <p>Você pode revisar a versão mais atual dos Termos de Serviço a qualquer momento nesta página.</p>
+            <p>Reservamo-nos o direito, a nosso exclusivo critério, de atualizar, modificar ou substituir qualquer parte destes Termos de Serviço ao publicar atualizações e alterações em nosso site.</p>
+          </section>
+
+          <hr class="terms-divider">
+
+          <!-- Seção 20 -->
+          <section class="terms-section" id="s20">
+            <h2>Seção 20</h2>
+            <h3>Informações de Contato</h3>
+            <p>Perguntas sobre os Termos de Serviço devem ser enviadas para nós pelo e-mail ou enviadas por correio para a nossa base de operações:</p>
+            <div class="terms-contact-block">
+              <p><strong>Lótus</strong></p>
+              <p>Itabira — MG, Brasil</p>
+              <p>E-mail: <a href="mailto:suporte@lotusclock.com.br">suporte@lotusclock.com.br</a></p>
+            </div>
+          </section>
+
+          <a href="#MainContent" class="back-to-top">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 12V4M8 4L4 8M8 4L12 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Voltar ao topo
+          </a>
+
+        </article>
+      </div><!-- /terms-layout -->
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="footer-section">
+      <div class="footer-main">
+        <div class="footer-left">
+          <div class="footer-display-text">
+            <p class="text-footer">O despertador<br>para quem<br>sempre perde<br>a hora.</p>
+          </div>
+          <div class="footer-icons">
+            <!-- Instagram Link -->
+            <a href="#" class="social-icon btn-icon-primary">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M11.6386 11.6386C12.7953 10.4818 14.3641 9.832 16 9.832C17.6359 9.832 19.2047 10.4818 20.3614 11.6386C21.5182 12.7953 22.168 14.3641 22.168 16C22.168 17.6359 21.5182 19.2047 20.3614 20.3614C19.2047 21.5182 17.6359 22.168 16 22.168C14.3641 22.168 12.7953 21.5182 11.6386 20.3614C10.4818 19.2047 9.832 17.6359 9.832 16C9.832 14.3641 10.4818 12.7953 11.6386 11.6386ZM14.4677 19.6992C14.9535 19.9004 15.4742 20.004 16 20.004C17.0619 20.004 18.0804 19.5822 18.8313 18.8313C19.5821 18.0804 20.004 17.0619 20.004 16C20.004 14.9381 19.5821 13.9196 18.8313 13.1687C18.0804 12.4179 17.0619 11.996 16 11.996C15.4742 11.996 14.9535 12.0996 14.4677 12.3008C13.9819 12.502 13.5406 12.7969 13.1687 13.1687C12.7969 13.5406 12.502 13.982 12.3008 14.4677C12.0996 14.9535 11.996 15.4742 11.996 16C11.996 16.5258 12.0996 17.0465 12.3008 17.5323C12.502 18.0181 12.7969 18.4595 13.1687 18.8313C13.5406 19.2031 13.9819 19.498 14.4677 19.6992Z"/>
+                <path d="M23.5354 10.751C23.8088 10.4775 23.9624 10.1067 23.9624 9.72C23.9624 9.33332 23.8088 8.96247 23.5354 8.68904C23.2619 8.41561 22.8911 8.262 22.5044 8.262C22.1177 8.262 21.7469 8.41561 21.4734 8.68904C21.2 8.96247 21.0464 9.33332 21.0464 9.72C21.0464 10.1067 21.2 10.4775 21.4734 10.751C21.7469 11.0244 22.1177 11.178 22.5044 11.178C22.8911 11.178 23.2619 11.0244 23.5354 10.751Z"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M11.0528 4.072C12.3328 4.0136 12.7408 4 16 4C19.26 4 19.6672 4.0144 20.9464 4.072C22.224 4.1304 23.0976 4.3344 23.8608 4.6296C24.6612 4.93109 25.3863 5.40338 25.9856 6.0136C26.596 6.61306 27.0683 7.33845 27.3696 8.1392C27.6664 8.9024 27.8696 9.7752 27.928 11.0528C27.9864 12.3328 28 12.7408 28 16C28 19.2592 27.9864 19.6672 27.928 20.9472C27.8696 22.2248 27.6664 23.0976 27.3704 23.8608C27.0689 24.6612 26.5966 25.3863 25.9864 25.9856C25.3864 26.5968 24.6608 27.0688 23.8608 27.3696C23.0976 27.6664 22.2248 27.8696 20.9472 27.928C19.6672 27.9864 19.2592 28 16 28C12.7408 28 12.3328 27.9864 11.0528 27.928C9.7752 27.8696 8.9024 27.6664 8.1392 27.3704C7.33881 27.0689 6.61372 26.5966 6.0144 25.9864C5.4032 25.3864 4.9312 24.6608 4.6304 23.8608C4.3336 23.0976 4.1304 22.2248 4.072 20.9472C4.0136 19.6672 4 19.26 4 16C4 12.74 4.0144 12.3328 4.072 11.0536C4.1304 9.776 4.3344 8.9024 4.6296 8.1392C4.93109 7.3388 5.40338 6.61371 6.0136 6.0144C6.6136 5.4032 7.3392 4.9312 8.1392 4.6304C8.9024 4.3336 9.7752 4.1304 11.0528 4.072ZM20.8496 6.232C19.584 6.1744 19.204 6.1624 16 6.1624C12.796 6.1624 12.416 6.1744 11.1504 6.232C9.9808 6.2856 9.3456 6.4808 8.9224 6.6456C8.40113 6.83758 7.92955 7.14404 7.5424 7.5424C7.1232 7.9624 6.8624 8.3624 6.6456 8.9224C6.48 9.3456 6.2856 9.9808 6.232 11.1504C6.1744 12.416 6.1624 12.796 6.1624 16C6.1624 19.204 6.1744 19.584 6.232 20.8496C6.2856 22.0192 6.4808 22.6544 6.6456 23.0776C6.8377 23.5988 7.14414 24.0704 7.5424 24.4576C7.92961 24.8559 8.40116 25.1623 8.9224 25.3544C9.3456 25.52 9.9808 25.7144 11.1504 25.768C12.416 25.8256 12.7952 25.8376 16 25.8376C19.2048 25.8376 19.584 25.8256 20.8496 25.768C22.0192 25.7144 22.6544 25.5192 23.0776 25.3544C23.5989 25.1624 24.0705 24.856 24.4576 24.4576C24.8559 24.0704 25.1623 23.5988 25.3544 23.0776C25.52 22.6544 25.7144 22.0192 25.768 20.8496C25.8256 19.584 25.8376 19.204 25.8376 16C25.8376 12.796 25.8256 12.416 25.768 11.1504C25.7144 9.9808 25.5192 9.3456 25.3544 8.9224C25.1376 8.3624 24.8776 7.9624 24.4576 7.5424C24.0376 7.1232 23.6376 6.8624 23.0776 6.6456C22.6544 6.48 22.0192 6.2856 20.8496 6.232Z"/>
+              </svg>
+            </a>
+            <!-- TikTok Link -->
+            <a href="#" class="social-icon btn-icon-primary">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24.1526 8.01176C22.7161 7.07518 21.6794 5.57666 21.356 3.82979C21.2861 3.45236 21.2477 3.06393 21.2477 2.6665H16.6632L16.6558 21.0398C16.5788 23.0973 14.8854 24.7486 12.8094 24.7486C12.1642 24.7486 11.5567 24.5873 11.0218 24.3058C9.7951 23.6603 8.95564 22.3745 8.95564 20.8949C8.95564 18.7698 10.6845 17.041 12.8094 17.041C13.2061 17.041 13.5866 17.1064 13.9465 17.2191V12.5388C13.574 12.4881 13.1956 12.4564 12.8094 12.4564C8.15642 12.4564 4.37109 16.2419 4.37109 20.8949C4.37109 23.7497 5.79743 26.2761 7.97347 27.8038C9.34411 28.7661 11.0113 29.3332 12.8094 29.3332C17.4624 29.3332 21.2477 25.5479 21.2477 20.8949V11.5781C23.0458 12.8687 25.2488 13.6292 27.626 13.6292V9.04463C26.3455 9.04463 25.1528 8.66395 24.1526 8.01176Z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-right">
+          <div class="footer-list">
+            <h6 class="footer-list-heading text-heading-xxs">Clientes</h6>
+            <ul>
+              <li><a href="#">Aplicativo</a></li>
+              <li><a href="#">Suporte</a></li>
+              <li><a href="#">Fale Conosco</a></li>
+              <li><a href="#">Envios</a></li>
+              <li><a href="#">Devoluções</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-list">
+            <h6 class="footer-list-heading text-heading-xxs">Parceiros</h6>
+            <ul>
+              <li><a href="#">Afiliados</a></li>
+              <li><a href="#">Investidores</a></li>
+              <li><a href="#">Revendedores</a></li>
+              <li><a href="#">Imprensa</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="legal-text">
+          <p class="text-caption">© 2026 Lótus Clock Brasil, Todos os direitos reservados.</p>
+        </div>
+        <div class="policy-list text-caption">
+          <ul>
+            <li><a href="#">Política de Privacidade</a></li>
+            <li><a href="termos-de-servico.html" aria-current="page">Termos de Uso</a></li>
+            <li><a href="#">Não Vender Minhas Informações</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Highlight active TOC link on scroll
+      (function () {
+        const sections = document.querySelectorAll('.terms-section[id]');
+        const tocLinks = document.querySelectorAll('.terms-toc a');
+
+        if (!sections.length || !tocLinks.length) return;
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const id = entry.target.id;
+              tocLinks.forEach(link => {
+                link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+              });
+            }
+          });
+        }, { rootMargin: '-20% 0px -70% 0px' });
+
+        sections.forEach(s => observer.observe(s));
+      })();
+    </script>
+  </body>
+</html>

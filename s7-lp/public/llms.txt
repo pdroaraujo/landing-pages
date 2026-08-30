@@ -1,0 +1,20 @@
+# Agência S7
+
+> Agência de marketing digital especializada em criação de sites de alta performance, SEO estratégico e Google Meu Negócio, com foco em conversão e resultados orgânicos para pequenas e médias empresas.
+
+## Serviços
+- Criação de Sites: sites de alta performance com design exclusivo, otimizados para mobile e projetados para converter visitantes em clientes.
+- SEO Estratégico: otimização para buscadores com foco em geração de tráfego orgânico qualificado.
+- Google Meu Negócio: otimização de perfil para aumentar a visibilidade local da empresa no Google.
+
+## Processo
+1. Descoberta e planejamento estratégico
+2. Criação / UI Design (sketch, wireframe, protótipo, validação)
+3. Desenvolvimento e otimização (SEO, performance, mobile)
+
+## Cases
+- PH Container (https://phcontainer.com.br): site institucional para empresa de locação de containers e Munck em Jacareí-SP, com melhora imediata nos resultados do Google Meu Negócio.
+
+## Contato
+- E-mail: contato.agencias7@outlook.com
+- Site: https://agencias7.com.br
