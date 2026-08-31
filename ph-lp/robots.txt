@@ -1,4 +1,32 @@
+# PH Container — robots.txt
+# Liberado para todos os buscadores, inclusive crawlers de IA (para ser citado
+# no ChatGPT, Perplexity, Gemini, etc.). Não bloquear os agentes abaixo.
+
 User-agent: *
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://phcontainer.com.br/sitemap.xml

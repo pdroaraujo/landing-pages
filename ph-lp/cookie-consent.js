@@ -1,7 +1,30 @@
 (function () {
-  var GA_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // substitua pelo Measurement ID do Google Analytics (GA4)
+  // === Google Analytics 4 ===
+  // 1. Crie a propriedade em analytics.google.com e cole o Measurement ID abaixo.
+  // 2. No GA4 > Administrador > Eventos, marque como CONVERSÃO os eventos:
+  //    'contato_whatsapp', 'contato_telefone', 'clique_avaliacao'.
+  var GA_MEASUREMENT_ID = 'G-XXXXXXXXXX';
   var CONSENT_KEY = 'cookie_consent';
   var PRIVACY_URL = 'politica-de-privacidade.html';
+
+  function trackEvent(name, params) {
+    if (typeof window.gtag === 'function') window.gtag('event', name, params || {});
+  }
+
+  function wireConversionTracking() {
+    var map = [
+      ['a[href*="wa.me"], a[href*="api.whatsapp.com"]', 'contato_whatsapp', 'whatsapp'],
+      ['a[href^="tel:"]', 'contato_telefone', 'telefone'],
+      ['a[data-track="avaliar"]', 'clique_avaliacao', 'google']
+    ];
+    map.forEach(function (row) {
+      document.querySelectorAll(row[0]).forEach(function (el) {
+        el.addEventListener('click', function () {
+          trackEvent(row[1], { metodo: row[2], destino: el.getAttribute('href') || '' });
+        });
+      });
+    });
+  }
 
   function loadAnalytics() {
     if (!GA_MEASUREMENT_ID || GA_MEASUREMENT_ID === 'G-XXXXXXXXXX') return;
@@ -40,6 +63,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
+    wireConversionTracking();
     var consent = localStorage.getItem(CONSENT_KEY);
     if (consent === 'accepted') {
       loadAnalytics();

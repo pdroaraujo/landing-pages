@@ -9,8 +9,10 @@
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://phcontainer.com.br/">
 
-    <!-- Google Search Console: substitua CONTEUDO_DO_CODIGO pelo código de verificação gerado no Search Console -->
-    <meta name="google-site-verification" content="CONTEUDO_DO_CODIGO">
+    <!-- Google Search Console: propriedade verificada (2026-08). Se um dia precisar do
+         método por meta tag, cole o código aqui e descomente:
+    <meta name="google-site-verification" content="COLE_O_CODIGO_AQUI">
+    -->
 
     <!-- Open Graph / redes sociais -->
     <meta property="og:type" content="website">
@@ -30,6 +32,148 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css?v=1.0.2">
+
+    <!-- ============================================================
+         Dados estruturados (JSON-LD) — negócio local + serviços + FAQ
+         Ajuda Google (resultados ricos) e IAs (ChatGPT/Perplexity/Gemini).
+         TODO confirmar: horário de funcionamento real e faixa de preço.
+         ============================================================ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "@id": "https://phcontainer.com.br/#business",
+      "name": "PH Container",
+      "alternateName": "PH Container - Locação de Container e Munck",
+      "description": "Locação, compra e venda de containers e locação de caminhão Munck (guindauto) em Jacareí, São José dos Campos e todo o Vale do Paraíba. Em operação desde 1995.",
+      "slogan": "Solução em locação de containers e guindautos no Vale do Paraíba",
+      "url": "https://phcontainer.com.br/",
+      "logo": "https://phcontainer.com.br/logo.webp",
+      "image": "https://phcontainer.com.br/bg-container.webp",
+      "telephone": "+55-12-99724-8156",
+      "email": "contato@phcontainer.com.br",
+      "foundingDate": "1995",
+      "priceRange": "$$",
+      "currenciesAccepted": "BRL",
+      "paymentAccepted": "Dinheiro, PIX, Boleto bancário, Cartão",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Av. Nicola Capucci, 391",
+        "addressLocality": "Jacareí",
+        "addressRegion": "SP",
+        "postalCode": "12320-330",
+        "addressCountry": "BR"
+      },
+      "geo": { "@type": "GeoCoordinates", "latitude": -23.342372, "longitude": -45.968033 },
+      "hasMap": "https://www.google.com/maps?cid=8205083714264096334",
+      "openingHoursSpecification": [
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "07:30", "closes": "17:30" },
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "08:00", "closes": "12:00" }
+      ],
+      "knowsLanguage": "pt-BR",
+      "sameAs": [ "https://www.instagram.com/phcontainer/" ],
+      "areaServed": [
+        { "@type": "City", "name": "Aparecida" },
+        { "@type": "City", "name": "Arapeí" },
+        { "@type": "City", "name": "Areias" },
+        { "@type": "City", "name": "Bananal" },
+        { "@type": "City", "name": "Caçapava" },
+        { "@type": "City", "name": "Cachoeira Paulista" },
+        { "@type": "City", "name": "Campos do Jordão" },
+        { "@type": "City", "name": "Canas" },
+        { "@type": "City", "name": "Caraguatatuba" },
+        { "@type": "City", "name": "Cruzeiro" },
+        { "@type": "City", "name": "Cunha" },
+        { "@type": "City", "name": "Guaratinguetá" },
+        { "@type": "City", "name": "Igaratá" },
+        { "@type": "City", "name": "Ilhabela" },
+        { "@type": "City", "name": "Jacareí" },
+        { "@type": "City", "name": "Jambeiro" },
+        { "@type": "City", "name": "Lagoinha" },
+        { "@type": "City", "name": "Lavrinhas" },
+        { "@type": "City", "name": "Lorena" },
+        { "@type": "City", "name": "Monteiro Lobato" },
+        { "@type": "City", "name": "Natividade da Serra" },
+        { "@type": "City", "name": "Paraibuna" },
+        { "@type": "City", "name": "Pindamonhangaba" },
+        { "@type": "City", "name": "Piquete" },
+        { "@type": "City", "name": "Potim" },
+        { "@type": "City", "name": "Queluz" },
+        { "@type": "City", "name": "Redenção da Serra" },
+        { "@type": "City", "name": "Roseira" },
+        { "@type": "City", "name": "Santa Branca" },
+        { "@type": "City", "name": "Santo Antônio do Pinhal" },
+        { "@type": "City", "name": "São Bento do Sapucaí" },
+        { "@type": "City", "name": "São José do Barreiro" },
+        { "@type": "City", "name": "São José dos Campos" },
+        { "@type": "City", "name": "São Luiz do Paraitinga" },
+        { "@type": "City", "name": "São Sebastião" },
+        { "@type": "City", "name": "Silveiras" },
+        { "@type": "City", "name": "Taubaté" },
+        { "@type": "City", "name": "Tremembé" },
+        { "@type": "City", "name": "Ubatuba" }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Serviços PH Container",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Locação de container escritório", "description": "Container escritório com ar-condicionado, janelas e instalação elétrica. Módulos de 6 m e 12 m." } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Locação de container depósito e almoxarifado", "description": "Container para armazenagem de materiais e ferramentas em obra ou indústria." } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Locação de container banheiro e vestiário", "description": "Container sanitário para canteiro de obra, com vasos, chuveiros e lavatórios." } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Locação de caminhão Munck (guindauto)", "description": "Guindauto para carga, descarga, remoção de máquinas e transporte de cargas no Vale do Paraíba." } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Içamento de cargas", "description": "Içamento de painéis, totens e estruturas, inclusive com cesto de inspeção veicular." } }
+        ]
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Quanto custa alugar um container em Jacareí ou no Vale do Paraíba?",
+          "acceptedAnswer": { "@type": "Answer", "text": "O valor depende do tipo de container (escritório, almoxarifado ou sanitário), do tempo de locação e da cidade de entrega. A PH Container faz o orçamento sem compromisso pelo WhatsApp (12) 99724-8156." }
+        },
+        {
+          "@type": "Question",
+          "name": "Quais tipos de container a PH Container aluga?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Container escritório com ar-condicionado, container depósito e almoxarifado, container banheiro e vestiário, plantão de vendas e refeitório. Os módulos têm 6 metros (20 pés) ou 12 metros (40 pés)." }
+        },
+        {
+          "@type": "Question",
+          "name": "Em quais cidades a PH Container entrega container e Munck?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Jacareí, São José dos Campos, Taubaté, Pindamonhangaba, Caçapava, Guaratinguetá e todas as cidades do Vale do Paraíba, da Serra da Mantiqueira e do Litoral Norte de São Paulo, de Aparecida a Ubatuba." }
+        },
+        {
+          "@type": "Question",
+          "name": "Qual o prazo de entrega do container?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Em geral de 1 a 3 dias úteis após a confirmação do orçamento, conforme a cidade de entrega e a disponibilidade do modelo." }
+        },
+        {
+          "@type": "Question",
+          "name": "Preciso preparar o local para receber o container?",
+          "acceptedAnswer": { "@type": "Answer", "text": "O terreno precisa estar nivelado e com acesso livre para o caminhão Munck posicionar o container. A equipe da PH orienta sobre o local antes da entrega." }
+        },
+        {
+          "@type": "Question",
+          "name": "A PH Container também faz içamento e transporte de cargas?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Sim. Além dos containers, a PH aluga caminhão Munck (guindauto) para transporte de cargas, operações de carga e descarga, remoção de máquinas e içamento de painéis e totens." }
+        },
+        {
+          "@type": "Question",
+          "name": "Há quanto tempo a PH Container atua no Vale do Paraíba?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Desde 1995 — mais de 30 anos de operação, atendendo empresas como Ambev, Heineken, Nestlé, Suzano Celulose e a Prefeitura de Jacareí." }
+        },
+        {
+          "@type": "Question",
+          "name": "Como solicitar um orçamento com a PH Container?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Pelo WhatsApp (12) 99724-8156, pelo e-mail contato@phcontainer.com.br ou pelo telefone (12) 99724-8156." }
+        }
+      ]
+    }
+    </script>
 </head>
 <body>
     <header class="header">
@@ -198,6 +342,13 @@
                 <h4>Redes Sociais</h4>
                 <a href="https://www.instagram.com/phcontainer/" class="footer-link" target="_blank" rel="noopener">Instagram: @phcontainer</a>
                 <a href="politica-de-privacidade.html" class="footer-link">Política de Privacidade</a>
+            </div>
+            <div class="footer-col">
+                <h4>Avaliações</h4>
+                <!-- TODO: trocar pelo link curto de avaliação do Perfil da Empresa no Google
+                     (painel do Google Meu Negócio > "Peça avaliações" > https://g.page/r/.../review). -->
+                <a href="https://www.google.com/maps?cid=8205083714264096334" class="footer-link" target="_blank" rel="noopener" data-track="avaliar">★ Avalie a PH no Google</a>
+                <p class="footer-desc" style="margin-top:4px;">Sua avaliação ajuda mais clientes do Vale a encontrar a gente.</p>
             </div>
         </div>
         <div class="container footer-bottom">

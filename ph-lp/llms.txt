@@ -1,20 +1,66 @@
 # PH Container
 
-> Empresa de locação, compra e venda de containers e locação de caminhão Munck (guindauto), atuando desde 1995 em Jacareí, São José dos Campos e toda a região do Vale do Paraíba, SP.
+> Empresa de locação, compra e venda de containers e locação de caminhão Munck
+> (guindauto), em operação desde 1995 em Jacareí, São José dos Campos e toda a
+> região do Vale do Paraíba, Serra da Mantiqueira e Litoral Norte de São Paulo.
+> Atende obras, indústrias e eventos. Orçamento pelo WhatsApp (12) 99724-8156.
 
 ## Sobre
-- [Quem Somos](https://phcontainer.com.br/#quem-somos): mais de 30 anos de experiência oferecendo soluções personalizadas em locação de containers e guindautos, com foco em qualidade e segurança.
+- Fundada em 1995 — mais de 30 anos de operação no Vale do Paraíba.
+- Sede própria em Jacareí-SP, com frota de caminhões Munck (guindauto).
+- Atende de canteiros de obra a grandes indústrias, com soluções personalizadas.
+- [Quem Somos](https://phcontainer.com.br/#quem-somos)
 
 ## Serviços
-- [Locação de Containers](https://phcontainer.com.br/#servicos): container escritório com ar-condicionado, depósito e almoxarifado, banheiro/vestiário, plantão de vendas e refeitório.
-- [Transporte e Içamento (Munck)](https://phcontainer.com.br/#servicos): transporte de cargas em geral, operações de carga e descarga, remoção de máquinas, içamento de painéis e totens, içamento com cesto de inspeção veicular.
 
-## Clientes
-Empresas que já confiaram na PH Container: Ambev, Cebrace, Heineken, Nestlé, Prefeitura de Jacareí, SAAE, Suzano Celulose.
+### Locação de containers
+- **Container escritório** — com ar-condicionado, janelas, instalação elétrica e forro. Usado como escritório de obra, plantão de vendas, sala de reunião.
+- **Container depósito / almoxarifado** — para armazenagem segura de materiais, ferramentas e equipamentos.
+- **Container banheiro / vestiário (sanitário)** — para canteiro de obra, com vasos, chuveiros e lavatórios.
+- **Container refeitório / plantão de vendas.**
+- Medidas: módulos de **6 metros (20 pés)** e **12 metros (40 pés)**. Combinações e módulos sobrepostos sob consulta.
+- [Serviços](https://phcontainer.com.br/#servicos)
+
+### Locação de caminhão Munck (guindauto) e içamento
+- Transporte de cargas em geral.
+- Operações de carga e descarga.
+- Remoção e transporte de máquinas.
+- Içamento de painéis, totens e estruturas.
+- Içamento com cesto de inspeção veicular.
+
+## Preço
+- Locação **sob orçamento**, sem compromisso. O valor depende do tipo de container, do tempo de locação e da cidade de entrega.
+- Prazo de entrega típico: **1 a 3 dias úteis** após a confirmação.
+
+## Diferenciais
+- Desde 1995 — tradição e conhecimento da região.
+- Frota própria de guindautos (não terceiriza a entrega).
+- Clientes de referência: Ambev, Cebrace, Heineken, Nestlé, Prefeitura de Jacareí, SAAE, Suzano Celulose.
+- Cobertura de toda a Região Metropolitana do Vale do Paraíba e Litoral Norte.
+
+## Cidades atendidas
+Aparecida, Arapeí, Areias, Bananal, Caçapava, Cachoeira Paulista, Campos do Jordão,
+Canas, Caraguatatuba, Cruzeiro, Cunha, Guaratinguetá, Igaratá, Ilhabela, Jacareí,
+Jambeiro, Lagoinha, Lavrinhas, Lorena, Monteiro Lobato, Natividade da Serra,
+Paraibuna, Pindamonhangaba, Piquete, Potim, Queluz, Redenção da Serra, Roseira,
+Santa Branca, Santo Antônio do Pinhal, São Bento do Sapucaí, São José do Barreiro,
+São José dos Campos, São Luiz do Paraitinga, São Sebastião, Silveiras, Taubaté,
+Tremembé, Ubatuba.
+
+## Perguntas frequentes
+- **Quanto custa alugar um container?** Sob orçamento — depende do tipo, do tempo de locação e da cidade. Orçamento gratuito pelo WhatsApp (12) 99724-8156.
+- **Quais tipos de container vocês alugam?** Escritório (com ar-condicionado), depósito/almoxarifado, banheiro/vestiário, refeitório. Módulos de 6 m e 12 m.
+- **Vocês entregam na minha cidade?** Atendemos todo o Vale do Paraíba, Serra da Mantiqueira e Litoral Norte de SP — de Aparecida a Ubatuba. Veja a lista completa acima.
+- **Qual o prazo de entrega?** Em geral 1 a 3 dias úteis após a confirmação do orçamento.
+- **Preciso preparar o terreno?** O local deve estar nivelado e com acesso para o caminhão Munck. Orientamos antes da entrega.
+- **Vocês fazem içamento e transporte?** Sim, com caminhão Munck próprio.
+- **Há quanto tempo vocês atuam?** Desde 1995.
 
 ## Contato
 - WhatsApp: https://wa.me/5512997248156
-- E-mail: contato@phcontainer.com.br
 - Telefone: (12) 99724-8156
+- E-mail: contato@phcontainer.com.br
 - Endereço: Av. Nicola Capucci, 391, Cidade Jardim, Jacareí - SP, 12320-330
 - Instagram: https://www.instagram.com/phcontainer/
+- Google Maps: https://www.google.com/maps?cid=8205083714264096334
+- Site feito pela Agência S7 (https://agencias7.com.br)
