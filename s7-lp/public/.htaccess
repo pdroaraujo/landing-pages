@@ -1,8 +1,15 @@
-# Força HTTPS
+# Força HTTPS + SPA fallback (rotas /admin, /login servidas pelo index.html)
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
+  # HTTPS
   RewriteCond %{HTTPS} off
   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # SPA: qualquer caminho que não seja arquivo/pasta real cai no index.html
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
 </IfModule>
 
 # Página 404 customizada

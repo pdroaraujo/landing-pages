@@ -12,6 +12,16 @@ dist
 dist-ssr
 *.local
 
+# Env — nunca versionar (usar .env.example)
+.env
+.env.*
+!.env.example
+
+# Supabase CLI
+supabase/.branches
+supabase/.temp
+.supabase
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
