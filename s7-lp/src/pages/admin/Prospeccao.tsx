@@ -7,8 +7,8 @@ const modes = [
     to: '/admin/prospeccao/buscar',
     icon: Search,
     title: 'Encontrar Clientes',
-    desc: 'Escolha o nicho e a cidade. A IA busca empresas no Google Maps, separa quem não tem site (lead) e analisa quem tem.',
-    bullets: ['Busca por nicho e cidade', 'Verificação de site + análise', 'Vai direto para uma lista'],
+    desc: 'Escolha o nicho e a cidade (Brasil ou mundo). Busca empresas, verifica site e traz tudo para você qualificar.',
+    bullets: ['Busca por nicho e cidade', 'Verificação de site + parecer IA', 'Qualificação antes da lista'],
   },
   {
     to: '/admin/prospeccao/scanner',

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Plus, Upload, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
+import { useTeam } from '../../lib/useTeam';
 import type { Sale } from '../../lib/types';
 import { brl, fullDate } from '../../lib/format';
 import { Card, PageHeader, Btn, Field, inputClass, Badge } from '../../components/admin/ui';
@@ -15,16 +16,22 @@ const empty = {
   recurring: false,
   monthly_value: '',
   contract_signed: true,
+  seller: '',
   sold_at: new Date().toISOString().slice(0, 10),
 };
 
 export default function Vendas() {
   const { profile } = useAuth();
+  const team = useTeam();
   const [sales, setSales] = useState<Sale[]>([]);
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!form.seller && profile?.full_name) setForm((f) => ({ ...f, seller: profile.full_name }));
+  }, [profile, form.seller]);
 
   const load = async () => {
     const { data } = await supabase.from('sales').select('*').order('sold_at', { ascending: false });
@@ -45,7 +52,7 @@ export default function Vendas() {
       recurring: form.recurring,
       monthly_value: form.recurring ? Number(form.monthly_value) || 0 : 0,
       contract_signed: form.contract_signed,
-      seller: profile?.full_name ?? null,
+      seller: form.seller || profile?.full_name || null,
       sold_at: form.sold_at,
       source: 'manual',
     });
@@ -74,6 +81,7 @@ export default function Vendas() {
     const iRec = idx('recorr');
     const iMon = idx('mensal');
     const iDate = idx('data');
+    const iSeller = idx('fechou') >= 0 ? idx('fechou') : idx('vendedor');
 
     const rows = lines.map((l) => {
       const c = l.split(/[,;]/);
@@ -91,7 +99,7 @@ export default function Vendas() {
         recurring: rec,
         monthly_value: rec ? parseMoney(c[iMon] ?? '') : 0,
         contract_signed: true,
-        seller: profile?.full_name ?? null,
+        seller: (iSeller >= 0 && (c[iSeller] ?? '').trim()) || profile?.full_name || null,
         sold_at: d || new Date().toISOString().slice(0, 10),
         source: 'import' as const,
       };
@@ -161,6 +169,18 @@ export default function Vendas() {
               <input type="checkbox" checked={form.contract_signed} onChange={(e) => setForm({ ...form, contract_signed: e.target.checked })} className="accent-[#fe0000]" />
               Contrato assinado
             </label>
+            <Field label="Quem fechou">
+              <select
+                value={form.seller}
+                onChange={(e) => setForm({ ...form, seller: e.target.value })}
+                className={inputClass}
+              >
+                {team.map((m) => (
+                  <option key={m.id} className="bg-[#161616]">{m.full_name}</option>
+                ))}
+                {!team.length && <option className="bg-[#161616]">{profile?.full_name}</option>}
+              </select>
+            </Field>
             <Field label="Data">
               <input type="date" value={form.sold_at} onChange={(e) => setForm({ ...form, sold_at: e.target.value })} className={inputClass} />
             </Field>
@@ -178,6 +198,7 @@ export default function Vendas() {
                   <th className="px-5 py-3 font-medium">Cliente</th>
                   <th className="px-5 py-3 font-medium">Produto</th>
                   <th className="px-5 py-3 font-medium">Valor</th>
+                  <th className="px-5 py-3 font-medium">Quem fechou</th>
                   <th className="px-5 py-3 font-medium">Data</th>
                   <th className="px-5 py-3" />
                 </tr>
@@ -185,7 +206,7 @@ export default function Vendas() {
               <tbody>
                 {sales.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-5 py-10 text-center text-xs text-white/35">
+                    <td colSpan={6} className="px-5 py-10 text-center text-xs text-white/35">
                       Nenhuma venda registrada.
                     </td>
                   </tr>
@@ -198,6 +219,7 @@ export default function Vendas() {
                     </td>
                     <td className="px-5 py-3 text-white/60">{s.product}</td>
                     <td className="px-5 py-3 font-bold">{brl(s.value)}</td>
+                    <td className="px-5 py-3 text-white/50">{s.seller ?? '—'}</td>
                     <td className="px-5 py-3 text-white/50">{fullDate(s.sold_at)}</td>
                     <td className="px-5 py-3 text-right">
                       <button onClick={() => del(s.id)} className="text-white/30 hover:text-[#fe0000]">

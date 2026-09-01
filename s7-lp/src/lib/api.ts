@@ -7,11 +7,11 @@ export type ProspectRequest = {
   niche: string; // slug
   city: string;
   uf?: string;
+  country?: string; // nome do país (default Brasil)
+  countryCode?: string; // ISO2
   maxResults?: number;
   /** nichos extras — usado no Scanner Local */
   extraNiches?: string[];
-  /** distribui os leads automaticamente entre os vendedores */
-  autoSplit?: boolean;
   listName?: string;
 };
 

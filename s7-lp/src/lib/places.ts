@@ -31,3 +31,17 @@ export async function loadCountries(): Promise<Country[]> {
 }
 
 export const BRASIL: Country = { cc: 'BR', n: 'Brasil', cap: 'Brasília', r: 'Americas', lat: -14, lng: -53 };
+
+export type LocationValue = {
+  country: string; // nome
+  countryCode: string; // ISO2
+  uf: string;
+  city: string;
+};
+
+export const defaultLocation: LocationValue = {
+  country: 'Brasil',
+  countryCode: 'BR',
+  uf: 'SP',
+  city: 'Santos',
+};

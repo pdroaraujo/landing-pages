@@ -34,7 +34,7 @@ export function classifyUrl(website: string | null): Analysis {
   return { status: 'own', finalUrl: website, score: 5, verdict: 'Site próprio — análise pendente.', checks: {} };
 }
 
-export async function classifyWebsite(website: string | null): Promise<Analysis> {
+export async function classifyWebsite(website: string | null, useAI = true): Promise<Analysis> {
   const quick = classifyUrl(website);
   if (quick.status !== 'own') return quick;
   const site = quick.finalUrl as string;
@@ -86,7 +86,7 @@ export async function classifyWebsite(website: string | null): Promise<Analysis>
   if (!checks.hasAnalytics) score += 0.5;
   score = Math.max(0, Math.min(10, Math.round(score * 10) / 10));
 
-  const gem = await geminiVerdict(finalUrl, checks, textSnippet(html), score);
+  const gem = useAI ? await geminiVerdict(finalUrl, checks, textSnippet(html), score) : null;
 
   return {
     status: 'own',
@@ -127,7 +127,7 @@ async function geminiVerdict(
 ): Promise<{ score: number; verdict: string } | null> {
   const key = Deno.env.get('GEMINI_API_KEY');
   if (!key) return null;
-  const model = Deno.env.get('GEMINI_MODEL') ?? 'gemini-3.6-flash';
+  const model = Deno.env.get('GEMINI_MODEL') ?? 'gemini-flash-lite-latest';
   const prompt = `Você é consultor da Agência S7 (criação de sites e SEO). Avalie se vale a pena oferecer um site novo/upgrade para esta empresa.
 URL: ${url}
 Checagens técnicas: ${JSON.stringify(checks)}

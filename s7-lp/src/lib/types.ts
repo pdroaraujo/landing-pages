@@ -30,6 +30,8 @@ export type Business = {
   whatsapp: string | null;
   address: string | null;
   city: string | null;
+  uf: string | null;
+  country: string | null;
   niche: string | null;
   category: string | null;
   rating: number | null;
@@ -57,6 +59,7 @@ export type ListItem = {
   list_id: string;
   business_id: string;
   assigned_to: string | null;
+  qualified: boolean | null; // null = a avaliar · true = aprovado · false = rejeitado
   call_status: CallStatus;
   notes: string | null;
   contacted_at: string | null;

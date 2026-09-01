@@ -211,17 +211,22 @@ Deno.serve(async (req) => {
   }
 });
 
+const MAX_GEMINI = 12; // teto de pareceres com IA por rodada (quota grátis do Gemini)
+
 // deno-lint-ignore no-explicit-any
 async function analyzeSites(db: any, sites: { id: string; website: string | null }[], deadline: number) {
   let upgrades = 0;
   let done = 0;
+  let aiUsed = 0;
   const POOL = 4;
   const queue = [...sites];
   const worker = async () => {
     while (queue.length && Date.now() < deadline - 6000) {
       const s = queue.shift()!;
       try {
-        const a = await classifyWebsite(s.website);
+        const useAI = aiUsed < MAX_GEMINI;
+        if (useAI) aiUsed++;
+        const a = await classifyWebsite(s.website, useAI);
         const isLead = a.status === 'instagram' || a.status === 'linktree';
         if (!isLead && a.score >= 6) upgrades++;
         await db
