@@ -34,55 +34,75 @@ export async function fetchApify(opts: {
   const region = [opts.city, opts.uf, isBR ? '' : opts.country].filter(Boolean).join(' ');
 
   const termsPerNiche = opts.niches.length > 2 ? 1 : opts.niches.length > 1 ? 2 : 3;
-  const searchStringsArray: string[] = [];
+  let searchStringsArray: string[] = [];
   for (const slug of opts.niches) {
     const n = nicheBySlug(slug);
     for (const term of n.apifyTerms.slice(0, termsPerNiche)) {
       searchStringsArray.push(`${term} em ${region}`);
     }
   }
+  // no máx. 3 runs paralelos (limite de memória total do plano free da Apify)
+  searchStringsArray = searchStringsArray.slice(0, 3);
 
-  const perSearch = Math.min(120, Math.max(5, Math.ceil(opts.maxResults / searchStringsArray.length)));
-  const input: Record<string, unknown> = {
-    searchStringsArray,
-    language: isBR ? 'pt-BR' : 'en',
-    maxCrawledPlacesPerSearch: perSearch,
-    skipClosedPlaces: true,
+  // Dispara os runs Apify EM PARALELO (1 termo por run) — rodam ao mesmo tempo
+  // na infra da Apify, então o tempo total ≈ o de um run só, não a soma.
+  const perSearch = Math.min(120, Math.max(8, Math.ceil(opts.maxResults / searchStringsArray.length)));
+  const DONE = ['SUCCEEDED', 'FAILED', 'ABORTED', 'TIMED-OUT'];
+
+  const startRun = async (term: string) => {
+    const input: Record<string, unknown> = {
+      searchStringsArray: [term],
+      language: isBR ? 'pt-BR' : 'en',
+      maxCrawledPlacesPerSearch: perSearch,
+      skipClosedPlaces: true,
+    };
+    if (opts.countryCode) input.countryCode = opts.countryCode.toLowerCase();
+    const r = await fetch(
+      `https://api.apify.com/v2/acts/${actor}/runs?token=${token}&timeout=170`,
+      { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(input) },
+    );
+    if (!r.ok) throw new Error(`Apify ${r.status}: ${(await r.text()).slice(0, 160)}`);
+    const j = (await r.json()) as { data: { id: string; defaultDatasetId: string } };
+    return { id: j.data.id, dataset: j.data.defaultDatasetId };
   };
-  if (opts.countryCode) input.countryCode = opts.countryCode.toLowerCase();
 
-  // Run assíncrono + polling: se o actor demorar demais, pegamos os resultados
-  // parciais que já estiverem no dataset em vez de estourar com TIMED-OUT.
-  const startRes = await fetch(`https://api.apify.com/v2/acts/${actor}/runs?token=${token}&timeout=180`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(input),
-  });
-  if (!startRes.ok) throw new Error(`Apify ${startRes.status}: ${(await startRes.text()).slice(0, 200)}`);
-  const runData = (await startRes.json()) as { data: { id: string; defaultDatasetId: string } };
-  const runId = runData.data.id;
-  const datasetId = runData.data.defaultDatasetId;
+  const runs = await Promise.all(searchStringsArray.map(startRun));
 
-  const BUDGET_MS = 100_000; // resto do orçamento fica p/ a análise de sites (parcial)
+  // poll paralelo até todos terminarem ou o orçamento acabar
+  const BUDGET_MS = 88_000;
   const t0 = Date.now();
-  let status = 'RUNNING';
-  while (Date.now() - t0 < BUDGET_MS) {
-    await new Promise((r) => setTimeout(r, 4000));
-    try {
-      const st = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${token}`);
-      status = ((await st.json()) as { data: { status: string } }).data.status;
-    } catch { /* segue tentando */ }
-    if (['SUCCEEDED', 'FAILED', 'ABORTED', 'TIMED-OUT'].includes(status)) break;
+  const pending = new Set(runs.map((r) => r.id));
+  while (pending.size && Date.now() - t0 < BUDGET_MS) {
+    await new Promise((res) => setTimeout(res, 4000));
+    await Promise.all(
+      [...pending].map(async (id) => {
+        try {
+          const st = await fetch(`https://api.apify.com/v2/actor-runs/${id}?token=${token}`);
+          const status = ((await st.json()) as { data: { status: string } }).data.status;
+          if (DONE.includes(status)) pending.delete(id);
+        } catch { /* tenta de novo */ }
+      }),
+    );
   }
-  // se ainda estiver rodando, aborta pra não continuar consumindo crédito
-  if (!['SUCCEEDED', 'FAILED', 'ABORTED', 'TIMED-OUT'].includes(status)) {
-    fetch(`https://api.apify.com/v2/actor-runs/${runId}/abort?token=${token}`, { method: 'POST' }).catch(() => {});
+  // aborta os que sobraram (não gasta crédito à toa) e pega o parcial
+  for (const id of pending) {
+    fetch(`https://api.apify.com/v2/actor-runs/${id}/abort?token=${token}`, { method: 'POST' }).catch(() => {});
   }
 
-  const itemsRes = await fetch(
-    `https://api.apify.com/v2/datasets/${datasetId}/items?token=${token}&clean=true&limit=${opts.maxResults * 2}`,
+  const perDataset = Math.ceil((opts.maxResults * 2) / runs.length);
+  const batches = await Promise.all(
+    runs.map(async (r) => {
+      try {
+        const res = await fetch(
+          `https://api.apify.com/v2/datasets/${r.dataset}/items?token=${token}&clean=true&limit=${perDataset}`,
+        );
+        return res.ok ? ((await res.json()) as Record<string, unknown>[]) : [];
+      } catch {
+        return [];
+      }
+    }),
   );
-  const items = itemsRes.ok ? ((await itemsRes.json()) as Record<string, unknown>[]) : [];
+  const items = batches.flat();
 
   return items.map((it) => ({
     place_id: (it.placeId as string) ?? (it.fid as string) ?? null,
