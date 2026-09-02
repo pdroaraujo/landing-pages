@@ -13,7 +13,7 @@ export default function Buscar() {
   const [niche, setNiche] = useState(NICHES[0].slug);
   const [loc, setLoc] = useState<LocationValue>(defaultLocation);
   const [source, setSource] = useState<ProspectSource>('apify');
-  const [maxResults, setMaxResults] = useState(60);
+  const [maxResults, setMaxResults] = useState(100);
   const [loading, setLoading] = useState(false);
   const [res, setRes] = useState<ProspectResponse | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -73,7 +73,7 @@ export default function Buscar() {
               <input
                 type="range"
                 min={20}
-                max={source === 'apify' ? 80 : 200}
+                max={source === "apify" ? 150 : 300}
                 step={10}
                 value={maxResults}
                 onChange={(e) => setMaxResults(Number(e.target.value))}
@@ -100,7 +100,8 @@ export default function Buscar() {
           {!res && !loading && <p className="text-xs text-white/35">Preencha e clique em Prospectar.</p>}
           {loading && (
             <p className="text-xs text-white/45">
-              Buscando empresas{source === 'apify' ? ' (Google Maps leva ~40s)' : ''}…
+              Buscando empresas{source === 'apify' ? ` no Google Maps (~${maxResults >= 100 ? '1-2 min' : '40s'})` : ''}…
+              {' '}Sites com "análise pendente" você completa depois com um clique na lista.
             </p>
           )}
           {res && (

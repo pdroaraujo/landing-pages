@@ -51,14 +51,38 @@ export async function fetchApify(opts: {
   };
   if (opts.countryCode) input.countryCode = opts.countryCode.toLowerCase();
 
-  const url = `https://api.apify.com/v2/acts/${actor}/run-sync-get-dataset-items?token=${token}&timeout=130`;
-  const res = await fetch(url, {
+  // Run assíncrono + polling: se o actor demorar demais, pegamos os resultados
+  // parciais que já estiverem no dataset em vez de estourar com TIMED-OUT.
+  const startRes = await fetch(`https://api.apify.com/v2/acts/${actor}/runs?token=${token}&timeout=180`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(input),
   });
-  if (!res.ok) throw new Error(`Apify ${res.status}: ${(await res.text()).slice(0, 200)}`);
-  const items = (await res.json()) as Record<string, unknown>[];
+  if (!startRes.ok) throw new Error(`Apify ${startRes.status}: ${(await startRes.text()).slice(0, 200)}`);
+  const runData = (await startRes.json()) as { data: { id: string; defaultDatasetId: string } };
+  const runId = runData.data.id;
+  const datasetId = runData.data.defaultDatasetId;
+
+  const BUDGET_MS = 100_000; // resto do orçamento fica p/ a análise de sites (parcial)
+  const t0 = Date.now();
+  let status = 'RUNNING';
+  while (Date.now() - t0 < BUDGET_MS) {
+    await new Promise((r) => setTimeout(r, 4000));
+    try {
+      const st = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${token}`);
+      status = ((await st.json()) as { data: { status: string } }).data.status;
+    } catch { /* segue tentando */ }
+    if (['SUCCEEDED', 'FAILED', 'ABORTED', 'TIMED-OUT'].includes(status)) break;
+  }
+  // se ainda estiver rodando, aborta pra não continuar consumindo crédito
+  if (!['SUCCEEDED', 'FAILED', 'ABORTED', 'TIMED-OUT'].includes(status)) {
+    fetch(`https://api.apify.com/v2/actor-runs/${runId}/abort?token=${token}`, { method: 'POST' }).catch(() => {});
+  }
+
+  const itemsRes = await fetch(
+    `https://api.apify.com/v2/datasets/${datasetId}/items?token=${token}&clean=true&limit=${opts.maxResults * 2}`,
+  );
+  const items = itemsRes.ok ? ((await itemsRes.json()) as Record<string, unknown>[]) : [];
 
   return items.map((it) => ({
     place_id: (it.placeId as string) ?? (it.fid as string) ?? null,

@@ -514,6 +514,10 @@ export default function Landing() {
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center pt-8 border-t border-white/10 text-xs tracking-widest text-white/50 uppercase gap-4">
             <p>@ 2026 AGÊNCIA S7. TODOS OS DIREITOS RESERVADOS.</p>
+            <a href="/login" className="relative group w-fit text-white/50 hover:text-white transition-colors">
+              <span className="relative z-10">Painel de Administração</span>
+              <span className="absolute left-0 bottom-[-4px] w-0 h-[2px] bg-[#fe0000] transition-all duration-300 ease-out group-hover:w-full"></span>
+            </a>
           </div>
         </FadeIn>
       </footer>

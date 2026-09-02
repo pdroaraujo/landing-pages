@@ -5,6 +5,7 @@ import {
   UFS,
   loadBrCities,
   loadCountries,
+  worldCountries,
   defaultLocation,
   type BrCity,
   type Country,
@@ -39,9 +40,11 @@ export default function LocationPicker({
     return [...favs, ...base.filter((c) => !seen.has(c.n))].slice(0, 900);
   }, [isBR, brCities, value.uf]);
 
+  const intl = useMemo(() => worldCountries(countries), [countries]);
+
   const setCountry = (cc: string) => {
     if (cc === 'BR') return onChange({ ...defaultLocation });
-    const c = countries.find((x) => x.cc === cc);
+    const c = intl.find((x) => x.cc === cc);
     onChange({
       country: c?.n ?? cc,
       countryCode: cc,
@@ -59,14 +62,12 @@ export default function LocationPicker({
           className={inputClass}
         >
           <option value="BR" className="bg-[#161616]">🇧🇷 Brasil</option>
-          <option disabled className="bg-[#161616]">──────────</option>
-          {countries
-            .filter((c) => c.cc !== 'BR')
-            .map((c) => (
-              <option key={c.cc} value={c.cc} className="bg-[#161616]">
-                {c.n}
-              </option>
-            ))}
+          <option disabled className="bg-[#161616]">── Europa · EUA · Dubai ──</option>
+          {intl.map((c) => (
+            <option key={c.cc} value={c.cc} className="bg-[#161616]">
+              {c.n}
+            </option>
+          ))}
         </select>
       </Field>
 

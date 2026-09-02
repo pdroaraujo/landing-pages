@@ -30,6 +30,15 @@ export async function loadCountries(): Promise<Country[]> {
   return _countries;
 }
 
+// Prospecção internacional da S7: só Europa + EUA + Dubai (EAU).
+const EXTRA_CC = new Set(['US', 'AE']);
+export function worldCountries(all: Country[]): Country[] {
+  return all
+    .filter((c) => c.r === 'Europe' || EXTRA_CC.has(c.cc))
+    .map((c) => (c.cc === 'AE' ? { ...c, n: 'Emirados Árabes (Dubai)', cap: 'Dubai' } : c))
+    .sort((a, b) => a.n.localeCompare(b.n, 'pt'));
+}
+
 export const BRASIL: Country = { cc: 'BR', n: 'Brasil', cap: 'Brasília', r: 'Americas', lat: -14, lng: -53 };
 
 export type LocationValue = {

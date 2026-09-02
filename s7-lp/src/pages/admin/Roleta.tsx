@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Dices, ArrowRight, Loader2 } from 'lucide-react';
 import { NICHES } from '../../lib/niches';
-import { loadBrCities, loadCountries, type BrCity, type Country } from '../../lib/places';
+import { loadBrCities, loadCountries, worldCountries, type BrCity, type Country } from '../../lib/places';
 import { runProspect, type ProspectResponse } from '../../lib/api';
 import type { ProspectSource } from '../../lib/types';
 import { Card, PageHeader } from '../../components/admin/ui';
@@ -33,7 +33,7 @@ export default function Roleta() {
     if (scope === 'mundo' && !countries.length) loadCountries().then(setCountries);
   }, [scope, countries.length]);
 
-  const worldPlaces = countries.filter((c) => c.cap);
+  const worldPlaces = worldCountries(countries).filter((c) => c.cap);
   const cityLabels =
     scope === 'brasil'
       ? brCities.map((c) => `${c.n} · ${c.uf}`)

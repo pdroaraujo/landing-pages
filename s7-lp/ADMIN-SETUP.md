@@ -72,58 +72,80 @@ Se o PowerShell reclamar de "execução de scripts foi desabilitada", rode uma v
 ```powershell
 npx supabase login
 npx supabase link --project-ref qzjjyyzhypnybhswwmnm
-npx supabase secrets set APIFY_TOKEN=apify_api_xxx APIFY_ACTOR=compass/crawler-google-places GEMINI_API_KEY=AQ.xxx GEMINI_MODEL=gemini-3.6-flash
+npx supabase secrets set APIFY_TOKEN=apify_api_xxx APIFY_ACTOR=compass/google-maps-extractor GEMINI_API_KEY=AQ.xxx GEMINI_MODEL=gemini-flash-lite-latest
 npx supabase functions deploy prospect
 ```
 
 - Essas chaves (Apify, Gemini) são **secrets da Edge Function** — nunca vão no `.env`
-  do front nem no git.
+  do front nem no git. **Já configuradas** no projeto `qzjjyyzhypnybhswwmnm`.
 - `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` já existem
   automaticamente no ambiente da função.
-- **Apify**: token em apify.com → Settings → Integrations. O plano free dá ~US$5/mês
-  de crédito; o actor `compass/crawler-google-places` cobra por resultado.
-- **Gemini**: chave testada e OK (o formato `AQ.` do AI Studio funciona). Modelo padrão
-  `gemini-3.6-flash` (o `2.0-flash` foi descontinuado). Se a API falhar, o parecer cai
-  na heurística automaticamente.
+- **Apify**: actor `compass/google-maps-extractor` (~40s/rodada). Plano free ≈ US$5/mês.
+- **Gemini**: `gemini-flash-lite-latest` (o `3.6-flash` free tier só dá 20 req/dia).
+  Se a API falhar, o parecer cai na heurística automaticamente.
 
 ## 4. Rodar / build
 
 ```powershell
 npm run dev            # http://localhost:5173  → /login
-npm run build          # dist/  (inclui public/.htaccess p/ SPA na Hostinger)
+npm run build          # gera dist/  (o .env PRECISA existir antes do build)
 ```
 
-Deploy: suba o conteúdo de `dist/` como hoje. O `.htaccess` faz o fallback das
-rotas `/admin` e `/login` para o `index.html`.
+## 5. Deploy na Hostinger (MANUAL — git não faz deploy)
+
+Commit/push no GitHub **não** publica nada. O site sobe assim:
+
+1. `npm run build` com o `.env` presente (as chaves do Supabase são "assadas" no bundle).
+2. No **hPanel → Gerenciador de Arquivos** (ou FTP), abra a pasta que serve
+   `agencias7.com.br` (normalmente `public_html/`).
+3. Suba **todo o conteúdo de `dist/`** (não a pasta, o conteúdo), sobrescrevendo.
+   Pode apagar a `assets/` antiga antes — os nomes têm hash novo.
+4. **CRÍTICO: incluir o `.htaccess`** (arquivo oculto). No Gerenciador de Arquivos:
+   ⚙️ → "Mostrar arquivos ocultos". No FileZilla: Servidor → "Forçar exibição de
+   arquivos ocultos". Sem ele, `/admin` e `/login` dão **404**.
+5. Testar: `https://agencias7.com.br/login`.
+
+> Se rebuildar sem o `.env`, o `/login` abre mas não conecta no Supabase. Sempre
+> confira que `s7-lp/.env` existe antes do `npm run build`.
 
 ---
 
 ## Como a prospecção funciona
 
-1. **Encontrar Clientes** — escolhe nicho + cidade → busca no Google Maps (Apify)
-   ou OpenStreetMap (grátis).
-2. **Scanner Local** — vários nichos de uma região de uma vez, ranqueado por potencial.
-3. **Roleta** — sorteia nicho + cidade (animação de caça‑níquel) e **dispara a busca
-   automaticamente**. Fonte padrão: OpenStreetMap (grátis) — troque para Google/Apify
-   no botão se quiser.
+1. **Encontrar Clientes** — nicho + país/UF/cidade (Brasil inteiro via IBGE, ou
+   Europa/EUA/Dubai) → busca no Google Maps (Apify) ou OpenStreetMap (grátis).
+   Coleta até ~150 empresas por rodada.
+2. **Scanner Local** — vários nichos de uma cidade de uma vez.
+3. **Roleta** — sorteia nicho + cidade (caça‑níquel) — escopo Brasil (5.570 cidades)
+   ou Mundo (Europa/EUA/Dubai) — e **dispara a busca automaticamente**.
 
 Para cada empresa encontrada:
 
 | Situação | Resultado |
 |---|---|
-| Sem site | **Lead** (score 10) |
+| Sem site | **Lead** (na hora) |
 | Link vai p/ Instagram/Facebook | **Lead** — "precisa de site próprio" |
 | Link vai p/ Linktree/bio.link/etc | **Lead** — "precisa de site próprio" |
-| Site próprio | Heurística (HTTPS, responsivo, velocidade, meta tags, ano no rodapé, schema, analytics) + **parecer do Gemini** e nota 0–10 de "vale upgrade" |
+| Site próprio | Heurística (HTTPS, responsivo, velocidade, meta tags, schema, analytics) + **parecer do Gemini** e nota 0–10 de "vale upgrade" |
+
+Em rodadas grandes (100+), a Apify come quase todo o tempo da função e alguns sites
+próprios ficam com **"análise pendente"**. Na tela da lista aparece o botão
+**"Analisar N sites"** — ele roda a análise em lotes (função `analyze-pending`) até zerar.
 
 **Deduplicação:** toda empresa vista fica em `businesses` (`dedup_key` = nome+telefone+cidade,
-e `place_id`). Novas rodadas **ignoram** quem já foi prospectado — a lista só recebe
-empresas inéditas. O resultado mostra quantas foram ignoradas por duplicidade.
++ `place_id`). Novas rodadas **ignoram** quem já foi prospectado — a lista só recebe
+empresas inéditas.
 
-**Divisão de listas:** marque "dividir entre os vendedores" e os leads são
-distribuídos em rodízio entre os usuários `seller` (Antonio / Vinicius). Cada um vê só
-a fila dele em **Listas → Minhas**. Pedro (admin) vê tudo e pode reatribuir. Sem marcar,
-a lista fica sem dono e o admin atribui manualmente em cada empresa.
+## Qualificação e distribuição
+
+A prospecção **não monta lista pronta**. Ela cria uma lista com todas as empresas
+"a qualificar". Na tela da lista (**Listas → [a lista]**):
+
+- Abas **Todas · Sem site · Com site**
+- Cada empresa: **Aprovar** / **Rejeitar** (só admin)
+- Depois, botão **"Distribuir N aprovadas"** → reparte as aprovadas em rodízio entre
+  Pedro / Antonio / Vinicius. Cada vendedor vê a fila dele; o status de ligação
+  (Ligou / Não atendeu / Fechou…) só aparece nas aprovadas.
 
 ## Dashboard
 
@@ -134,9 +156,8 @@ evolução por período e Top 5 Produtos / Últimas Vendas — tudo calculado da
 
 ## Pendências / decisões abertas
 
-- [ ] Confirmar e‑mails reais dos 3 vendedores (hoje `@agencias7.com.br` no seed).
-- [ ] Ajustar a lista de cidades da roleta (`src/lib/cities.ts`) — base atual:
-      Baixada Santista + Litoral Norte + Vale do Paraíba.
+- [ ] **Subir o `dist/` pra Hostinger** (ver seção 5) — o `/admin` ainda não está no ar.
 - [ ] Definir produtos/serviços oficiais p/ o cadastro de vendas (`src/pages/admin/Vendas.tsx`).
 - [ ] Comissões: a dashboard cita "comissões" mas ainda não há módulo — definir regra.
 - [ ] (Opcional) botão de gerar mensagem de abordagem com IA por lead.
+- [ ] (Opcional) sócios (Antonio/Vinicius) também poderem qualificar, não só o admin.

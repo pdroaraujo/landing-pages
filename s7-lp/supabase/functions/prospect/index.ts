@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
   }
 
   const niches = [body.niche, ...(body.extraNiches ?? [])].filter(Boolean);
-  const hardCap = body.source === 'apify' ? 80 : 200;
+  const hardCap = body.source === 'apify' ? 150 : 300;
   const maxResults = Math.min(Math.max(body.maxResults ?? 100, 10), hardCap);
   const primaryCity = body.city.split(',')[0].trim();
   const countryCode = (body.countryCode ?? 'BR').toLowerCase();

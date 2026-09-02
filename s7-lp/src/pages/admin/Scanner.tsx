@@ -39,7 +39,7 @@ export default function Scanner() {
         uf: loc.uf || undefined,
         country: loc.country,
         countryCode: loc.countryCode,
-        maxResults: source === 'apify' ? 80 : 120,
+        maxResults: source === 'apify' ? 120 : 200,
         listName: `Scanner · ${loc.city} · ${selected.length} nichos`,
       });
       setRes(r);

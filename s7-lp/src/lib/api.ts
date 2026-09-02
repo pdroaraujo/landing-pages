@@ -34,3 +34,13 @@ export async function runProspect(req: ProspectRequest): Promise<ProspectRespons
   if ((data as { error?: string })?.error) throw new Error((data as { error: string }).error);
   return data as ProspectResponse;
 }
+
+export type AnalyzePendingResponse = { analyzed: number; upgrades: number; remaining: number };
+
+/** Analisa os sites próprios ainda pendentes de uma lista (em lotes). */
+export async function analyzePending(listId: string): Promise<AnalyzePendingResponse> {
+  const { data, error } = await supabase.functions.invoke('analyze-pending', { body: { list_id: listId } });
+  if (error) throw new Error(error.message);
+  if ((data as { error?: string })?.error) throw new Error((data as { error: string }).error);
+  return data as AnalyzePendingResponse;
+}

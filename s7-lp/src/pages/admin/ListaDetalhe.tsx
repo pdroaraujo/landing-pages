@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Globe, AtSign, Link2, PhoneOff, Phone, Star, Check, X, Users } from 'lucide-react';
+import { ArrowLeft, Globe, AtSign, Link2, PhoneOff, Phone, Star, Check, X, Users, Sparkles } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
 import { useTeam } from '../../lib/useTeam';
+import { analyzePending } from '../../lib/api';
 import type { CallStatus, ListItem, WebsiteStatus } from '../../lib/types';
 import { Card, PageHeader, Badge, Btn } from '../../components/admin/ui';
 
@@ -40,6 +41,7 @@ export default function ListaDetalhe() {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>('all');
   const [distributing, setDistributing] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
   const isAdmin = profile?.role === 'admin';
 
   const load = async () => {
@@ -81,8 +83,23 @@ export default function ListaDetalhe() {
     const pend = items.filter((i) => i.qualified === null).length;
     const appr = items.filter((i) => i.qualified === true).length;
     const rej = items.filter((i) => i.qualified === false).length;
-    return { pend, appr, rej, distributed: items.filter((i) => i.assigned_to).length };
+    const analysisPending = items.filter(
+      (i) => i.business?.website_status === 'own' && !Object.keys(i.business.analysis?.checks ?? {}).length,
+    ).length;
+    return { pend, appr, rej, analysisPending, distributed: items.filter((i) => i.assigned_to).length };
   }, [items]);
+
+  const runAnalysis = async () => {
+    setAnalyzing(true);
+    try {
+      for (let guard = 0; guard < 20; guard++) {
+        const r = await analyzePending(id!);
+        await load();
+        if (r.remaining <= 0 || r.analyzed === 0) break;
+      }
+    } catch { /* silencioso — o parecer é opcional */ }
+    setAnalyzing(false);
+  };
 
   const visible = useMemo(() => {
     let v = items;
@@ -112,11 +129,19 @@ export default function ListaDetalhe() {
         title={listName}
         subtitle={`${items.length} empresas · ${counts.pend} a qualificar · ${counts.appr} aprovadas · ${counts.rej} rejeitadas`}
         actions={
-          isAdmin && counts.appr > 0 ? (
-            <Btn onClick={distribute} disabled={distributing}>
-              <Users size={14} /> {distributing ? 'Distribuindo...' : `Distribuir ${counts.appr} aprovadas`}
-            </Btn>
-          ) : undefined
+          <>
+            {counts.analysisPending > 0 && (
+              <Btn variant="outline" onClick={runAnalysis} disabled={analyzing}>
+                <Sparkles size={14} />
+                {analyzing ? 'Analisando...' : `Analisar ${counts.analysisPending} sites`}
+              </Btn>
+            )}
+            {isAdmin && counts.appr > 0 && (
+              <Btn onClick={distribute} disabled={distributing}>
+                <Users size={14} /> {distributing ? 'Distribuindo...' : `Distribuir ${counts.appr} aprovadas`}
+              </Btn>
+            )}
+          </>
         }
       />
 
