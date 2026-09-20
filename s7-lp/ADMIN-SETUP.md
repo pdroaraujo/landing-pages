@@ -4,26 +4,27 @@
 (Encontrar Clientes · Scanner Local · Roleta) e **Listas** de ligação, com login.
 
 - Stack: Vite + React 19 + Tailwind v4 + react-router (front) · **Supabase**
-  (Auth + Postgres + Edge Function) · Apify (Google Maps) · Gemini (análise de site).
+  (Auth + Postgres + Edge Function) · OpenStreetMap (busca automática, grátis) ·
+  Gemini (análise de site). **Sem Apify** — removida em 2026-09-20.
 - Rotas: `/` (LP pública, intacta), `/login`, `/admin/*` (protegida).
 - Design: mesmo padrão S7 — fundo `#0f0f0f`, vermelho `#fe0000`, Plus Jakarta Sans.
 
-## Estado (2026-09-01) — no ar e testado
+## Estado (2026-09-20)
 
-- Projeto Supabase `projeto-s7` (`qzjjyyzhypnybhswwmnm`) · schema aplicado · função
-  `prospect` publicada com secrets.
-- Logins criados: **pedro@agencias7.com.br** (admin), **antonio@** e **vinicius@**
-  (sócios). Senha inicial `S7-<nome>-troque123` — trocar no 1º acesso.
-- Fluxo testado ponta a ponta: Apify puxou 10 salões/barbearias em Praia Grande com
-  telefone, classificou lead/instagram/linktree/site-próprio e o Gemini deu pareceres
-  reais ("site com erro 404", "SSL fora do ar", etc). Divisão em rodízio OK (5/3/3).
-
-**Observações de operação:**
-- **Apify demora ~2 min por rodada** (cold start do scraper), independente do tamanho.
-  Para 100 leads/dia, rode 3–4 buscas menores (nichos/cidades diferentes) em vez de
-  uma gigante. `maxResults` é limitado a 60 quando a fonte é Apify.
-- **OpenStreetMap é grátis mas raso no Brasil** — costuma trazer poucas empresas.
-  Serve para testar sem custo; para volume real, use a fonte Google (Apify).
+- Projeto Supabase `projeto-s7` (`qzjjyyzhypnybhswwmnm`) · schema aplicado.
+- Logins: **pedro@agencias7.com.br** (admin), **antonio@** e **vinicius@** (sócios).
+  Senha inicial `S7-<nome>-troque123` — trocar no 1º acesso.
+- ⚠️ **Projetos Supabase free pausam sozinhos após ~1 semana sem uso.** Se a função
+  `prospect` voltar com erro/404, primeiro confira no dashboard
+  (supabase.com/dashboard/project/qzjjyyzhypnybhswwmnm) se aparece um botão
+  **"Restore project"** — clique nele (não perde dado nenhum) e espere ~1-2 min.
+  Depois disso é só rodar `npx supabase functions deploy prospect` de novo.
+- **Apify foi removida.** A busca automática (Buscar/Scanner/Roleta → "Prospectar
+  automático") usa só OpenStreetMap, que é grátis mas tem cobertura mais fraca no
+  Brasil. Pra prospecção de volume real, use a **Roleta → Importar arquivo**: ela
+  gera um prompt pronto pra colar no Claude (ele busca no Google Maps e devolve um
+  CSV), você sobe o arquivo e o mesmo pipeline de sempre (dedup, classificação de
+  site, parecer do Gemini) roda em cima.
 
 ---
 
@@ -72,17 +73,20 @@ Se o PowerShell reclamar de "execução de scripts foi desabilitada", rode uma v
 ```powershell
 npx supabase login
 npx supabase link --project-ref qzjjyyzhypnybhswwmnm
-npx supabase secrets set APIFY_TOKEN=apify_api_xxx APIFY_ACTOR=compass/google-maps-extractor GEMINI_API_KEY=AQ.xxx GEMINI_MODEL=gemini-flash-lite-latest
+npx supabase secrets set GEMINI_API_KEY=AQ.xxx GEMINI_MODEL=gemini-flash-lite-latest
 npx supabase functions deploy prospect
+npx supabase functions deploy analyze-pending
 ```
 
-- Essas chaves (Apify, Gemini) são **secrets da Edge Function** — nunca vão no `.env`
-  do front nem no git. **Já configuradas** no projeto `qzjjyyzhypnybhswwmnm`.
+- A chave do Gemini é **secret da Edge Function** — nunca vai no `.env` do front
+  nem no git. **Já configurada** no projeto `qzjjyyzhypnybhswwmnm`.
 - `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` já existem
   automaticamente no ambiente da função.
-- **Apify**: actor `compass/google-maps-extractor` (~40s/rodada). Plano free ≈ US$5/mês.
 - **Gemini**: `gemini-flash-lite-latest` (o `3.6-flash` free tier só dá 20 req/dia).
   Se a API falhar, o parecer cai na heurística automaticamente.
+- Os secrets `APIFY_TOKEN`/`APIFY_ACTOR` ficaram configurados no projeto mas não
+  são mais lidos por nada — pode apagar com `npx supabase secrets unset APIFY_TOKEN APIFY_ACTOR`
+  se quiser limpar.
 
 ## 4. Rodar / build
 
@@ -113,13 +117,20 @@ Commit/push no GitHub **não** publica nada. O site sobe assim:
 ## Como a prospecção funciona
 
 1. **Encontrar Clientes** — nicho + país/UF/cidade (Brasil inteiro via IBGE, ou
-   Europa/EUA/Dubai) → busca no Google Maps (Apify) ou OpenStreetMap (grátis).
-   Coleta até ~150 empresas por rodada.
-2. **Scanner Local** — vários nichos de uma cidade de uma vez.
+   Europa/EUA/Dubai) → busca automática no OpenStreetMap (grátis). Coleta até
+   ~300 empresas por rodada, mas a cobertura no Brasil é mais fraca que o Google Maps.
+2. **Scanner Local** — vários nichos de uma cidade de uma vez, mesma fonte.
 3. **Roleta** — sorteia nicho + cidade (caça‑níquel) — escopo Brasil (5.570 cidades)
-   ou Mundo (Europa/EUA/Dubai) — e **dispara a busca automaticamente**.
+   ou Mundo (Europa/EUA/Dubai). Depois de sortear, você escolhe:
+   - **Prospectar automático** — dispara o OSM na hora, igual Buscar/Scanner.
+   - **Importar arquivo** — mostra um prompt pronto (já com o nicho+cidade sorteados)
+     pra colar no Claude, pedindo pra ele buscar no Google Maps e devolver um CSV.
+     Você sobe esse CSV (ou um `.xlsx`) e ele entra no mesmo pipeline abaixo.
+     Colunas esperadas (cabeçalho flexível — aceita variações em PT/EN):
+     `nome, telefone, endereco, cidade, categoria, site, avaliacao, avaliacoes`.
+     Só `nome` é obrigatório.
 
-Para cada empresa encontrada:
+Para cada empresa (venha do OSM ou do arquivo importado):
 
 | Situação | Resultado |
 |---|---|
@@ -128,13 +139,14 @@ Para cada empresa encontrada:
 | Link vai p/ Linktree/bio.link/etc | **Lead** — "precisa de site próprio" |
 | Site próprio | Heurística (HTTPS, responsivo, velocidade, meta tags, schema, analytics) + **parecer do Gemini** e nota 0–10 de "vale upgrade" |
 
-Em rodadas grandes (100+), a Apify come quase todo o tempo da função e alguns sites
-próprios ficam com **"análise pendente"**. Na tela da lista aparece o botão
-**"Analisar N sites"** — ele roda a análise em lotes (função `analyze-pending`) até zerar.
+Em rodadas grandes, alguns sites próprios podem ficar com **"análise pendente"**
+(teto de segurança pra não estourar o tempo da função nem a cota do Gemini). Na tela
+da lista aparece o botão **"Analisar N sites"** — roda em lotes (função
+`analyze-pending`) até zerar.
 
 **Deduplicação:** toda empresa vista fica em `businesses` (`dedup_key` = nome+telefone+cidade,
-+ `place_id`). Novas rodadas **ignoram** quem já foi prospectado — a lista só recebe
-empresas inéditas.
++ `place_id` quando existe). Novas rodadas — automáticas ou importadas — **ignoram**
+quem já foi prospectado; a lista só recebe empresas inéditas.
 
 ## Qualificação e distribuição
 
@@ -156,7 +168,10 @@ evolução por período e Top 5 Produtos / Últimas Vendas — tudo calculado da
 
 ## Pendências / decisões abertas
 
-- [ ] **Subir o `dist/` pra Hostinger** (ver seção 5) — o `/admin` ainda não está no ar.
+- [ ] **Confirmar que o `dist/` mais recente está na Hostinger** (ver seção 5) — a
+      cada mudança de código precisa rebuildar e subir de novo.
+- [ ] **Restaurar o projeto Supabase se estiver pausado** (ver "Estado" acima) antes
+      de testar qualquer coisa depois de um período sem uso.
 - [ ] Definir produtos/serviços oficiais p/ o cadastro de vendas (`src/pages/admin/Vendas.tsx`).
 - [ ] Comissões: a dashboard cita "comissões" mas ainda não há módulo — definir regra.
 - [ ] (Opcional) botão de gerar mensagem de abordagem com IA por lead.

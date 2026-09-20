@@ -1,8 +1,11 @@
 // Prompt pronto pra colar no Claude — pede pra ele buscar empresas no Google
 // Maps e devolver num CSV que a Roleta consegue importar direto.
-export function buildImportPrompt(nicheLabel: string, city: string, uf?: string, country = 'Brasil') {
+import type { Niche } from './niches';
+
+export function buildImportPrompt(niche: Niche, city: string, uf?: string, country = 'Brasil') {
   const loc = [city, uf, country !== 'Brasil' ? country : null].filter(Boolean).join(', ');
-  return `Busque empresas do ramo "${nicheLabel}" em ${loc} usando o Google Maps.
+  const examples = niche.searchTerms.slice(0, 5).join(', ');
+  return `Busque empresas do ramo "${niche.label}" em ${loc} usando o Google Maps — tipos de negócio como: ${examples}.
 
 Pra cada empresa encontrada, devolva uma linha de um CSV com EXATAMENTE estas colunas (primeira linha = cabeçalho; nenhum texto antes ou depois do CSV):
 

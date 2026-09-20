@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Dices, ArrowRight, Loader2, Copy, Check, Upload, Radar } from 'lucide-react';
-import { NICHES } from '../../lib/niches';
+import { NICHES, type Niche } from '../../lib/niches';
 import { loadBrCities, loadCountries, worldCountries, type BrCity, type Country } from '../../lib/places';
 import { runProspect, type ProspectResponse } from '../../lib/api';
 import { buildImportPrompt } from '../../lib/prospectPrompt';
@@ -14,7 +14,7 @@ type Scope = 'brasil' | 'mundo';
 type Phase = 'idle' | 'spinning' | 'choosing' | 'running' | 'done' | 'error';
 type Path = 'auto' | 'import' | null;
 
-type Drawn = { nicheSlug: string; nicheLabel: string; city: string; uf?: string; country: string; countryCode: string; place: string };
+type Drawn = { niche: Niche; city: string; uf?: string; country: string; countryCode: string; place: string };
 
 export default function Roleta() {
   const nicheReel = useRef<SlotReelHandle>(null);
@@ -87,7 +87,7 @@ export default function Roleta() {
       const c = worldPlaces[ci];
       city = c.cap!; country = c.n; countryCode = c.cc; placeLabel = `${c.cap} · ${c.n}`;
     }
-    setDrawn({ nicheSlug: niche.slug, nicheLabel: niche.label, city, uf, country, countryCode, place: placeLabel });
+    setDrawn({ niche, city, uf, country, countryCode, place: placeLabel });
     setPhase('choosing');
   };
 
@@ -100,13 +100,13 @@ export default function Roleta() {
       const res = await runProspect({
         mode: 'roleta',
         source: 'osm',
-        niche: drawn.nicheSlug,
+        niche: drawn.niche.slug,
         city: drawn.city,
         uf: drawn.uf,
         country: drawn.country,
         countryCode: drawn.countryCode,
         maxResults: 150,
-        listName: `Roleta · ${drawn.nicheLabel} · ${drawn.city}`,
+        listName: `Roleta · ${drawn.niche.label} · ${drawn.city}`,
       });
       setResult(res);
       setPhase('done');
@@ -141,14 +141,14 @@ export default function Roleta() {
       const res = await runProspect({
         mode: 'roleta',
         source: 'import',
-        niche: drawn.nicheSlug,
+        niche: drawn.niche.slug,
         city: drawn.city,
         uf: drawn.uf,
         country: drawn.country,
         countryCode: drawn.countryCode,
         businesses: parsed,
         maxResults: parsed.length,
-        listName: `Roleta · ${drawn.nicheLabel} · ${drawn.city} (importado)`,
+        listName: `Roleta · ${drawn.niche.label} · ${drawn.city} (importado)`,
       });
       setResult(res);
       setPhase('done');
@@ -160,7 +160,7 @@ export default function Roleta() {
 
   const copyPrompt = () => {
     if (!drawn) return;
-    navigator.clipboard.writeText(buildImportPrompt(drawn.nicheLabel, drawn.city, drawn.uf, drawn.country));
+    navigator.clipboard.writeText(buildImportPrompt(drawn.niche, drawn.city, drawn.uf, drawn.country));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -225,7 +225,7 @@ export default function Roleta() {
 
         {drawn && (
           <p className="mt-6 text-center text-sm text-white/60">
-            Sorteado: <span className="font-bold text-white">{drawn.nicheLabel}</span> em{' '}
+            Sorteado: <span className="font-bold text-white">{drawn.niche.label}</span> em{' '}
             <span className="font-bold text-white">{drawn.place}</span>
           </p>
         )}
@@ -261,7 +261,7 @@ export default function Roleta() {
             <div className="relative">
               <textarea
                 readOnly
-                value={buildImportPrompt(drawn.nicheLabel, drawn.city, drawn.uf, drawn.country)}
+                value={buildImportPrompt(drawn.niche, drawn.city, drawn.uf, drawn.country)}
                 rows={6}
                 className="w-full resize-none rounded-xl border border-white/10 bg-black/30 p-3 text-xs text-white/70"
               />
