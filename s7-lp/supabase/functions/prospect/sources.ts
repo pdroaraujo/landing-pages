@@ -1,4 +1,5 @@
-// Coleta de empresas — Apify (Google Maps) e OpenStreetMap (grátis).
+// Coleta de empresas — OpenStreetMap (grátis, automático). A fonte "import"
+// (arquivo gerado manualmente) é tratada direto em index.ts, sem passar por cá.
 import { nicheBySlug } from './niches.ts';
 
 export type RawBiz = {
@@ -17,108 +18,6 @@ export type RawBiz = {
 };
 
 const UA = 'AgenciaS7-Prospect/1.0 (contato.agencias7@outlook.com)';
-
-// ---------------- APIFY ----------------
-export async function fetchApify(opts: {
-  niches: string[];
-  city: string;
-  uf?: string;
-  country?: string; // nome do país (default Brasil)
-  countryCode?: string; // ISO2 minúsculo
-  maxResults: number;
-}): Promise<RawBiz[]> {
-  const token = Deno.env.get('APIFY_TOKEN');
-  if (!token) throw new Error('APIFY_TOKEN não configurado.');
-  const actor = (Deno.env.get('APIFY_ACTOR') ?? 'compass/google-maps-extractor').replace('/', '~');
-  const isBR = !opts.countryCode || opts.countryCode.toLowerCase() === 'br';
-  const region = [opts.city, opts.uf, isBR ? '' : opts.country].filter(Boolean).join(' ');
-
-  const termsPerNiche = opts.niches.length > 2 ? 1 : opts.niches.length > 1 ? 2 : 3;
-  let searchStringsArray: string[] = [];
-  for (const slug of opts.niches) {
-    const n = nicheBySlug(slug);
-    for (const term of n.apifyTerms.slice(0, termsPerNiche)) {
-      searchStringsArray.push(`${term} em ${region}`);
-    }
-  }
-  // no máx. 3 runs paralelos (limite de memória total do plano free da Apify)
-  searchStringsArray = searchStringsArray.slice(0, 3);
-
-  // Dispara os runs Apify EM PARALELO (1 termo por run) — rodam ao mesmo tempo
-  // na infra da Apify, então o tempo total ≈ o de um run só, não a soma.
-  const perSearch = Math.min(120, Math.max(8, Math.ceil(opts.maxResults / searchStringsArray.length)));
-  const DONE = ['SUCCEEDED', 'FAILED', 'ABORTED', 'TIMED-OUT'];
-
-  const startRun = async (term: string) => {
-    const input: Record<string, unknown> = {
-      searchStringsArray: [term],
-      language: isBR ? 'pt-BR' : 'en',
-      maxCrawledPlacesPerSearch: perSearch,
-      skipClosedPlaces: true,
-    };
-    if (opts.countryCode) input.countryCode = opts.countryCode.toLowerCase();
-    const r = await fetch(
-      `https://api.apify.com/v2/acts/${actor}/runs?token=${token}&timeout=170`,
-      { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(input) },
-    );
-    if (!r.ok) throw new Error(`Apify ${r.status}: ${(await r.text()).slice(0, 160)}`);
-    const j = (await r.json()) as { data: { id: string; defaultDatasetId: string } };
-    return { id: j.data.id, dataset: j.data.defaultDatasetId };
-  };
-
-  const runs = await Promise.all(searchStringsArray.map(startRun));
-
-  // poll paralelo até todos terminarem ou o orçamento acabar
-  const BUDGET_MS = 88_000;
-  const t0 = Date.now();
-  const pending = new Set(runs.map((r) => r.id));
-  while (pending.size && Date.now() - t0 < BUDGET_MS) {
-    await new Promise((res) => setTimeout(res, 4000));
-    await Promise.all(
-      [...pending].map(async (id) => {
-        try {
-          const st = await fetch(`https://api.apify.com/v2/actor-runs/${id}?token=${token}`);
-          const status = ((await st.json()) as { data: { status: string } }).data.status;
-          if (DONE.includes(status)) pending.delete(id);
-        } catch { /* tenta de novo */ }
-      }),
-    );
-  }
-  // aborta os que sobraram (não gasta crédito à toa) e pega o parcial
-  for (const id of pending) {
-    fetch(`https://api.apify.com/v2/actor-runs/${id}/abort?token=${token}`, { method: 'POST' }).catch(() => {});
-  }
-
-  const perDataset = Math.ceil((opts.maxResults * 2) / runs.length);
-  const batches = await Promise.all(
-    runs.map(async (r) => {
-      try {
-        const res = await fetch(
-          `https://api.apify.com/v2/datasets/${r.dataset}/items?token=${token}&clean=true&limit=${perDataset}`,
-        );
-        return res.ok ? ((await res.json()) as Record<string, unknown>[]) : [];
-      } catch {
-        return [];
-      }
-    }),
-  );
-  const items = batches.flat();
-
-  return items.map((it) => ({
-    place_id: (it.placeId as string) ?? (it.fid as string) ?? null,
-    name: (it.title as string) ?? (it.name as string) ?? 'Sem nome',
-    phone: (it.phone as string) ?? (it.phoneUnformatted as string) ?? null,
-    website: cleanUrl(it.website as string | undefined),
-    address: (it.address as string) ?? (it.street as string) ?? null,
-    city: (it.city as string) ?? opts.city,
-    uf: (it.state as string) ?? opts.uf ?? null,
-    category: (it.categoryName as string) ?? ((it.categories as string[]) ?? [])[0] ?? null,
-    rating: typeof it.totalScore === 'number' ? (it.totalScore as number) : null,
-    reviews: typeof it.reviewsCount === 'number' ? (it.reviewsCount as number) : null,
-    lat: (it.location as { lat?: number })?.lat ?? null,
-    lng: (it.location as { lng?: number })?.lng ?? null,
-  }));
-}
 
 // ---------------- OPENSTREETMAP ----------------
 export async function fetchOSM(opts: {
@@ -168,7 +67,7 @@ export async function fetchOSM(opts: {
       if (r.ok) { res = r; break; }
     } catch { /* tenta o próximo */ }
   }
-  if (!res) throw new Error('Overpass indisponível — tente de novo ou use a fonte Google (Apify).');
+  if (!res) throw new Error('Overpass indisponível no momento — tente de novo em instantes.');
   const data = (await res.json()) as { elements: { id: number; type: string; tags?: Record<string, string>; lat?: number; lon?: number; center?: { lat: number; lon: number } }[] };
 
   const seen = new Set<string>();

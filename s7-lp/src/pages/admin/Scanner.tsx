@@ -3,16 +3,13 @@ import { Link } from 'react-router-dom';
 import { Radar, Loader2, ArrowRight } from 'lucide-react';
 import { NICHES } from '../../lib/niches';
 import { runProspect, type ProspectResponse } from '../../lib/api';
-import type { ProspectSource } from '../../lib/types';
 import { Card, PageHeader, Btn } from '../../components/admin/ui';
-import SourceToggle from '../../components/admin/SourceToggle';
 import LocationPicker from '../../components/admin/LocationPicker';
 import { defaultLocation, type LocationValue } from '../../lib/places';
 
 export default function Scanner() {
   const [loc, setLoc] = useState<LocationValue>(defaultLocation);
   const [selected, setSelected] = useState<string[]>(NICHES.slice(0, 4).map((n) => n.slug));
-  const [source, setSource] = useState<ProspectSource>('apify');
   const [loading, setLoading] = useState(false);
   const [res, setRes] = useState<ProspectResponse | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -32,14 +29,14 @@ export default function Scanner() {
     try {
       const r = await runProspect({
         mode: 'scanner',
-        source,
+        source: 'osm',
         niche: selected[0],
         extraNiches: selected.slice(1),
         city: loc.city,
         uf: loc.uf || undefined,
         country: loc.country,
         countryCode: loc.countryCode,
-        maxResults: source === 'apify' ? 120 : 200,
+        maxResults: 200,
         listName: `Scanner · ${loc.city} · ${selected.length} nichos`,
       });
       setRes(r);
@@ -54,7 +51,7 @@ export default function Scanner() {
     <div>
       <PageHeader
         title="Scanner Local"
-        subtitle="Varre vários nichos de uma cidade de uma vez e traz tudo para você qualificar."
+        subtitle="Varre vários nichos de uma cidade de uma vez (OpenStreetMap, grátis) e traz tudo para você qualificar."
       />
 
       <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
@@ -82,11 +79,6 @@ export default function Scanner() {
                   </button>
                 ))}
               </div>
-            </div>
-
-            <div>
-              <span className="text-xs font-medium uppercase tracking-widest text-white/50 mb-2 block">Fonte</span>
-              <SourceToggle value={source} onChange={setSource} disabled={loading} />
             </div>
 
             <Btn type="submit" disabled={loading || !selected.length} className="mt-2 self-start px-8 py-4">

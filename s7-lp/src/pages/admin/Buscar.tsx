@@ -3,16 +3,13 @@ import { Link } from 'react-router-dom';
 import { Search, Loader2, ArrowRight } from 'lucide-react';
 import { NICHES } from '../../lib/niches';
 import { runProspect, type ProspectResponse } from '../../lib/api';
-import type { ProspectSource } from '../../lib/types';
 import { Card, PageHeader, Btn, Field, inputClass } from '../../components/admin/ui';
-import SourceToggle from '../../components/admin/SourceToggle';
 import LocationPicker from '../../components/admin/LocationPicker';
 import { defaultLocation, type LocationValue } from '../../lib/places';
 
 export default function Buscar() {
   const [niche, setNiche] = useState(NICHES[0].slug);
   const [loc, setLoc] = useState<LocationValue>(defaultLocation);
-  const [source, setSource] = useState<ProspectSource>('apify');
   const [maxResults, setMaxResults] = useState(100);
   const [loading, setLoading] = useState(false);
   const [res, setRes] = useState<ProspectResponse | null>(null);
@@ -30,7 +27,7 @@ export default function Buscar() {
     try {
       const r = await runProspect({
         mode: 'buscar',
-        source,
+        source: 'osm',
         niche,
         city: loc.city,
         uf: loc.uf || undefined,
@@ -51,7 +48,7 @@ export default function Buscar() {
     <div>
       <PageHeader
         title="Encontrar Clientes"
-        subtitle="Escolha nicho e cidade. Buscamos as empresas, verificamos site e você qualifica os leads depois."
+        subtitle="Escolha nicho e cidade. Buscamos as empresas no OpenStreetMap (grátis), verificamos site e você qualifica os leads depois."
       />
 
       <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
@@ -73,7 +70,7 @@ export default function Buscar() {
               <input
                 type="range"
                 min={20}
-                max={source === "apify" ? 150 : 300}
+                max={300}
                 step={10}
                 value={maxResults}
                 onChange={(e) => setMaxResults(Number(e.target.value))}
@@ -81,10 +78,11 @@ export default function Buscar() {
               />
             </Field>
 
-            <div>
-              <span className="text-xs font-medium uppercase tracking-widest text-white/50 mb-2 block">Fonte</span>
-              <SourceToggle value={source} onChange={setSource} disabled={loading} />
-            </div>
+            <p className="-mt-2 text-xs text-white/35">
+              Sem cobertura no OpenStreetMap pra essa cidade/nicho? Use a{' '}
+              <Link to="/admin/prospeccao/roleta" className="text-[#fe0000]">Roleta → Importar arquivo</Link>{' '}
+              pra trazer os dados de outra fonte.
+            </p>
 
             <Btn type="submit" disabled={loading} className="mt-2 self-start px-8 py-4">
               {loading ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
@@ -100,8 +98,7 @@ export default function Buscar() {
           {!res && !loading && <p className="text-xs text-white/35">Preencha e clique em Prospectar.</p>}
           {loading && (
             <p className="text-xs text-white/45">
-              Buscando empresas{source === 'apify' ? ` no Google Maps (~${maxResults >= 100 ? '1-2 min' : '40s'})` : ''}…
-              {' '}Sites com "análise pendente" você completa depois com um clique na lista.
+              Buscando empresas… Sites com "análise pendente" você completa depois com um clique na lista.
             </p>
           )}
           {res && (

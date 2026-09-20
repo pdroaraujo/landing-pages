@@ -1,9 +1,10 @@
 // Edge Function: prospect
-//  Coleta empresas (Apify Google Maps ou OpenStreetMap), deduplica contra
-//  `businesses`, classifica o site (lead / instagram / linktree / upgrade),
-//  cria uma lista e (opcional) divide entre os vendedores.
+//  Coleta empresas (OpenStreetMap automático, ou uma lista importada de
+//  arquivo CSV/XLSX gerada manualmente), deduplica contra `businesses`,
+//  classifica o site (lead / instagram / linktree / upgrade) e cria uma lista
+//  pra qualificação (aprovar/rejeitar) — sem atribuir dono ainda.
 import { createClient } from 'jsr:@supabase/supabase-js@2';
-import { fetchApify, fetchOSM, type RawBiz } from './sources.ts';
+import { fetchOSM, type RawBiz } from './sources.ts';
 import { classifyUrl, classifyWebsite } from './analyze.ts';
 
 const CORS = {
@@ -48,7 +49,7 @@ Deno.serve(async (req) => {
 
   let body: {
     mode: 'buscar' | 'scanner' | 'roleta';
-    source: 'apify' | 'osm';
+    source: 'osm' | 'import';
     niche: string;
     extraNiches?: string[];
     city: string;
@@ -57,6 +58,8 @@ Deno.serve(async (req) => {
     countryCode?: string; // ISO2
     maxResults?: number;
     listName?: string;
+    /** empresas já coletadas manualmente — usado quando source === 'import' */
+    businesses?: Partial<RawBiz>[];
   };
   try {
     body = await req.json();
@@ -65,7 +68,7 @@ Deno.serve(async (req) => {
   }
 
   const niches = [body.niche, ...(body.extraNiches ?? [])].filter(Boolean);
-  const hardCap = body.source === 'apify' ? 150 : 300;
+  const hardCap = body.source === 'import' ? 500 : 300;
   const maxResults = Math.min(Math.max(body.maxResults ?? 100, 10), hardCap);
   const primaryCity = body.city.split(',')[0].trim();
   const countryCode = (body.countryCode ?? 'BR').toLowerCase();
@@ -89,8 +92,30 @@ Deno.serve(async (req) => {
 
   try {
     // --- 1. coleta ---
-    const opts = { niches, city: primaryCity, uf: body.uf, country: countryName, countryCode, maxResults };
-    const raw: RawBiz[] = body.source === 'apify' ? await fetchApify(opts) : await fetchOSM(opts);
+    let raw: RawBiz[];
+    if (body.source === 'import') {
+      raw = (body.businesses ?? [])
+        .map((b) => ({
+          place_id: b.place_id ?? null,
+          name: (b.name ?? '').trim(),
+          phone: b.phone ?? null,
+          website: b.website ?? null,
+          address: b.address ?? null,
+          city: b.city ?? primaryCity,
+          uf: b.uf ?? body.uf ?? null,
+          category: b.category ?? null,
+          rating: typeof b.rating === 'number' ? b.rating : null,
+          reviews: typeof b.reviews === 'number' ? b.reviews : null,
+          lat: b.lat ?? null,
+          lng: b.lng ?? null,
+        }))
+        .filter((b) => b.name)
+        .slice(0, maxResults);
+      if (!raw.length) throw new Error('Nenhuma empresa válida no arquivo importado.');
+    } else {
+      const opts = { niches, city: primaryCity, uf: body.uf, country: countryName, countryCode, maxResults };
+      raw = await fetchOSM(opts);
+    }
 
     // dedup interno da rodada
     const byKey = new Map<string, RawBiz>();

@@ -1,17 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Dices, ArrowRight, Loader2 } from 'lucide-react';
+import { Dices, ArrowRight, Loader2, Copy, Check, Upload, Radar } from 'lucide-react';
 import { NICHES } from '../../lib/niches';
 import { loadBrCities, loadCountries, worldCountries, type BrCity, type Country } from '../../lib/places';
 import { runProspect, type ProspectResponse } from '../../lib/api';
-import type { ProspectSource } from '../../lib/types';
-import { Card, PageHeader } from '../../components/admin/ui';
+import { buildImportPrompt } from '../../lib/prospectPrompt';
+import { parseImportFile, type ImportedBiz } from '../../lib/importParse';
+import { Card, PageHeader, Btn } from '../../components/admin/ui';
 import SlotReel, { type SlotReelHandle } from '../../components/admin/SlotReel';
-import SourceToggle from '../../components/admin/SourceToggle';
 
 const nicheLabels = NICHES.map((n) => n.label);
 type Scope = 'brasil' | 'mundo';
-type Phase = 'idle' | 'spinning' | 'prospecting' | 'done' | 'error';
+type Phase = 'idle' | 'spinning' | 'choosing' | 'running' | 'done' | 'error';
+type Path = 'auto' | 'import' | null;
+
+type Drawn = { nicheSlug: string; nicheLabel: string; city: string; uf?: string; country: string; countryCode: string; place: string };
 
 export default function Roleta() {
   const nicheReel = useRef<SlotReelHandle>(null);
@@ -21,10 +24,15 @@ export default function Roleta() {
   const [brCities, setBrCities] = useState<BrCity[]>([]);
   const [countries, setCountries] = useState<Country[]>([]);
   const [phase, setPhase] = useState<Phase>('idle');
-  const [source, setSource] = useState<ProspectSource>('apify');
-  const [drawn, setDrawn] = useState<{ niche: string; place: string } | null>(null);
+  const [path, setPath] = useState<Path>(null);
+  const [drawn, setDrawn] = useState<Drawn | null>(null);
   const [result, setResult] = useState<ProspectResponse | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [parsed, setParsed] = useState<ImportedBiz[] | null>(null);
+  const [parseErr, setParseErr] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadBrCities().then(setBrCities);
@@ -40,13 +48,24 @@ export default function Roleta() {
       : worldPlaces.map((c) => `${c.cap} · ${c.n}`);
 
   const ready = nicheLabels.length > 0 && cityLabels.length > 0;
-  const busy = phase === 'spinning' || phase === 'prospecting';
+  const busy = phase === 'spinning' || phase === 'running';
+
+  const reset = () => {
+    setPhase('idle');
+    setPath(null);
+    setDrawn(null);
+    setResult(null);
+    setErr(null);
+    setFile(null);
+    setParsed(null);
+    setParseErr(null);
+    if (fileRef.current) fileRef.current.value = '';
+  };
 
   const spin = async () => {
     if (!ready) return;
+    reset();
     setPhase('spinning');
-    setResult(null);
-    setErr(null);
 
     const ni = Math.floor(Math.random() * NICHES.length);
     const ci = Math.floor(Math.random() * cityLabels.length);
@@ -68,20 +87,26 @@ export default function Roleta() {
       const c = worldPlaces[ci];
       city = c.cap!; country = c.n; countryCode = c.cc; placeLabel = `${c.cap} · ${c.n}`;
     }
-    setDrawn({ niche: niche.label, place: placeLabel });
+    setDrawn({ nicheSlug: niche.slug, nicheLabel: niche.label, city, uf, country, countryCode, place: placeLabel });
+    setPhase('choosing');
+  };
 
-    setPhase('prospecting');
+  const runAuto = async () => {
+    if (!drawn) return;
+    setPath('auto');
+    setPhase('running');
+    setErr(null);
     try {
       const res = await runProspect({
         mode: 'roleta',
-        source,
-        niche: niche.slug,
-        city,
-        uf,
-        country,
-        countryCode,
-        maxResults: source === 'apify' ? 60 : 120,
-        listName: `Roleta · ${niche.label} · ${city}`,
+        source: 'osm',
+        niche: drawn.nicheSlug,
+        city: drawn.city,
+        uf: drawn.uf,
+        country: drawn.country,
+        countryCode: drawn.countryCode,
+        maxResults: 150,
+        listName: `Roleta · ${drawn.nicheLabel} · ${drawn.city}`,
       });
       setResult(res);
       setPhase('done');
@@ -91,11 +116,60 @@ export default function Roleta() {
     }
   };
 
+  const pickFile = async (f: File) => {
+    setFile(f);
+    setParsed(null);
+    setParseErr(null);
+    try {
+      const rows = await parseImportFile(f);
+      if (!rows.length) {
+        setParseErr('Não achei nenhuma empresa válida nesse arquivo. Confira se a coluna "nome" existe.');
+        return;
+      }
+      setParsed(rows);
+    } catch {
+      setParseErr('Não consegui ler esse arquivo. Use um .csv ou .xlsx.');
+    }
+  };
+
+  const runImport = async () => {
+    if (!drawn || !parsed?.length) return;
+    setPath('import');
+    setPhase('running');
+    setErr(null);
+    try {
+      const res = await runProspect({
+        mode: 'roleta',
+        source: 'import',
+        niche: drawn.nicheSlug,
+        city: drawn.city,
+        uf: drawn.uf,
+        country: drawn.country,
+        countryCode: drawn.countryCode,
+        businesses: parsed,
+        maxResults: parsed.length,
+        listName: `Roleta · ${drawn.nicheLabel} · ${drawn.city} (importado)`,
+      });
+      setResult(res);
+      setPhase('done');
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Falha ao importar.');
+      setPhase('error');
+    }
+  };
+
+  const copyPrompt = () => {
+    if (!drawn) return;
+    navigator.clipboard.writeText(buildImportPrompt(drawn.nicheLabel, drawn.city, drawn.uf, drawn.country));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div>
       <PageHeader
         title="Roleta"
-        subtitle="Gira: sorteia um nicho e uma cidade e já dispara a prospecção."
+        subtitle="Gira: sorteia um nicho e uma cidade. Depois você escolhe prospectar automático (grátis, OpenStreetMap) ou importar um arquivo com as empresas."
       />
 
       <Card className="mx-auto max-w-2xl p-8">
@@ -135,18 +209,14 @@ export default function Roleta() {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col items-center gap-4">
-          <SourceToggle value={source} onChange={setSource} disabled={busy} />
-
+        <div className="mt-8 flex flex-col items-center gap-3">
           <button
             onClick={spin}
             disabled={busy || !ready}
-            className="group relative mt-2 flex items-center gap-3 overflow-hidden rounded-full bg-[#fe0000] px-12 py-5 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-60"
+            className="group relative flex items-center gap-3 overflow-hidden rounded-full bg-[#fe0000] px-12 py-5 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-60"
           >
-            {busy ? <Loader2 size={18} className="animate-spin" /> : <Dices size={18} />}
-            {phase === 'spinning' && 'Girando...'}
-            {phase === 'prospecting' && 'Prospectando...'}
-            {(phase === 'idle' || phase === 'done' || phase === 'error') && 'Girar a Roleta'}
+            {phase === 'spinning' ? <Loader2 size={18} className="animate-spin" /> : <Dices size={18} />}
+            {phase === 'spinning' ? 'Girando...' : phase === 'idle' ? 'Girar a Roleta' : 'Girar de novo'}
           </button>
           {scope === 'brasil' && (
             <p className="text-[11px] text-white/30">{brCities.length.toLocaleString('pt-BR')} cidades</p>
@@ -155,8 +225,80 @@ export default function Roleta() {
 
         {drawn && (
           <p className="mt-6 text-center text-sm text-white/60">
-            Sorteado: <span className="font-bold text-white">{drawn.niche}</span> em{' '}
+            Sorteado: <span className="font-bold text-white">{drawn.nicheLabel}</span> em{' '}
             <span className="font-bold text-white">{drawn.place}</span>
+          </p>
+        )}
+
+        {/* --- escolha do caminho --- */}
+        {phase === 'choosing' && drawn && (
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <button
+              onClick={runAuto}
+              className="flex flex-col items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-center hover:border-[#fe0000]/40 transition-colors"
+            >
+              <Radar className="text-[#fe0000]" size={22} />
+              <span className="text-sm font-bold">Prospectar automático</span>
+              <span className="text-[11px] text-white/40">OpenStreetMap · grátis · na hora</span>
+            </button>
+            <button
+              onClick={() => setPath('import')}
+              className="flex flex-col items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-center hover:border-[#fe0000]/40 transition-colors"
+            >
+              <Upload className="text-[#fe0000]" size={22} />
+              <span className="text-sm font-bold">Importar arquivo</span>
+              <span className="text-[11px] text-white/40">Peça pro Claude buscar e suba o CSV/XLSX</span>
+            </button>
+          </div>
+        )}
+
+        {/* --- painel de importação --- */}
+        {phase === 'choosing' && path === 'import' && drawn && (
+          <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-white/50">
+              1. Peça pro Claude gerar a lista
+            </p>
+            <div className="relative">
+              <textarea
+                readOnly
+                value={buildImportPrompt(drawn.nicheLabel, drawn.city, drawn.uf, drawn.country)}
+                rows={6}
+                className="w-full resize-none rounded-xl border border-white/10 bg-black/30 p-3 text-xs text-white/70"
+              />
+              <button
+                onClick={copyPrompt}
+                className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-lg bg-white/10 px-2.5 py-1.5 text-[11px] font-bold text-white hover:bg-white/20"
+              >
+                {copied ? <Check size={12} /> : <Copy size={12} />} {copied ? 'Copiado' : 'Copiar'}
+              </button>
+            </div>
+
+            <p className="mb-2 mt-5 text-xs font-bold uppercase tracking-widest text-white/50">
+              2. Suba o arquivo que ele te devolver (.csv ou .xlsx)
+            </p>
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".csv,.xlsx,.xls,text/csv"
+              onChange={(e) => e.target.files?.[0] && pickFile(e.target.files[0])}
+              className="block w-full text-xs text-white/60 file:mr-3 file:rounded-lg file:border-0 file:bg-[#fe0000] file:px-4 file:py-2 file:text-xs file:font-bold file:uppercase file:text-white"
+            />
+            {parseErr && <p className="mt-2 text-xs text-[#ff5a5a]">{parseErr}</p>}
+            {parsed && (
+              <p className="mt-2 text-xs text-emerald-400">
+                {parsed.length} empresas lidas de "{file?.name}" — confira e prospecte.
+              </p>
+            )}
+
+            <Btn onClick={runImport} disabled={!parsed?.length} className="mt-4">
+              <Upload size={14} /> Prospectar {parsed?.length ?? ''} empresas
+            </Btn>
+          </div>
+        )}
+
+        {phase === 'running' && (
+          <p className="mt-6 text-center text-xs text-white/45">
+            {path === 'auto' ? 'Buscando no OpenStreetMap…' : 'Importando e analisando os sites…'}
           </p>
         )}
 
