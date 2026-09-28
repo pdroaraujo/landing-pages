@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Store, Nfc, LogOut, Menu, X, ArrowLeftRight, KeyRound } from 'lucide-react';
+import { LayoutDashboard, Store, Nfc, LogOut, Menu, X, ArrowLeftRight, KeyRound, MapPinned } from 'lucide-react';
 import { useAuth } from '../../lib/auth';
 
 const nav = [
   { to: '/s7card', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/s7card/mapeamento', label: 'Mapeamento', icon: MapPinned },
   { to: '/s7card/lojas', label: 'Lojas', icon: Store },
   { to: '/s7card/placas', label: 'Placas', icon: Nfc },
 ];
@@ -47,10 +48,7 @@ export default function S7CardLayout() {
       <div className="pointer-events-none fixed top-[-20%] left-1/2 -translate-x-1/2 w-[1100px] h-[700px] bg-[#fe0000] rounded-full blur-[200px] opacity-[0.15] z-0" />
 
       <aside className="hidden lg:flex fixed inset-y-0 left-0 w-64 flex-col border-r border-white/10 bg-[#0c0c0c]/80 backdrop-blur-md z-30 p-6">
-        <div className="mb-10">
-          <img src="/logo.png" alt="S7" className="h-14 w-auto self-start object-contain" />
-          <span className="mt-2 block text-xs font-bold uppercase tracking-widest text-[#fe0000]">S7 Card</span>
-        </div>
+        <img src="/logo.png" alt="S7" className="h-14 w-auto self-start object-contain mb-10" />
         {navItems}
         <div className="mt-auto pt-6 border-t border-white/10">
           {hasAgencia && (

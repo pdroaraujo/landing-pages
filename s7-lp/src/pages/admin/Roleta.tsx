@@ -1,16 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Dices, ArrowRight, Loader2, Copy, Check, Upload, Radar } from 'lucide-react';
 import { NICHES, type Niche } from '../../lib/niches';
-import { loadBrCities, loadCountries, worldCountries, type BrCity, type Country } from '../../lib/places';
+import { loadBrCities, loadCountries, worldCountries, UFS, type BrCity, type Country } from '../../lib/places';
 import { runProspect, type ProspectResponse } from '../../lib/api';
 import { buildImportPrompt } from '../../lib/prospectPrompt';
 import { parseImportFile, type ImportedBiz } from '../../lib/importParse';
-import { Card, PageHeader, Btn } from '../../components/admin/ui';
+import { Card, PageHeader, Btn, Field, inputClass } from '../../components/admin/ui';
 import SlotReel, { type SlotReelHandle } from '../../components/admin/SlotReel';
 
 const nicheLabels = NICHES.map((n) => n.label);
 type Scope = 'brasil' | 'mundo';
+type SortMode = 'ambos' | 'so_nicho' | 'so_cidade';
 type Phase = 'idle' | 'spinning' | 'choosing' | 'running' | 'done' | 'error';
 type Path = 'auto' | 'import' | null;
 
@@ -21,6 +22,11 @@ export default function Roleta() {
   const cityReel = useRef<SlotReelHandle>(null);
 
   const [scope, setScope] = useState<Scope>('brasil');
+  const [sortMode, setSortMode] = useState<SortMode>('ambos');
+  const [ufFilter, setUfFilter] = useState(''); // '' = todos os estados (só vale pra Brasil)
+  const [manualNicheSlug, setManualNicheSlug] = useState(NICHES[0].slug);
+  const [manualCityIdx, setManualCityIdx] = useState(0);
+
   const [brCities, setBrCities] = useState<BrCity[]>([]);
   const [countries, setCountries] = useState<Country[]>([]);
   const [phase, setPhase] = useState<Phase>('idle');
@@ -41,14 +47,33 @@ export default function Roleta() {
     if (scope === 'mundo' && !countries.length) loadCountries().then(setCountries);
   }, [scope, countries.length]);
 
-  const worldPlaces = worldCountries(countries).filter((c) => c.cap);
+  const worldPlaces = useMemo(() => worldCountries(countries).filter((c) => c.cap), [countries]);
+  const brCitiesFiltered = useMemo(
+    () => (ufFilter ? brCities.filter((c) => c.uf === ufFilter) : brCities),
+    [brCities, ufFilter],
+  );
+  const cityPoolSize = scope === 'brasil' ? brCitiesFiltered.length : worldPlaces.length;
   const cityLabels =
     scope === 'brasil'
-      ? brCities.map((c) => `${c.n} · ${c.uf}`)
+      ? brCitiesFiltered.map((c) => `${c.n} · ${c.uf}`)
       : worldPlaces.map((c) => `${c.cap} · ${c.n}`);
+
+  // reset o índice manual quando o universo de cidades muda (troca de UF/escopo)
+  useEffect(() => {
+    setManualCityIdx(0);
+  }, [scope, ufFilter, worldPlaces.length]);
 
   const ready = nicheLabels.length > 0 && cityLabels.length > 0;
   const busy = phase === 'spinning' || phase === 'running';
+
+  const placeAt = (idx: number) => {
+    if (scope === 'brasil') {
+      const c = brCitiesFiltered[idx];
+      return { city: c.n, uf: c.uf as string | undefined, country: 'Brasil', countryCode: 'BR', place: `${c.n} · ${c.uf}` };
+    }
+    const c = worldPlaces[idx];
+    return { city: c.cap!, uf: undefined, country: c.n, countryCode: c.cc, place: `${c.cap} · ${c.n}` };
+  };
 
   const reset = () => {
     setPhase('idle');
@@ -67,27 +92,20 @@ export default function Roleta() {
     reset();
     setPhase('spinning');
 
-    const ni = Math.floor(Math.random() * NICHES.length);
-    const ci = Math.floor(Math.random() * cityLabels.length);
+    const spinNiche = sortMode !== 'so_cidade';
+    const spinCity = sortMode !== 'so_nicho';
 
-    await Promise.all([
-      nicheReel.current?.spinTo(ni),
-      new Promise((r) => setTimeout(r, 450)).then(() => cityReel.current?.spinTo(ci)),
-    ]);
+    const ni = spinNiche ? Math.floor(Math.random() * NICHES.length) : NICHES.findIndex((n) => n.slug === manualNicheSlug);
+    const ci = spinCity ? Math.floor(Math.random() * cityPoolSize) : manualCityIdx;
+
+    const spins: Promise<void>[] = [];
+    if (spinNiche) spins.push(Promise.resolve(nicheReel.current?.spinTo(ni)));
+    if (spinCity) spins.push(new Promise((r) => setTimeout(r, spinNiche ? 450 : 0)).then(() => cityReel.current?.spinTo(ci)));
+    await Promise.all(spins);
 
     const niche = NICHES[ni];
-    let city: string, placeLabel: string;
-    let uf: string | undefined;
-    let country = 'Brasil';
-    let countryCode = 'BR';
-    if (scope === 'brasil') {
-      const c = brCities[ci];
-      city = c.n; uf = c.uf; placeLabel = `${c.n} · ${c.uf}`;
-    } else {
-      const c = worldPlaces[ci];
-      city = c.cap!; country = c.n; countryCode = c.cc; placeLabel = `${c.cap} · ${c.n}`;
-    }
-    setDrawn({ niche, city, uf, country, countryCode, place: placeLabel });
+    const place = placeAt(ci);
+    setDrawn({ niche, ...place });
     setPhase('choosing');
   };
 
@@ -169,11 +187,11 @@ export default function Roleta() {
     <div>
       <PageHeader
         title="Roleta"
-        subtitle="Gira: sorteia um nicho e uma cidade. Depois você escolhe prospectar automático (grátis, OpenStreetMap) ou importar um arquivo com as empresas."
+        subtitle="Gira: sorteia nicho e/ou cidade. Depois você escolhe prospectar automático (grátis, OpenStreetMap) ou importar um arquivo com as empresas."
       />
 
       <Card className="mx-auto max-w-2xl p-8">
-        <div className="mb-6 flex justify-center">
+        <div className="mb-4 flex flex-wrap justify-center gap-2">
           <div className="inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
             {(['brasil', 'mundo'] as const).map((s) => (
               <button
@@ -188,18 +206,79 @@ export default function Roleta() {
               </button>
             ))}
           </div>
+          <div className="inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
+            {([
+              { key: 'ambos', label: 'Nicho + cidade' },
+              { key: 'so_nicho', label: 'Só o nicho' },
+              { key: 'so_cidade', label: 'Só a cidade' },
+            ] as const).map((m) => (
+              <button
+                key={m.key}
+                onClick={() => setSortMode(m.key)}
+                disabled={busy}
+                className={`rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${
+                  sortMode === m.key ? 'bg-[#fe0000] text-white' : 'text-white/45 hover:text-white'
+                }`}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {scope === 'brasil' && sortMode !== 'so_nicho' && (
+          <div className="mb-6 flex justify-center">
+            <Field label="Estado (filtra a cidade sorteada)">
+              <select value={ufFilter} onChange={(e) => setUfFilter(e.target.value)} disabled={busy} className={inputClass}>
+                <option value="" className="bg-[#161616]">Todos os estados</option>
+                {UFS.map((uf) => (
+                  <option key={uf} value={uf} className="bg-[#161616]">{uf}</option>
+                ))}
+              </select>
+            </Field>
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="mb-2 text-center text-[11px] font-bold uppercase tracking-widest text-white/40">Nicho</p>
-            <SlotReel ref={nicheReel} items={nicheLabels} />
+            {sortMode === 'so_cidade' ? (
+              <select
+                value={manualNicheSlug}
+                onChange={(e) => setManualNicheSlug(e.target.value)}
+                disabled={busy}
+                className={`${inputClass} h-[216px] text-center`}
+              >
+                {NICHES.map((n) => (
+                  <option key={n.slug} value={n.slug} className="bg-[#161616]">{n.label}</option>
+                ))}
+              </select>
+            ) : (
+              <SlotReel ref={nicheReel} items={nicheLabels} />
+            )}
           </div>
           <div>
             <p className="mb-2 text-center text-[11px] font-bold uppercase tracking-widest text-white/40">
               {scope === 'brasil' ? 'Cidade' : 'Cidade · País'}
             </p>
-            {ready ? (
+            {sortMode === 'so_nicho' ? (
+              cityLabels.length ? (
+                <select
+                  value={manualCityIdx}
+                  onChange={(e) => setManualCityIdx(Number(e.target.value))}
+                  disabled={busy}
+                  className={`${inputClass} h-[216px] text-center`}
+                >
+                  {cityLabels.map((label, i) => (
+                    <option key={label} value={i} className="bg-[#161616]">{label}</option>
+                  ))}
+                </select>
+              ) : (
+                <div className="grid h-[216px] place-items-center rounded-2xl border border-white/10 bg-white/[0.03] text-xs text-white/40">
+                  carregando…
+                </div>
+              )
+            ) : ready ? (
               <SlotReel ref={cityReel} items={cityLabels} />
             ) : (
               <div className="grid h-[216px] place-items-center rounded-2xl border border-white/10 bg-white/[0.03] text-xs text-white/40">
@@ -212,14 +291,16 @@ export default function Roleta() {
         <div className="mt-8 flex flex-col items-center gap-3">
           <button
             onClick={spin}
-            disabled={busy || !ready}
+            disabled={busy || !ready || (sortMode === 'so_nicho' && !cityLabels.length)}
             className="group relative flex items-center gap-3 overflow-hidden rounded-full bg-[#fe0000] px-12 py-5 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-60"
           >
             {phase === 'spinning' ? <Loader2 size={18} className="animate-spin" /> : <Dices size={18} />}
             {phase === 'spinning' ? 'Girando...' : phase === 'idle' ? 'Girar a Roleta' : 'Girar de novo'}
           </button>
-          {scope === 'brasil' && (
-            <p className="text-[11px] text-white/30">{brCities.length.toLocaleString('pt-BR')} cidades</p>
+          {scope === 'brasil' && sortMode !== 'so_nicho' && (
+            <p className="text-[11px] text-white/30">
+              {cityPoolSize.toLocaleString('pt-BR')} cidade{cityPoolSize === 1 ? '' : 's'}{ufFilter ? ` em ${ufFilter}` : ''}
+            </p>
           )}
         </div>
 

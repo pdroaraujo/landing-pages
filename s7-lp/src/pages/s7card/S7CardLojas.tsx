@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, ChevronRight } from 'lucide-react';
+import { Plus, ChevronRight, MousePointerClick } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import type { S7CardStore } from '../../lib/s7card';
 import { brl, fullDate } from '../../lib/format';
@@ -10,6 +10,7 @@ const empty = { name: '', category: '', address: '', city: '', uf: '', contact_n
 
 export default function S7CardLojas() {
   const [stores, setStores] = useState<S7CardStore[]>([]);
+  const [taps, setTaps] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
@@ -17,8 +18,17 @@ export default function S7CardLojas() {
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from('s7card_stores').select('*').order('created_at', { ascending: false });
+    const [{ data }, { data: tapRows }] = await Promise.all([
+      supabase.from('s7card_stores').select('*').order('created_at', { ascending: false }),
+      supabase.from('s7card_taps').select('tag:s7card_tags(store_id)'),
+    ]);
     setStores((data as S7CardStore[]) ?? []);
+    const counts: Record<string, number> = {};
+    (tapRows as unknown as { tag: { store_id: string | null } | null }[] ?? []).forEach((r) => {
+      const sid = r.tag?.store_id;
+      if (sid) counts[sid] = (counts[sid] ?? 0) + 1;
+    });
+    setTaps(counts);
     setLoading(false);
   };
   useEffect(() => {
@@ -117,6 +127,9 @@ export default function S7CardLojas() {
                     {' · '}vendida em {fullDate(s.sold_at)} · {brl(s.sold_value)}
                   </p>
                 </div>
+                <span className="inline-flex items-center gap-1 text-xs text-white/50 shrink-0">
+                  <MousePointerClick size={13} /> {taps[s.id] ?? 0} toques
+                </span>
                 <ChevronRight className="text-white/30" size={18} />
               </Card>
             </Link>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Copy, Check, MousePointerClick } from 'lucide-react';
+import { ArrowLeft, Copy, Check, MousePointerClick, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import type { S7CardStore, S7CardTag } from '../../lib/s7card';
 import { linkTypeInfo } from '../../lib/s7card';
@@ -48,7 +48,15 @@ export default function S7CardLojaDetalhe() {
     setTimeout(() => setCopied(null), 1500);
   };
 
+  const removeTag = async (tagId: string, label: string) => {
+    if (!confirm(`Apagar a placa "${label}"? Os toques registrados dela também somem. Não dá pra desfazer.`)) return;
+    await supabase.from('s7card_tags').delete().eq('id', tagId);
+    load();
+  };
+
   if (loading || !store) return <p className="text-sm text-white/40">Carregando…</p>;
+
+  const totalTaps = tags.reduce((a, t) => a + (taps[t.id] ?? 0), 0);
 
   return (
     <div>
@@ -62,7 +70,12 @@ export default function S7CardLojaDetalhe() {
 
       <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
         <div>
-          <h3 className="mb-4 font-bold tracking-tight">Placas dessa loja</h3>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="font-bold tracking-tight">Placas dessa loja</h3>
+            <span className="inline-flex items-center gap-1 text-xs text-white/50">
+              <MousePointerClick size={13} /> {totalTaps} toques no total
+            </span>
+          </div>
           {tags.length === 0 ? (
             <Card className="p-8 text-center text-sm text-white/35">Nenhuma placa vinculada ainda.</Card>
           ) : (
@@ -89,6 +102,13 @@ export default function S7CardLojaDetalhe() {
                           className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-bold text-white/70 hover:bg-white/10"
                         >
                           {copied === t.code ? <Check size={13} /> : <Copy size={13} />} /r/{t.code}
+                        </button>
+                        <button
+                          onClick={() => removeTag(t.id, t.label || info.label)}
+                          className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-2.5 py-2 text-xs font-bold text-white/50 hover:bg-[#fe0000]/20 hover:text-[#ff5a5a]"
+                          title="Apagar placa"
+                        >
+                          <Trash2 size={13} />
                         </button>
                       </div>
                     </div>

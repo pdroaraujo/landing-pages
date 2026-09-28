@@ -15,7 +15,7 @@ import { useAuth } from '../../lib/auth';
 
 const nav = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/admin/prospeccao', label: 'Prospecção', icon: Radar },
+  { to: '/admin/prospeccao/roleta', label: 'Prospecção', icon: Radar },
   { to: '/admin/listas', label: 'Listas', icon: ListChecks },
   { to: '/admin/vendas', label: 'Vendas', icon: DollarSign },
 ];

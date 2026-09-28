@@ -83,8 +83,8 @@ export default function S7CardDashboard() {
   return (
     <div>
       <PageHeader
-        title="S7 Card"
-        subtitle="Placas NFC — lojas, placas instaladas e toques registrados."
+        title="Dashboard"
+        subtitle="S7 Card — lojas, placas instaladas e toques registrados."
         actions={
           <Link to="/s7card/lojas">
             <Btn>

@@ -108,3 +108,34 @@ export type S7CardTag = {
   store?: S7CardStore;
   taps_count?: number;
 };
+
+export type ProspectStatus = 'a_prospectar' | 'prospectado' | 'vendido' | 'descartado';
+
+export type S7CardProspect = {
+  id: string;
+  dedup_key: string | null;
+  name: string;
+  phone: string | null;
+  address: string | null;
+  city: string | null;
+  uf: string | null;
+  category: string | null;
+  website: string | null;
+  status: ProspectStatus;
+  notes: string | null;
+  store_id: string | null;
+  created_at: string;
+};
+
+/** Mesma lógica de dedup da prospecção da agência: nome+telefone+cidade normalizados. */
+export function prospectDedupKey(name: string, phone: string | null, city: string | null): string {
+  const slug = (s: string) =>
+    (s ?? '')
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  const digits = (s: string | null) => (s ?? '').replace(/\D/g, '').replace(/^55/, '');
+  return `${slug(name)}|${digits(phone)}|${slug(city ?? '')}`;
+}

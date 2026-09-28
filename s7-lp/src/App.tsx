@@ -8,9 +8,6 @@ const Login = lazy(() => import('./pages/Login'));
 const ChangePassword = lazy(() => import('./pages/ChangePassword'));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
-const Prospeccao = lazy(() => import('./pages/admin/Prospeccao'));
-const Buscar = lazy(() => import('./pages/admin/Buscar'));
-const Scanner = lazy(() => import('./pages/admin/Scanner'));
 const Roleta = lazy(() => import('./pages/admin/Roleta'));
 const Listas = lazy(() => import('./pages/admin/Listas'));
 const ListaDetalhe = lazy(() => import('./pages/admin/ListaDetalhe'));
@@ -21,6 +18,7 @@ const S7CardDashboard = lazy(() => import('./pages/s7card/S7CardDashboard'));
 const S7CardLojas = lazy(() => import('./pages/s7card/S7CardLojas'));
 const S7CardLojaDetalhe = lazy(() => import('./pages/s7card/S7CardLojaDetalhe'));
 const S7CardPlacas = lazy(() => import('./pages/s7card/S7CardPlacas'));
+const S7CardMapeamento = lazy(() => import('./pages/s7card/S7CardMapeamento'));
 
 function Blank() {
   return <div className="min-h-screen bg-[#0f0f0f]" />;
@@ -81,9 +79,7 @@ export default function App() {
               }
             >
               <Route index element={<Dashboard />} />
-              <Route path="prospeccao" element={<Prospeccao />} />
-              <Route path="prospeccao/buscar" element={<Buscar />} />
-              <Route path="prospeccao/scanner" element={<Scanner />} />
+              <Route path="prospeccao" element={<Navigate to="/admin/prospeccao/roleta" replace />} />
               <Route path="prospeccao/roleta" element={<Roleta />} />
               <Route path="listas" element={<Listas />} />
               <Route path="listas/:id" element={<ListaDetalhe />} />
@@ -102,6 +98,7 @@ export default function App() {
               <Route path="lojas" element={<S7CardLojas />} />
               <Route path="lojas/:id" element={<S7CardLojaDetalhe />} />
               <Route path="placas" element={<S7CardPlacas />} />
+              <Route path="mapeamento" element={<S7CardMapeamento />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />
