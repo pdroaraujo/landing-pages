@@ -1,8 +1,9 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './lib/auth';
+import { AuthProvider, useAuth, type Workspace } from './lib/auth';
 import Landing from './pages/Landing';
 
+const TapRedirect = lazy(() => import('./pages/TapRedirect'));
 const Login = lazy(() => import('./pages/Login'));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
@@ -14,15 +15,27 @@ const Listas = lazy(() => import('./pages/admin/Listas'));
 const ListaDetalhe = lazy(() => import('./pages/admin/ListaDetalhe'));
 const Vendas = lazy(() => import('./pages/admin/Vendas'));
 
+const S7CardLayout = lazy(() => import('./pages/s7card/S7CardLayout'));
+const S7CardDashboard = lazy(() => import('./pages/s7card/S7CardDashboard'));
+const S7CardLojas = lazy(() => import('./pages/s7card/S7CardLojas'));
+const S7CardLojaDetalhe = lazy(() => import('./pages/s7card/S7CardLojaDetalhe'));
+const S7CardPlacas = lazy(() => import('./pages/s7card/S7CardPlacas'));
+
 function Blank() {
   return <div className="min-h-screen bg-[#0f0f0f]" />;
 }
 
-function Protected({ children }: { children: React.ReactNode }) {
-  const { session, loading, ready } = useAuth();
+/** `workspace` restringe a rota a quem tem acesso àquele workspace específico —
+ * a agência e o S7 Card são seções isoladas: quem só tem um nunca vê o outro. */
+function Protected({ children, workspace }: { children: React.ReactNode; workspace?: Workspace }) {
+  const { session, workspaces, loading, ready } = useAuth();
   if (!ready) return <ConfigMissing />;
   if (loading) return <Blank />;
   if (!session) return <Navigate to="/login" replace />;
+  if (workspace) {
+    if (workspaces === null) return <Blank />;
+    if (!workspaces.includes(workspace)) return <Navigate to="/login" replace />;
+  }
   return <>{children}</>;
 }
 
@@ -48,10 +61,12 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/r/:code" element={<TapRedirect />} />
+
             <Route
               path="/admin"
               element={
-                <Protected>
+                <Protected workspace="agencia">
                   <AdminLayout />
                 </Protected>
               }
@@ -65,6 +80,21 @@ export default function App() {
               <Route path="listas/:id" element={<ListaDetalhe />} />
               <Route path="vendas" element={<Vendas />} />
             </Route>
+
+            <Route
+              path="/s7card"
+              element={
+                <Protected workspace="s7card">
+                  <S7CardLayout />
+                </Protected>
+              }
+            >
+              <Route index element={<S7CardDashboard />} />
+              <Route path="lojas" element={<S7CardLojas />} />
+              <Route path="lojas/:id" element={<S7CardLojaDetalhe />} />
+              <Route path="placas" element={<S7CardPlacas />} />
+            </Route>
+
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

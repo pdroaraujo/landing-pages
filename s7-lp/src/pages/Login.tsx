@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { useNavigate, Navigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 import { inputClass } from '../components/admin/ui';
+import RoleRedirect from '../components/RoleRedirect';
 
 export default function Login() {
   const { session, signIn, ready } = useAuth();
-  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  if (session) return <Navigate to="/admin" replace />;
+  if (session) return <RoleRedirect />;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,9 +27,9 @@ export default function Login() {
           ? 'E-mail ou senha inválidos.'
           : `Erro: ${error}`,
       );
-      return;
     }
-    navigate('/admin', { replace: true });
+    // sucesso: `session` muda via onAuthStateChange e o componente re-renderiza
+    // no `if (session) return <RoleRedirect />` acima, já mandando pro workspace certo.
   };
 
   return (

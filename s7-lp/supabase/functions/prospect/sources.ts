@@ -19,6 +19,19 @@ export type RawBiz = {
 
 const UA = 'AgenciaS7-Prospect/1.0 (contato.agencias7@outlook.com)';
 
+// fetch() do Deno não tem timeout por padrão — uma conexão que trava (comum com
+// Overpass/Nominatim vistos de IPs de datacenter) segura a function até o limite
+// duro da plataforma (WORKER_RESOURCE_LIMIT, ~150s) sem nunca cair no catch.
+async function fetchTimeout(url: string, init: RequestInit, ms: number): Promise<Response> {
+  const ctrl = new AbortController();
+  const to = setTimeout(() => ctrl.abort(), ms);
+  try {
+    return await fetch(url, { ...init, signal: ctrl.signal });
+  } finally {
+    clearTimeout(to);
+  }
+}
+
 // ---------------- OPENSTREETMAP ----------------
 export async function fetchOSM(opts: {
   niches: string[];
@@ -30,14 +43,34 @@ export async function fetchOSM(opts: {
 }): Promise<RawBiz[]> {
   const isBR = !opts.countryCode || opts.countryCode.toLowerCase() === 'br';
   const countryName = isBR ? 'Brasil' : opts.country || '';
-  // 1. geocode da cidade -> osm area id
+  // 1. geocode da cidade -> área do OSM. Usa o Photon (komoot) em vez do Nominatim:
+  // o Nominatim bloqueia/rate-limita IPs de datacenter (ex: Supabase Edge Functions)
+  // com "Access denied"; o Photon usa os mesmos dados do OSM e é liberado pra isso.
   const q = encodeURIComponent([opts.city, isBR ? opts.uf : '', countryName].filter(Boolean).join(', '));
-  const geo = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
-    headers: { 'User-Agent': UA },
-  });
-  const gj = (await geo.json()) as { osm_id: number; osm_type: string }[];
-  if (!gj.length) throw new Error(`Cidade não encontrada no OSM: ${opts.city}`);
-  const areaId = 3600000000 + gj[0].osm_id; // relation -> area
+  let geoRes: Response;
+  try {
+    geoRes = await fetchTimeout(`https://photon.komoot.io/api/?q=${q}&limit=5`, { headers: { 'User-Agent': UA } }, 15_000);
+  } catch {
+    throw new Error('Geocoder (Photon) não respondeu a tempo — tente de novo em instantes.');
+  }
+  if (!geoRes.ok) throw new Error(`Geocoder indisponível (${geoRes.status}) — tente de novo em instantes.`);
+  let geoJson: { features: { properties: { osm_id: number; osm_type: string; osm_key?: string } }[] };
+  try {
+    geoJson = await geoRes.json();
+  } catch {
+    throw new Error('Geocoder retornou uma resposta inesperada — tente de novo em instantes.');
+  }
+  // prefere uma relação administrativa (limite de cidade); N (node) não serve de área
+  const place =
+    geoJson.features?.find((f) => f.properties.osm_type === 'R' && f.properties.osm_key !== 'military') ??
+    geoJson.features?.[0];
+  if (!place || place.properties.osm_type === 'N') {
+    throw new Error(`Cidade não encontrada no OSM: ${opts.city}`);
+  }
+  const areaId =
+    place.properties.osm_type === 'W'
+      ? 2400000000 + place.properties.osm_id
+      : 3600000000 + place.properties.osm_id; // relation -> area
 
   // 2. monta filtros de tags (só os que costumam ter empresa com site — limita a 6 p/ não estourar o Overpass)
   const tags = [...new Set(opts.niches.flatMap((slug) => nicheBySlug(slug).osmTags))].slice(0, 6);
@@ -51,24 +84,35 @@ export async function fetchOSM(opts: {
   const cap = Math.min(opts.maxResults * 2, 250);
   const query = `[out:json][timeout:25];area(${areaId})->.a;(${tagFilters});out center tags ${cap};`;
 
-  // Overpass público às vezes 429/504 — tenta 2 mirrors
+  // Overpass público às vezes 429/504/timeout, e alguns mirrors ficam inalcançáveis
+  // de IPs de datacenter (visto do ambiente da Edge Function) — tenta vários.
   const endpoints = [
+    'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
     'https://overpass-api.de/api/interpreter',
     'https://overpass.kumi.systems/api/interpreter',
   ];
   let res: Response | null = null;
   for (const ep of endpoints) {
     try {
-      const r = await fetch(ep, {
-        method: 'POST',
-        headers: { 'content-type': 'application/x-www-form-urlencoded', 'User-Agent': UA },
-        body: 'data=' + encodeURIComponent(query),
-      });
+      const r = await fetchTimeout(
+        ep,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/x-www-form-urlencoded', 'User-Agent': UA },
+          body: 'data=' + encodeURIComponent(query),
+        },
+        20_000,
+      );
       if (r.ok) { res = r; break; }
-    } catch { /* tenta o próximo */ }
+    } catch { /* tenta o próximo mirror */ }
   }
   if (!res) throw new Error('Overpass indisponível no momento — tente de novo em instantes.');
-  const data = (await res.json()) as { elements: { id: number; type: string; tags?: Record<string, string>; lat?: number; lon?: number; center?: { lat: number; lon: number } }[] };
+  let data: { elements: { id: number; type: string; tags?: Record<string, string>; lat?: number; lon?: number; center?: { lat: number; lon: number } }[] };
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error('Overpass retornou uma resposta inesperada — tente de novo em instantes.');
+  }
 
   const seen = new Set<string>();
   const out: RawBiz[] = [];

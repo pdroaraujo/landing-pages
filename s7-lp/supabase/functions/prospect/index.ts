@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
   const countryCode = (body.countryCode ?? 'BR').toLowerCase();
   const countryName = body.country ?? 'Brasil';
 
-  const { data: run } = await db
+  const { data: run, error: runError } = await db
     .from('prospect_runs')
     .insert({
       created_by: uid,
@@ -88,7 +88,8 @@ Deno.serve(async (req) => {
     })
     .select('id')
     .single();
-  const runId = run!.id as string;
+  if (runError || !run) return json({ error: `Falha ao iniciar a rodada: ${runError?.message ?? 'sem retorno do banco'}` }, 500);
+  const runId = run.id as string;
 
   try {
     // --- 1. coleta ---

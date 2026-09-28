@@ -3,9 +3,12 @@ import type { Session } from '@supabase/supabase-js';
 import { supabase, supabaseReady } from './supabase';
 import type { Profile } from './types';
 
+export type Workspace = 'agencia' | 's7card';
+
 type AuthCtx = {
   session: Session | null;
   profile: Profile | null;
+  workspaces: Workspace[] | null; // null = ainda carregando
   loading: boolean;
   ready: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
@@ -17,6 +20,7 @@ const Ctx = createContext<AuthCtx | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [workspaces, setWorkspaces] = useState<Workspace[] | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!session) {
       setProfile(null);
+      setWorkspaces(null);
       return;
     }
     supabase
@@ -43,6 +48,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .eq('id', session.user.id)
       .single()
       .then(({ data }) => setProfile((data as Profile) ?? null));
+    supabase
+      .from('workspace_access')
+      .select('workspace')
+      .eq('user_id', session.user.id)
+      .then(({ data }) => setWorkspaces(((data ?? []) as { workspace: Workspace }[]).map((w) => w.workspace)));
   }, [session]);
 
   const signIn: AuthCtx['signIn'] = async (email, password) => {
@@ -55,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <Ctx.Provider value={{ session, profile, loading, ready: supabaseReady, signIn, signOut }}>
+    <Ctx.Provider value={{ session, profile, workspaces, loading, ready: supabaseReady, signIn, signOut }}>
       {children}
     </Ctx.Provider>
   );
