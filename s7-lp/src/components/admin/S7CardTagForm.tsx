@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { LINK_TYPES, linkTypeInfo, type LinkType } from '../../lib/s7card';
+import { buildReviewLink, extractPlaceId, isReviewLink, PLACE_ID_FINDER_URL } from '../../lib/googleReview';
 import { Btn, Field, inputClass } from './ui';
 
 const randomCode = () => Math.random().toString(36).slice(2, 8);
@@ -25,6 +26,31 @@ export default function S7CardTagForm({
 
   const info = linkTypeInfo(linkType);
   const askReviews = storeId && linkType === 'google_review' && !storeHasReviewsBaseline;
+  const isGoogleReview = linkType === 'google_review';
+  const [placeIdFound, setPlaceIdFound] = useState<'auto' | 'manual' | null>(null);
+
+  /** Cola o link do Google Maps (ou o Place ID direto) e a gente monta o link de avaliação sozinho. */
+  const handleReviewPaste = (raw: string) => {
+    const value = raw.trim();
+    if (!value) {
+      setDestination('');
+      setPlaceIdFound(null);
+      return;
+    }
+    if (isReviewLink(value)) {
+      setDestination(value);
+      setPlaceIdFound(null);
+      return;
+    }
+    const placeId = extractPlaceId(value);
+    if (placeId) {
+      setDestination(buildReviewLink(placeId));
+      setPlaceIdFound(/^ChIJ/.test(value) ? 'manual' : 'auto');
+      return;
+    }
+    setDestination(value);
+    setPlaceIdFound(null);
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +82,7 @@ export default function S7CardTagForm({
     setDestination('');
     setLabel('');
     setReviewsBaseline('');
+    setPlaceIdFound(null);
     onCreated();
   };
 
@@ -74,9 +101,35 @@ export default function S7CardTagForm({
         </Field>
       </div>
       <p className="-mt-2 text-xs text-white/35">{info.hint}</p>
-      <Field label="Destino">
-        <input value={destination} onChange={(e) => setDestination(e.target.value)} className={inputClass} placeholder={info.placeholder} />
-      </Field>
+      {isGoogleReview ? (
+        <Field label="Link do Google Meu Negócio (ou Place ID)">
+          <input
+            value={destination}
+            onChange={(e) => handleReviewPaste(e.target.value)}
+            className={inputClass}
+            placeholder="Cole o link do Google Maps da loja, ou o Place ID (ChIJ...)"
+          />
+          {placeIdFound && (
+            <p className="mt-1.5 text-xs text-emerald-400">
+              Link direto de avaliação gerado automaticamente a partir do Place ID.
+            </p>
+          )}
+          {!placeIdFound && destination && !isReviewLink(destination) && (
+            <p className="mt-1.5 text-xs text-amber-400">
+              Não achei o Place ID nesse link — ele vai como está. Pra gerar o link direto de avaliação, pegue o
+              Place ID de graça no{' '}
+              <a href={PLACE_ID_FINDER_URL} target="_blank" rel="noreferrer" className="underline">
+                buscador oficial do Google
+              </a>{' '}
+              e cole aqui (ou cole o link "Peça avaliações" do Google Meu Negócio direto).
+            </p>
+          )}
+        </Field>
+      ) : (
+        <Field label="Destino">
+          <input value={destination} onChange={(e) => setDestination(e.target.value)} className={inputClass} placeholder={info.placeholder} />
+        </Field>
+      )}
       {askReviews && (
         <Field label="Avaliações no Google hoje (fica salvo pra comparar depois)">
           <input
