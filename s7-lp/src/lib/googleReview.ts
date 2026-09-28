@@ -2,27 +2,24 @@
 // precisar do link especial que só aparece dentro do painel do Google Meu
 // Negócio (Perfil da Empresa > Peça avaliações).
 //
-// Quando você abre uma loja no google.com/maps, o endereço na barra do
-// navegador traz um trecho "!1s0x<hex>:0x<hex>" — esse é o CID interno do
-// Google pra aquele lugar. Testado com um link real (loja em Jacareí, SP,
-// 2026-09-28): esse mesmo CID funciona direto como "placeid" no link de
-// avaliação, sem precisar do Place ID (ChIJ...) da API paga do Google.
+// IMPORTANTE (testado na prática em 2026-09-28): esse endpoint só aceita o
+// Place ID no formato "ChIJ..." (o da Places API). O CID que aparece no link
+// normal do google.com/maps (trecho "!1s0x<hex>:0x<hex>") NÃO funciona aqui —
+// testamos com um link real e deu 404. Não tentar essa rota de novo.
 //
-// Se o link colado não tiver esse trecho (ex: veio de outro buscador, não do
-// Google Maps), caímos pro Place ID "ChIJ..." — grátis de achar no buscador
-// oficial do Google — como plano B.
+// O Place ID "ChIJ..." não aparece no link comum do Maps — só tem dois jeitos
+// gratuitos de conseguir: (1) o link "Peça avaliações" de dentro do painel do
+// Google Meu Negócio, que já vem pronto; (2) o buscador oficial de Place ID do
+// Google (sem precisar de chave de API pra uso manual).
 
 export function buildReviewLink(placeId: string) {
   return `https://search.google.com/local/writereview?placeid=${encodeURIComponent(placeId.trim())}`;
 }
 
-const CID_RE = /!1s(0x[0-9a-fA-F]+:0x[0-9a-fA-F]+)/;
 const CHIJ_RE = /(ChIJ[a-zA-Z0-9_-]{15,})/;
 
-/** Acha o CID (do link do google.com/maps) ou um Place ID (ChIJ...) num texto/URL colado. */
+/** Acha um Place ID (ChIJ...) num texto colado — normalmente vem do buscador oficial do Google. */
 export function extractPlaceId(text: string): string | null {
-  const cid = text.match(CID_RE);
-  if (cid) return cid[1];
   const chij = text.match(CHIJ_RE);
   return chij ? chij[1] : null;
 }

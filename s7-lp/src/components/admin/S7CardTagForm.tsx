@@ -27,29 +27,29 @@ export default function S7CardTagForm({
   const info = linkTypeInfo(linkType);
   const askReviews = storeId && linkType === 'google_review' && !storeHasReviewsBaseline;
   const isGoogleReview = linkType === 'google_review';
-  const [placeIdFound, setPlaceIdFound] = useState<'auto' | 'manual' | null>(null);
+  const [placeIdFound, setPlaceIdFound] = useState(false);
 
-  /** Cola o link do Google Maps (ou o Place ID direto) e a gente monta o link de avaliação sozinho. */
+  /** Cola o link "Peça avaliações" do Google Meu Negócio, OU o Place ID (ChIJ...) do buscador oficial do Google. */
   const handleReviewPaste = (raw: string) => {
     const value = raw.trim();
     if (!value) {
       setDestination('');
-      setPlaceIdFound(null);
+      setPlaceIdFound(false);
       return;
     }
     if (isReviewLink(value)) {
       setDestination(value);
-      setPlaceIdFound(null);
+      setPlaceIdFound(false);
       return;
     }
     const placeId = extractPlaceId(value);
     if (placeId) {
       setDestination(buildReviewLink(placeId));
-      setPlaceIdFound(value === placeId ? 'manual' : 'auto');
+      setPlaceIdFound(true);
       return;
     }
     setDestination(value);
-    setPlaceIdFound(null);
+    setPlaceIdFound(false);
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -82,7 +82,7 @@ export default function S7CardTagForm({
     setDestination('');
     setLabel('');
     setReviewsBaseline('');
-    setPlaceIdFound(null);
+    setPlaceIdFound(false);
     onCreated();
   };
 
@@ -102,24 +102,25 @@ export default function S7CardTagForm({
       </div>
       <p className="-mt-2 text-xs text-white/35">{info.hint}</p>
       {isGoogleReview ? (
-        <Field label="Link do Google Meu Negócio (ou Place ID)">
+        <Field label="Link de avaliação (Google Meu Negócio) ou Place ID">
           <input
             value={destination}
             onChange={(e) => handleReviewPaste(e.target.value)}
             className={inputClass}
-            placeholder="Cole o link da loja no google.com/maps"
+            placeholder="Cole o link de dentro de 'Peça avaliações', ou um Place ID (ChIJ...)"
           />
           {placeIdFound && (
-            <p className="mt-1.5 text-xs text-emerald-400">Link direto de avaliação gerado automaticamente.</p>
+            <p className="mt-1.5 text-xs text-emerald-400">Link direto de avaliação gerado a partir do Place ID.</p>
           )}
           {!placeIdFound && destination && !isReviewLink(destination) && (
             <p className="mt-1.5 text-xs text-amber-400">
-              Não achei o CID nesse link — confira se copiou direto do google.com/maps (não de outro buscador). Como
-              alternativa, pegue o Place ID de graça no{' '}
+              O link comum do google.com/maps não serve aqui — o Google só aceita o Place ID (ChIJ...) nesse link
+              direto. Pegue de um dos dois jeitos, de graça: dentro do painel do Google Meu Negócio em{' '}
+              <span className="text-white/70">Perfil da Empresa → Peça avaliações</span> (copia o link pronto), ou no{' '}
               <a href={PLACE_ID_FINDER_URL} target="_blank" rel="noreferrer" className="underline">
-                buscador oficial do Google
+                buscador oficial de Place ID do Google
               </a>{' '}
-              e cole aqui (ou cole o link "Peça avaliações" do Google Meu Negócio direto).
+              (copia o ChIJ... e cola aqui).
             </p>
           )}
         </Field>
