@@ -4,6 +4,10 @@
 export type BrCity = { n: string; uf: string };
 export type Country = { cc: string; n: string; cap: string | null; r: string; lat: number | null; lng: number | null };
 
+/** Localização escolhida à mão: país -> estado (só Brasil) -> cidade. */
+export type Place = { country: string; countryCode: string; uf: string; city: string };
+export const EMPTY_PLACE: Place = { country: 'Brasil', countryCode: 'BR', uf: '', city: '' };
+
 export const UFS = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG',
   'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',

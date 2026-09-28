@@ -25,7 +25,8 @@ Traga o máximo de empresas reais e verificadas que encontrar no Google Maps (id
 }
 
 /** Usado na Roleta da agência — nicho vem do catálogo fixo de NICHES. */
-export function buildImportPrompt(niche: Niche, city: string, uf?: string, country = 'Brasil') {
+export function buildImportPrompt(niche: Niche, city: string, uf?: string, country = 'Brasil', type?: string) {
+  if (type) return csvPrompt(`do tipo "${type}" (categoria ${niche.label})`, city, uf, country);
   const examples = niche.searchTerms.slice(0, 5).join(', ');
   return csvPrompt(`do ramo "${niche.label}" — tipos de negócio como: ${examples}`, city, uf, country);
 }

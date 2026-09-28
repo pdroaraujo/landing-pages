@@ -2,19 +2,23 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Dices, ArrowRight, Loader2, Copy, Check, Upload } from 'lucide-react';
 import { NICHES, type Niche } from '../../lib/niches';
-import { loadBrCities, loadCountries, worldCountries, UFS, type BrCity, type Country } from '../../lib/places';
+import { loadBrCities, loadCountries, worldCountries, UFS, EMPTY_PLACE, type BrCity, type Country, type Place } from '../../lib/places';
+import NichePicker, { TypeChips } from '../../components/admin/NichePicker';
+import PlacePicker from '../../components/admin/PlacePicker';
 import { runProspect, type ProspectResponse } from '../../lib/api';
 import { buildImportPrompt } from '../../lib/prospectPrompt';
 import { parseImportFile, type ImportedBiz } from '../../lib/importParse';
 import { Card, PageHeader, Btn, Field, inputClass } from '../../components/admin/ui';
 import SlotReel, { type SlotReelHandle } from '../../components/admin/SlotReel';
 
+const randInt = (n: number) => Math.floor(Math.random() * n);
 const nicheLabels = NICHES.map((n) => n.label);
 type Scope = 'brasil' | 'mundo';
 type SortMode = 'ambos' | 'so_nicho' | 'so_cidade';
 type Phase = 'idle' | 'spinning' | 'ready' | 'running' | 'done' | 'error';
 
-type Drawn = { niche: Niche; city: string; uf?: string; country: string; countryCode: string; place: string };
+type Via = 'roleta' | 'escolher';
+type Drawn = { niche: Niche; type: string; city: string; uf?: string; country: string; countryCode: string; place: string };
 
 export default function Roleta() {
   const nicheReel = useRef<SlotReelHandle>(null);
@@ -24,7 +28,11 @@ export default function Roleta() {
   const [sortMode, setSortMode] = useState<SortMode>('ambos');
   const [ufFilter, setUfFilter] = useState(''); // '' = todos os estados (só vale pra Brasil)
   const [manualNicheSlug, setManualNicheSlug] = useState(NICHES[0].slug);
-  const [manualCityIdx, setManualCityIdx] = useState(0);
+  const [fixedPlace, setFixedPlace] = useState<Place>(EMPTY_PLACE);
+  const [via, setVia] = useState<Via>('roleta');
+  const [pickSlug, setPickSlug] = useState<string | null>(null);
+  const [pickType, setPickType] = useState('');
+  const [pickPlace, setPickPlace] = useState<Place>(EMPTY_PLACE);
 
   const [brCities, setBrCities] = useState<BrCity[]>([]);
   const [countries, setCountries] = useState<Country[]>([]);
@@ -56,12 +64,7 @@ export default function Roleta() {
       ? brCitiesFiltered.map((c) => `${c.n} · ${c.uf}`)
       : worldPlaces.map((c) => `${c.cap} · ${c.n}`);
 
-  // reset o índice manual quando o universo de cidades muda (troca de UF/escopo)
-  useEffect(() => {
-    setManualCityIdx(0);
-  }, [scope, ufFilter, worldPlaces.length]);
-
-  const ready = nicheLabels.length > 0 && cityLabels.length > 0;
+  const ready = sortMode === 'so_nicho' ? !!fixedPlace.city : cityLabels.length > 0;
   const busy = phase === 'spinning' || phase === 'running';
 
   const placeAt = (idx: number) => {
@@ -92,8 +95,8 @@ export default function Roleta() {
     const spinNiche = sortMode !== 'so_cidade';
     const spinCity = sortMode !== 'so_nicho';
 
-    const ni = spinNiche ? Math.floor(Math.random() * NICHES.length) : NICHES.findIndex((n) => n.slug === manualNicheSlug);
-    const ci = spinCity ? Math.floor(Math.random() * cityPoolSize) : manualCityIdx;
+    const ni = spinNiche ? randInt(NICHES.length) : NICHES.findIndex((n) => n.slug === manualNicheSlug);
+    const ci = spinCity ? randInt(cityPoolSize) : 0;
 
     const spins: Promise<void>[] = [];
     if (spinNiche) spins.push(Promise.resolve(nicheReel.current?.spinTo(ni)));
@@ -101,9 +104,38 @@ export default function Roleta() {
     await Promise.all(spins);
 
     const niche = NICHES[ni];
-    const place = placeAt(ci);
-    setDrawn({ niche, ...place });
+    const place = spinCity
+      ? placeAt(ci)
+      : {
+          city: fixedPlace.city,
+          uf: fixedPlace.uf || undefined,
+          country: fixedPlace.country,
+          countryCode: fixedPlace.countryCode,
+          place: [fixedPlace.city, fixedPlace.uf || fixedPlace.country].join(' · '),
+        };
+    setDrawn({ niche, type: '', ...place });
     setPhase('ready');
+  };
+
+  const confirmPick = () => {
+    const niche = NICHES.find((n) => n.slug === pickSlug);
+    if (!niche || !pickPlace.city) return;
+    reset();
+    setDrawn({
+      niche,
+      type: pickType,
+      city: pickPlace.city,
+      uf: pickPlace.uf || undefined,
+      country: pickPlace.country,
+      countryCode: pickPlace.countryCode,
+      place: [pickPlace.city, pickPlace.uf || pickPlace.country].join(' · '),
+    });
+    setPhase('ready');
+  };
+
+  const switchVia = (v: Via) => {
+    reset();
+    setVia(v);
   };
 
   const pickFile = async (f: File) => {
@@ -128,7 +160,7 @@ export default function Roleta() {
     setErr(null);
     try {
       const res = await runProspect({
-        mode: 'roleta',
+        mode: via === 'roleta' ? 'roleta' : 'buscar',
         niche: drawn.niche.slug,
         city: drawn.city,
         uf: drawn.uf,
@@ -136,7 +168,7 @@ export default function Roleta() {
         countryCode: drawn.countryCode,
         businesses: parsed,
         maxResults: parsed.length,
-        listName: `Roleta · ${drawn.niche.label} · ${drawn.city}`,
+        listName: `${via === 'roleta' ? 'Roleta' : 'Prospecção'} · ${drawn.type || drawn.niche.label} · ${drawn.city}`,
       });
       setResult(res);
       setPhase('done');
@@ -148,7 +180,7 @@ export default function Roleta() {
 
   const copyPrompt = () => {
     if (!drawn) return;
-    navigator.clipboard.writeText(buildImportPrompt(drawn.niche, drawn.city, drawn.uf, drawn.country));
+    navigator.clipboard.writeText(buildImportPrompt(drawn.niche, drawn.city, drawn.uf, drawn.country, drawn.type));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -156,12 +188,58 @@ export default function Roleta() {
   return (
     <div>
       <PageHeader
-        title="Roleta"
-        subtitle="Gira: sorteia nicho e/ou cidade. Depois é só pedir pro Claude gerar a lista e subir o arquivo."
+        title="Prospecção"
+        subtitle="Sorteie nicho e cidade na roleta ou escolha tudo na mão. Depois peça a lista pro Claude e suba o arquivo."
       />
 
-      <Card className="mx-auto max-w-2xl p-8">
+      <Card className="mx-auto max-w-3xl p-8">
+        <div className="mb-6 flex justify-center">
+          <div className="inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
+            {([
+              { key: 'roleta', label: 'Roleta' },
+              { key: 'escolher', label: 'Escolher' },
+            ] as const).map((v) => (
+              <button
+                key={v.key}
+                onClick={() => switchVia(v.key)}
+                disabled={busy}
+                className={`rounded-full px-6 py-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${
+                  via === v.key ? 'bg-[#fe0000] text-white' : 'text-white/45 hover:text-white'
+                }`}
+              >
+                {v.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {via === 'escolher' && (
+          <div className="flex flex-col gap-6">
+            <div>
+              <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-white/40">1. Categoria e tipo</p>
+              <NichePicker
+                nicheSlug={pickSlug}
+                type={pickType}
+                onChange={(slug, t) => {
+                  setPickSlug(slug);
+                  setPickType(t);
+                }}
+                disabled={busy}
+              />
+            </div>
+            <div>
+              <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-white/40">2. Localização</p>
+              <PlacePicker value={pickPlace} onChange={setPickPlace} disabled={busy} />
+            </div>
+            <Btn onClick={confirmPick} disabled={!pickSlug || !pickPlace.city || busy} className="self-start">
+              Continuar <ArrowRight size={14} />
+            </Btn>
+          </div>
+        )}
+
+        {via === 'roleta' && (<>
         <div className="mb-4 flex flex-wrap justify-center gap-2">
+          {sortMode !== 'so_nicho' && (
           <div className="inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
             {(['brasil', 'mundo'] as const).map((s) => (
               <button
@@ -176,6 +254,7 @@ export default function Roleta() {
               </button>
             ))}
           </div>
+          )}
           <div className="inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
             {([
               { key: 'ambos', label: 'Nicho + cidade' },
@@ -216,22 +295,14 @@ export default function Roleta() {
               </select>
             </Field>
           )}
-          {sortMode === 'so_nicho' && (
-            <Field label={scope === 'brasil' ? 'Cidade fixa' : 'País fixo'}>
-              {cityLabels.length ? (
-                <select value={manualCityIdx} onChange={(e) => setManualCityIdx(Number(e.target.value))} disabled={busy} className={inputClass}>
-                  {cityLabels.map((label, i) => (
-                    <option key={label} value={i} className="bg-[#161616]">{label}</option>
-                  ))}
-                </select>
-              ) : (
-                <select disabled className={inputClass}>
-                  <option>carregando…</option>
-                </select>
-              )}
-            </Field>
-          )}
         </div>
+
+        {sortMode === 'so_nicho' && (
+          <div className="mb-6">
+            <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-white/40">Localização fixa</p>
+            <PlacePicker value={fixedPlace} onChange={setFixedPlace} disabled={busy} />
+          </div>
+        )}
 
         <div className={sortMode === 'ambos' ? 'grid grid-cols-2 gap-4' : 'mx-auto max-w-xs'}>
           {sortMode !== 'so_cidade' && (
@@ -259,7 +330,7 @@ export default function Roleta() {
         <div className="mt-8 flex flex-col items-center gap-3">
           <button
             onClick={spin}
-            disabled={busy || !ready || (sortMode === 'so_nicho' && !cityLabels.length)}
+            disabled={busy || !ready}
             className="group relative flex items-center gap-3 overflow-hidden rounded-full bg-[#fe0000] px-12 py-5 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-60"
           >
             {phase === 'spinning' ? <Loader2 size={18} className="animate-spin" /> : <Dices size={18} />}
@@ -272,11 +343,26 @@ export default function Roleta() {
           )}
         </div>
 
+        </>)}
+
         {drawn && (
-          <p className="mt-6 text-center text-sm text-white/60">
-            Sorteado: <span className="font-bold text-white">{drawn.niche.label}</span> em{' '}
-            <span className="font-bold text-white">{drawn.place}</span>
-          </p>
+          <div className="mt-6 text-center">
+            <p className="text-sm text-white/60">
+              {via === 'roleta' ? 'Sorteado' : 'Escolhido'}:{' '}
+              <span className="font-bold text-white">{drawn.type ? `${drawn.type} (${drawn.niche.label})` : drawn.niche.label}</span> em{' '}
+              <span className="font-bold text-white">{drawn.place}</span>
+            </p>
+            {via === 'roleta' && phase === 'ready' && drawn.niche.slug !== 'outros' && (
+              <div className="mt-4 text-left">
+                <p className="mb-2 text-center text-[11px] font-bold uppercase tracking-widest text-white/40">
+                  Refinar o tipo (opcional)
+                </p>
+                <div className="flex justify-center">
+                  <TypeChips niche={drawn.niche} type={drawn.type} onChange={(t) => setDrawn({ ...drawn, type: t })} />
+                </div>
+              </div>
+            )}
+          </div>
         )}
 
         {(phase === 'ready' || phase === 'running' || phase === 'done' || phase === 'error') && drawn && (
@@ -287,7 +373,7 @@ export default function Roleta() {
             <div className="relative">
               <textarea
                 readOnly
-                value={buildImportPrompt(drawn.niche, drawn.city, drawn.uf, drawn.country)}
+                value={buildImportPrompt(drawn.niche, drawn.city, drawn.uf, drawn.country, drawn.type)}
                 rows={6}
                 className="w-full resize-none rounded-xl border border-white/10 bg-black/30 p-3 text-xs text-white/70"
               />
