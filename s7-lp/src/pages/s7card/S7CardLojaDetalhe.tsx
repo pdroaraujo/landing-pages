@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Copy, Check, MousePointerClick, Trash2 } from 'lucide-react';
+import { ArrowLeft, Copy, Check, MousePointerClick, Trash2, Star } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import type { S7CardStore, S7CardTag } from '../../lib/s7card';
 import { linkTypeInfo } from '../../lib/s7card';
 import { brl, fullDate } from '../../lib/format';
-import { Card, PageHeader, Badge } from '../../components/admin/ui';
+import { Card, PageHeader, Badge, inputClass, Btn } from '../../components/admin/ui';
 import S7CardTagForm from '../../components/admin/S7CardTagForm';
 
 export default function S7CardLojaDetalhe() {
@@ -15,6 +15,8 @@ export default function S7CardLojaDetalhe() {
   const [taps, setTaps] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState<string | null>(null);
+  const [reviewsInput, setReviewsInput] = useState('');
+  const [savingReviews, setSavingReviews] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -54,14 +56,31 @@ export default function S7CardLojaDetalhe() {
     load();
   };
 
+  const updateReviews = async () => {
+    if (!store || !reviewsInput) return;
+    setSavingReviews(true);
+    const today = new Date().toISOString().slice(0, 10);
+    const patch: Record<string, unknown> = { reviews_current: Number(reviewsInput), reviews_updated_at: today };
+    if (store.reviews_baseline === null) {
+      patch.reviews_baseline = Number(reviewsInput);
+      patch.reviews_baseline_at = today;
+    }
+    await supabase.from('s7card_stores').update(patch).eq('id', store.id);
+    setSavingReviews(false);
+    setReviewsInput('');
+    load();
+  };
+
   if (loading || !store) return <p className="text-sm text-white/40">Carregando…</p>;
 
   const totalTaps = tags.reduce((a, t) => a + (taps[t.id] ?? 0), 0);
+  const delta =
+    store.reviews_baseline !== null && store.reviews_current !== null ? store.reviews_current - store.reviews_baseline : null;
 
   return (
     <div>
-      <Link to="/s7card/lojas" className="mb-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white">
-        <ArrowLeft size={14} /> Lojas
+      <Link to="/s7card/mapeamento" className="mb-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white">
+        <ArrowLeft size={14} /> Mapeamento
       </Link>
       <PageHeader
         title={store.name}
@@ -119,10 +138,41 @@ export default function S7CardLojaDetalhe() {
           )}
         </div>
 
-        <Card className="p-6 h-fit">
-          <h3 className="font-bold tracking-tight mb-4">Vincular nova placa</h3>
-          <S7CardTagForm storeId={store.id} onCreated={load} />
-        </Card>
+        <div className="flex flex-col gap-5">
+          <Card className="p-6">
+            <h3 className="font-bold tracking-tight mb-4 flex items-center gap-2">
+              <Star size={16} className="text-[#fe0000]" /> Avaliações no Google
+            </h3>
+            {store.reviews_baseline === null ? (
+              <p className="mb-3 text-xs text-white/40">Nenhuma contagem registrada ainda.</p>
+            ) : (
+              <p className="mb-3 text-sm text-white/70">
+                {store.reviews_baseline} na instalação ({fullDate(store.reviews_baseline_at!)}) → {store.reviews_current ?? '?'} agora
+                {store.reviews_updated_at && ` (${fullDate(store.reviews_updated_at)})`}
+                {delta !== null && (
+                  <span className={delta > 0 ? 'text-emerald-400 font-bold' : 'text-white/50'}> · {delta >= 0 ? '+' : ''}{delta}</span>
+                )}
+              </p>
+            )}
+            <div className="flex gap-2">
+              <input
+                type="number"
+                value={reviewsInput}
+                onChange={(e) => setReviewsInput(e.target.value)}
+                className={inputClass}
+                placeholder="Nº de avaliações hoje"
+              />
+              <Btn onClick={updateReviews} disabled={!reviewsInput || savingReviews} className="shrink-0">
+                {savingReviews ? 'Salvando...' : 'Atualizar'}
+              </Btn>
+            </div>
+          </Card>
+
+          <Card className="p-6">
+            <h3 className="font-bold tracking-tight mb-4">Vincular nova placa</h3>
+            <S7CardTagForm storeId={store.id} storeHasReviewsBaseline={store.reviews_baseline !== null} onCreated={load} />
+          </Card>
+        </div>
       </div>
     </div>
   );

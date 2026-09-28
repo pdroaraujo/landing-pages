@@ -80,7 +80,6 @@ export type ProspectList = {
 };
 
 export type ProspectMode = 'buscar' | 'scanner' | 'roleta';
-export type ProspectSource = 'osm' | 'import';
 
 export type Sale = {
   id: string;

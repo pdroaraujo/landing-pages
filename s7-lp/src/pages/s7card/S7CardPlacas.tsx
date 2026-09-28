@@ -171,7 +171,7 @@ export default function S7CardPlacas() {
                       onChange={(e) => assign(t.id, e.target.value)}
                       className="rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1.5 text-xs text-white"
                     >
-                      <option value="" className="bg-[#161616]">— sem loja —</option>
+                      <option value="" className="bg-[#161616]">Sem loja (fica em estoque)</option>
                       {stores.map((s) => (
                         <option key={s.id} value={s.id} className="bg-[#161616]">{s.name}</option>
                       ))}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ListChecks, ChevronRight } from 'lucide-react';
+import { ListChecks, ChevronRight, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { fullDate } from '../../lib/format';
 import { Card, PageHeader, Badge } from '../../components/admin/ui';
@@ -22,14 +22,24 @@ export default function Listas() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const load = async () => {
+    setLoading(true);
+    const { data } = await supabase.from('list_overview').select('*').order('date', { ascending: false });
+    setRows((data as Row[]) ?? []);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const { data } = await supabase.from('list_overview').select('*').order('date', { ascending: false });
-      setRows((data as Row[]) ?? []);
-      setLoading(false);
-    })();
+    load();
   }, []);
+
+  const remove = async (e: React.MouseEvent, id: string, name: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!confirm(`Apagar a lista "${name}"? As empresas ficam salvas (não prospectamos de novo), só a lista some. Não dá pra desfazer.`)) return;
+    await supabase.from('lists').delete().eq('id', id);
+    load();
+  };
 
   return (
     <div>
@@ -72,6 +82,13 @@ export default function Listas() {
                       />
                     </div>
                   </div>
+                  <button
+                    onClick={(e) => remove(e, r.id, r.name)}
+                    className="rounded-lg bg-white/5 p-2.5 text-white/40 hover:bg-[#fe0000]/20 hover:text-[#ff5a5a]"
+                    title="Apagar lista"
+                  >
+                    <Trash2 size={15} />
+                  </button>
                   <ChevronRight className="text-white/30" size={18} />
                 </Card>
               </Link>

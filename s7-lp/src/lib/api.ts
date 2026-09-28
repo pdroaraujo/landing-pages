@@ -1,10 +1,9 @@
 import { supabase } from './supabase';
-import type { ProspectMode, ProspectSource } from './types';
+import type { ProspectMode } from './types';
 import type { ImportedBiz } from './importParse';
 
 export type ProspectRequest = {
   mode: ProspectMode;
-  source: ProspectSource;
   niche: string; // slug
   city: string;
   uf?: string;
@@ -13,8 +12,8 @@ export type ProspectRequest = {
   maxResults?: number;
   /** nichos extras — usado no Scanner Local */
   extraNiches?: string[];
-  /** empresas já coletadas manualmente — obrigatório quando source === 'import' */
-  businesses?: ImportedBiz[];
+  /** empresas coletadas manualmente (arquivo importado) */
+  businesses: ImportedBiz[];
   listName?: string;
 };
 

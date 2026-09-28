@@ -7,19 +7,24 @@ const randomCode = () => Math.random().toString(36).slice(2, 8);
 
 export default function S7CardTagForm({
   storeId,
+  storeHasReviewsBaseline,
   onCreated,
 }: {
   storeId?: string;
+  /** se a loja já tem uma contagem de avaliações registrada, não pede de novo aqui */
+  storeHasReviewsBaseline?: boolean;
   onCreated: () => void;
 }) {
   const [code, setCode] = useState(randomCode());
   const [linkType, setLinkType] = useState<LinkType>('google_review');
   const [destination, setDestination] = useState('');
   const [label, setLabel] = useState('');
+  const [reviewsBaseline, setReviewsBaseline] = useState('');
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   const info = linkTypeInfo(linkType);
+  const askReviews = storeId && linkType === 'google_review' && !storeHasReviewsBaseline;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,14 +39,23 @@ export default function S7CardTagForm({
       status: storeId ? 'instalada' : 'em_estoque',
       installed_at: storeId ? new Date().toISOString().slice(0, 10) : null,
     });
-    setSaving(false);
     if (error) {
+      setSaving(false);
       setErr(error.message.includes('duplicate') ? 'Já existe uma placa com esse código.' : error.message);
       return;
     }
+    if (askReviews && reviewsBaseline && storeId) {
+      const today = new Date().toISOString().slice(0, 10);
+      await supabase
+        .from('s7card_stores')
+        .update({ reviews_baseline: Number(reviewsBaseline), reviews_baseline_at: today })
+        .eq('id', storeId);
+    }
+    setSaving(false);
     setCode(randomCode());
     setDestination('');
     setLabel('');
+    setReviewsBaseline('');
     onCreated();
   };
 
@@ -63,6 +77,17 @@ export default function S7CardTagForm({
       <Field label="Destino">
         <input value={destination} onChange={(e) => setDestination(e.target.value)} className={inputClass} placeholder={info.placeholder} />
       </Field>
+      {askReviews && (
+        <Field label="Avaliações no Google hoje (fica salvo pra comparar depois)">
+          <input
+            type="number"
+            value={reviewsBaseline}
+            onChange={(e) => setReviewsBaseline(e.target.value)}
+            className={inputClass}
+            placeholder="Ex: 12"
+          />
+        </Field>
+      )}
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Código (URL pública)">
           <input value={code} onChange={(e) => setCode(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))} className={inputClass} />

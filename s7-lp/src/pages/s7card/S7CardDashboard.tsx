@@ -86,7 +86,7 @@ export default function S7CardDashboard() {
         title="Dashboard"
         subtitle="S7 Card — lojas, placas instaladas e toques registrados."
         actions={
-          <Link to="/s7card/lojas">
+          <Link to="/s7card/mapeamento">
             <Btn>
               <Plus size={14} /> Nova loja
             </Btn>

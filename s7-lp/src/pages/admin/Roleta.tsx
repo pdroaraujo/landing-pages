@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Dices, ArrowRight, Loader2, Copy, Check, Upload, Radar } from 'lucide-react';
+import { Dices, ArrowRight, Loader2, Copy, Check, Upload } from 'lucide-react';
 import { NICHES, type Niche } from '../../lib/niches';
 import { loadBrCities, loadCountries, worldCountries, UFS, type BrCity, type Country } from '../../lib/places';
 import { runProspect, type ProspectResponse } from '../../lib/api';
@@ -12,8 +12,7 @@ import SlotReel, { type SlotReelHandle } from '../../components/admin/SlotReel';
 const nicheLabels = NICHES.map((n) => n.label);
 type Scope = 'brasil' | 'mundo';
 type SortMode = 'ambos' | 'so_nicho' | 'so_cidade';
-type Phase = 'idle' | 'spinning' | 'choosing' | 'running' | 'done' | 'error';
-type Path = 'auto' | 'import' | null;
+type Phase = 'idle' | 'spinning' | 'ready' | 'running' | 'done' | 'error';
 
 type Drawn = { niche: Niche; city: string; uf?: string; country: string; countryCode: string; place: string };
 
@@ -30,7 +29,6 @@ export default function Roleta() {
   const [brCities, setBrCities] = useState<BrCity[]>([]);
   const [countries, setCountries] = useState<Country[]>([]);
   const [phase, setPhase] = useState<Phase>('idle');
-  const [path, setPath] = useState<Path>(null);
   const [drawn, setDrawn] = useState<Drawn | null>(null);
   const [result, setResult] = useState<ProspectResponse | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -77,7 +75,6 @@ export default function Roleta() {
 
   const reset = () => {
     setPhase('idle');
-    setPath(null);
     setDrawn(null);
     setResult(null);
     setErr(null);
@@ -106,32 +103,7 @@ export default function Roleta() {
     const niche = NICHES[ni];
     const place = placeAt(ci);
     setDrawn({ niche, ...place });
-    setPhase('choosing');
-  };
-
-  const runAuto = async () => {
-    if (!drawn) return;
-    setPath('auto');
-    setPhase('running');
-    setErr(null);
-    try {
-      const res = await runProspect({
-        mode: 'roleta',
-        source: 'osm',
-        niche: drawn.niche.slug,
-        city: drawn.city,
-        uf: drawn.uf,
-        country: drawn.country,
-        countryCode: drawn.countryCode,
-        maxResults: 150,
-        listName: `Roleta · ${drawn.niche.label} · ${drawn.city}`,
-      });
-      setResult(res);
-      setPhase('done');
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Falha na prospecção.');
-      setPhase('error');
-    }
+    setPhase('ready');
   };
 
   const pickFile = async (f: File) => {
@@ -152,13 +124,11 @@ export default function Roleta() {
 
   const runImport = async () => {
     if (!drawn || !parsed?.length) return;
-    setPath('import');
     setPhase('running');
     setErr(null);
     try {
       const res = await runProspect({
         mode: 'roleta',
-        source: 'import',
         niche: drawn.niche.slug,
         city: drawn.city,
         uf: drawn.uf,
@@ -166,7 +136,7 @@ export default function Roleta() {
         countryCode: drawn.countryCode,
         businesses: parsed,
         maxResults: parsed.length,
-        listName: `Roleta · ${drawn.niche.label} · ${drawn.city} (importado)`,
+        listName: `Roleta · ${drawn.niche.label} · ${drawn.city}`,
       });
       setResult(res);
       setPhase('done');
@@ -187,7 +157,7 @@ export default function Roleta() {
     <div>
       <PageHeader
         title="Roleta"
-        subtitle="Gira: sorteia nicho e/ou cidade. Depois você escolhe prospectar automático (grátis, OpenStreetMap) ou importar um arquivo com as empresas."
+        subtitle="Gira: sorteia nicho e/ou cidade. Depois é só pedir pro Claude gerar a lista e subir o arquivo."
       />
 
       <Card className="mx-auto max-w-2xl p-8">
@@ -202,7 +172,7 @@ export default function Roleta() {
                   scope === s ? 'bg-[#fe0000] text-white' : 'text-white/45 hover:text-white'
                 }`}
               >
-                {s === 'brasil' ? '🇧🇷 Brasil' : '🌎 Mundo'}
+                {s === 'brasil' ? 'Brasil' : 'Mundo'}
               </button>
             ))}
           </div>
@@ -226,8 +196,8 @@ export default function Roleta() {
           </div>
         </div>
 
-        {scope === 'brasil' && sortMode !== 'so_nicho' && (
-          <div className="mb-6 flex justify-center">
+        <div className="mb-6 flex flex-wrap justify-center gap-4">
+          {scope === 'brasil' && sortMode !== 'so_nicho' && (
             <Field label="Estado (filtra a cidade sorteada)">
               <select value={ufFilter} onChange={(e) => setUfFilter(e.target.value)} disabled={busy} className={inputClass}>
                 <option value="" className="bg-[#161616]">Todos os estados</option>
@@ -236,56 +206,54 @@ export default function Roleta() {
                 ))}
               </select>
             </Field>
-          </div>
-        )}
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="mb-2 text-center text-[11px] font-bold uppercase tracking-widest text-white/40">Nicho</p>
-            {sortMode === 'so_cidade' ? (
-              <select
-                value={manualNicheSlug}
-                onChange={(e) => setManualNicheSlug(e.target.value)}
-                disabled={busy}
-                className={`${inputClass} h-[216px] text-center`}
-              >
+          )}
+          {sortMode === 'so_cidade' && (
+            <Field label="Nicho fixo">
+              <select value={manualNicheSlug} onChange={(e) => setManualNicheSlug(e.target.value)} disabled={busy} className={inputClass}>
                 {NICHES.map((n) => (
                   <option key={n.slug} value={n.slug} className="bg-[#161616]">{n.label}</option>
                 ))}
               </select>
-            ) : (
-              <SlotReel ref={nicheReel} items={nicheLabels} />
-            )}
-          </div>
-          <div>
-            <p className="mb-2 text-center text-[11px] font-bold uppercase tracking-widest text-white/40">
-              {scope === 'brasil' ? 'Cidade' : 'Cidade · País'}
-            </p>
-            {sortMode === 'so_nicho' ? (
-              cityLabels.length ? (
-                <select
-                  value={manualCityIdx}
-                  onChange={(e) => setManualCityIdx(Number(e.target.value))}
-                  disabled={busy}
-                  className={`${inputClass} h-[216px] text-center`}
-                >
+            </Field>
+          )}
+          {sortMode === 'so_nicho' && (
+            <Field label={scope === 'brasil' ? 'Cidade fixa' : 'País fixo'}>
+              {cityLabels.length ? (
+                <select value={manualCityIdx} onChange={(e) => setManualCityIdx(Number(e.target.value))} disabled={busy} className={inputClass}>
                   {cityLabels.map((label, i) => (
                     <option key={label} value={i} className="bg-[#161616]">{label}</option>
                   ))}
                 </select>
               ) : (
+                <select disabled className={inputClass}>
+                  <option>carregando…</option>
+                </select>
+              )}
+            </Field>
+          )}
+        </div>
+
+        <div className={sortMode === 'ambos' ? 'grid grid-cols-2 gap-4' : 'mx-auto max-w-xs'}>
+          {sortMode !== 'so_cidade' && (
+            <div>
+              <p className="mb-2 text-center text-[11px] font-bold uppercase tracking-widest text-white/40">Nicho</p>
+              <SlotReel ref={nicheReel} items={nicheLabels} />
+            </div>
+          )}
+          {sortMode !== 'so_nicho' && (
+            <div>
+              <p className="mb-2 text-center text-[11px] font-bold uppercase tracking-widest text-white/40">
+                {scope === 'brasil' ? 'Cidade' : 'Cidade · País'}
+              </p>
+              {ready ? (
+                <SlotReel ref={cityReel} items={cityLabels} />
+              ) : (
                 <div className="grid h-[216px] place-items-center rounded-2xl border border-white/10 bg-white/[0.03] text-xs text-white/40">
-                  carregando…
+                  carregando cidades…
                 </div>
-              )
-            ) : ready ? (
-              <SlotReel ref={cityReel} items={cityLabels} />
-            ) : (
-              <div className="grid h-[216px] place-items-center rounded-2xl border border-white/10 bg-white/[0.03] text-xs text-white/40">
-                carregando cidades…
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="mt-8 flex flex-col items-center gap-3">
@@ -311,30 +279,7 @@ export default function Roleta() {
           </p>
         )}
 
-        {/* --- escolha do caminho --- */}
-        {phase === 'choosing' && drawn && (
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <button
-              onClick={runAuto}
-              className="flex flex-col items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-center hover:border-[#fe0000]/40 transition-colors"
-            >
-              <Radar className="text-[#fe0000]" size={22} />
-              <span className="text-sm font-bold">Prospectar automático</span>
-              <span className="text-[11px] text-white/40">OpenStreetMap · grátis · na hora</span>
-            </button>
-            <button
-              onClick={() => setPath('import')}
-              className="flex flex-col items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-center hover:border-[#fe0000]/40 transition-colors"
-            >
-              <Upload className="text-[#fe0000]" size={22} />
-              <span className="text-sm font-bold">Importar arquivo</span>
-              <span className="text-[11px] text-white/40">Peça pro Claude buscar e suba o CSV/XLSX</span>
-            </button>
-          </div>
-        )}
-
-        {/* --- painel de importação --- */}
-        {phase === 'choosing' && path === 'import' && drawn && (
+        {(phase === 'ready' || phase === 'running' || phase === 'done' || phase === 'error') && drawn && (
           <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
             <p className="mb-2 text-xs font-bold uppercase tracking-widest text-white/50">
               1. Peça pro Claude gerar a lista
@@ -371,16 +316,10 @@ export default function Roleta() {
               </p>
             )}
 
-            <Btn onClick={runImport} disabled={!parsed?.length} className="mt-4">
-              <Upload size={14} /> Prospectar {parsed?.length ?? ''} empresas
+            <Btn onClick={runImport} disabled={!parsed?.length || busy} className="mt-4">
+              <Upload size={14} /> {phase === 'running' ? 'Importando...' : `Prospectar ${parsed?.length ?? ''} empresas`}
             </Btn>
           </div>
-        )}
-
-        {phase === 'running' && (
-          <p className="mt-6 text-center text-xs text-white/45">
-            {path === 'auto' ? 'Buscando no OpenStreetMap…' : 'Importando e analisando os sites…'}
-          </p>
         )}
 
         {phase === 'error' && (

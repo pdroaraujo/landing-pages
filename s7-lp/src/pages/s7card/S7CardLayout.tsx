@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Store, Nfc, LogOut, Menu, X, ArrowLeftRight, KeyRound, MapPinned } from 'lucide-react';
+import { LayoutDashboard, Nfc, LogOut, Menu, X, ArrowLeftRight, KeyRound, MapPinned } from 'lucide-react';
 import { useAuth } from '../../lib/auth';
 
 const nav = [
   { to: '/s7card', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/s7card/mapeamento', label: 'Mapeamento', icon: MapPinned },
-  { to: '/s7card/lojas', label: 'Lojas', icon: Store },
   { to: '/s7card/placas', label: 'Placas', icon: Nfc },
 ];
 

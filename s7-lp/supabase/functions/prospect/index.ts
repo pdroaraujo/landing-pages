@@ -1,11 +1,25 @@
 // Edge Function: prospect
-//  Coleta empresas (OpenStreetMap automático, ou uma lista importada de
-//  arquivo CSV/XLSX gerada manualmente), deduplica contra `businesses`,
-//  classifica o site (lead / instagram / linktree / upgrade) e cria uma lista
-//  pra qualificação (aprovar/rejeitar) — sem atribuir dono ainda.
+//  Recebe uma lista de empresas já coletada manualmente (arquivo importado
+//  via Roleta), deduplica contra `businesses`, classifica o site
+//  (lead / instagram / linktree / upgrade) e cria uma lista pra qualificação
+//  (aprovar/rejeitar) — sem atribuir dono ainda.
 import { createClient } from 'jsr:@supabase/supabase-js@2';
-import { fetchOSM, type RawBiz } from './sources.ts';
 import { classifyUrl, classifyWebsite } from './analyze.ts';
+
+export type RawBiz = {
+  place_id: string | null;
+  name: string;
+  phone: string | null;
+  website: string | null;
+  address: string | null;
+  city: string | null;
+  uf: string | null;
+  category: string | null;
+  rating: number | null;
+  reviews: number | null;
+  lat: number | null;
+  lng: number | null;
+};
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -49,7 +63,6 @@ Deno.serve(async (req) => {
 
   let body: {
     mode: 'buscar' | 'scanner' | 'roleta';
-    source: 'osm' | 'import';
     niche: string;
     extraNiches?: string[];
     city: string;
@@ -58,7 +71,7 @@ Deno.serve(async (req) => {
     countryCode?: string; // ISO2
     maxResults?: number;
     listName?: string;
-    /** empresas já coletadas manualmente — usado quando source === 'import' */
+    /** empresas já coletadas manualmente (arquivo importado) */
     businesses?: Partial<RawBiz>[];
   };
   try {
@@ -67,11 +80,8 @@ Deno.serve(async (req) => {
     return json({ error: 'json inválido' }, 400);
   }
 
-  const niches = [body.niche, ...(body.extraNiches ?? [])].filter(Boolean);
-  const hardCap = body.source === 'import' ? 500 : 300;
-  const maxResults = Math.min(Math.max(body.maxResults ?? 100, 10), hardCap);
+  const maxResults = Math.min(Math.max(body.maxResults ?? 100, 10), 500);
   const primaryCity = body.city.split(',')[0].trim();
-  const countryCode = (body.countryCode ?? 'BR').toLowerCase();
   const countryName = body.country ?? 'Brasil';
 
   const { data: run, error: runError } = await db
@@ -79,7 +89,7 @@ Deno.serve(async (req) => {
     .insert({
       created_by: uid,
       mode: body.mode,
-      source: body.source,
+      source: 'import',
       niche: body.niche,
       city: body.city,
       uf: body.uf,
@@ -92,31 +102,25 @@ Deno.serve(async (req) => {
   const runId = run.id as string;
 
   try {
-    // --- 1. coleta ---
-    let raw: RawBiz[];
-    if (body.source === 'import') {
-      raw = (body.businesses ?? [])
-        .map((b) => ({
-          place_id: b.place_id ?? null,
-          name: (b.name ?? '').trim(),
-          phone: b.phone ?? null,
-          website: b.website ?? null,
-          address: b.address ?? null,
-          city: b.city ?? primaryCity,
-          uf: b.uf ?? body.uf ?? null,
-          category: b.category ?? null,
-          rating: typeof b.rating === 'number' ? b.rating : null,
-          reviews: typeof b.reviews === 'number' ? b.reviews : null,
-          lat: b.lat ?? null,
-          lng: b.lng ?? null,
-        }))
-        .filter((b) => b.name)
-        .slice(0, maxResults);
-      if (!raw.length) throw new Error('Nenhuma empresa válida no arquivo importado.');
-    } else {
-      const opts = { niches, city: primaryCity, uf: body.uf, country: countryName, countryCode, maxResults };
-      raw = await fetchOSM(opts);
-    }
+    // --- 1. normaliza o arquivo importado ---
+    const raw: RawBiz[] = (body.businesses ?? [])
+      .map((b) => ({
+        place_id: b.place_id ?? null,
+        name: (b.name ?? '').trim(),
+        phone: b.phone ?? null,
+        website: b.website ?? null,
+        address: b.address ?? null,
+        city: b.city ?? primaryCity,
+        uf: b.uf ?? body.uf ?? null,
+        category: b.category ?? null,
+        rating: typeof b.rating === 'number' ? b.rating : null,
+        reviews: typeof b.reviews === 'number' ? b.reviews : null,
+        lat: b.lat ?? null,
+        lng: b.lng ?? null,
+      }))
+      .filter((b) => b.name)
+      .slice(0, maxResults);
+    if (!raw.length) throw new Error('Nenhuma empresa válida no arquivo importado.');
 
     // dedup interno da rodada
     const byKey = new Map<string, RawBiz>();

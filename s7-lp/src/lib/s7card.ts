@@ -93,6 +93,10 @@ export type S7CardStore = {
   sold_at: string;
   notes: string | null;
   created_at: string;
+  reviews_baseline: number | null;
+  reviews_baseline_at: string | null;
+  reviews_current: number | null;
+  reviews_updated_at: string | null;
 };
 
 export type S7CardTag = {

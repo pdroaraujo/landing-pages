@@ -9,14 +9,6 @@ export const UFS = [
   'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
 ];
 
-// Atalhos da região da S7 — aparecem no topo dos seletores.
-export const FAVORITE_CITIES: BrCity[] = [
-  { n: 'Santos', uf: 'SP' }, { n: 'São Vicente', uf: 'SP' }, { n: 'Praia Grande', uf: 'SP' },
-  { n: 'Guarujá', uf: 'SP' }, { n: 'Cubatão', uf: 'SP' }, { n: 'Bertioga', uf: 'SP' },
-  { n: 'Mongaguá', uf: 'SP' }, { n: 'Itanhaém', uf: 'SP' }, { n: 'Peruíbe', uf: 'SP' },
-  { n: 'São Paulo', uf: 'SP' }, { n: 'São José dos Campos', uf: 'SP' }, { n: 'Taubaté', uf: 'SP' },
-];
-
 let _br: BrCity[] | null = null;
 let _countries: Country[] | null = null;
 
@@ -39,18 +31,3 @@ export function worldCountries(all: Country[]): Country[] {
     .sort((a, b) => a.n.localeCompare(b.n, 'pt'));
 }
 
-export const BRASIL: Country = { cc: 'BR', n: 'Brasil', cap: 'Brasília', r: 'Americas', lat: -14, lng: -53 };
-
-export type LocationValue = {
-  country: string; // nome
-  countryCode: string; // ISO2
-  uf: string;
-  city: string;
-};
-
-export const defaultLocation: LocationValue = {
-  country: 'Brasil',
-  countryCode: 'BR',
-  uf: 'SP',
-  city: 'Santos',
-};

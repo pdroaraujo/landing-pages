@@ -15,7 +15,6 @@ const Vendas = lazy(() => import('./pages/admin/Vendas'));
 
 const S7CardLayout = lazy(() => import('./pages/s7card/S7CardLayout'));
 const S7CardDashboard = lazy(() => import('./pages/s7card/S7CardDashboard'));
-const S7CardLojas = lazy(() => import('./pages/s7card/S7CardLojas'));
 const S7CardLojaDetalhe = lazy(() => import('./pages/s7card/S7CardLojaDetalhe'));
 const S7CardPlacas = lazy(() => import('./pages/s7card/S7CardPlacas'));
 const S7CardMapeamento = lazy(() => import('./pages/s7card/S7CardMapeamento'));
@@ -95,10 +94,9 @@ export default function App() {
               }
             >
               <Route index element={<S7CardDashboard />} />
-              <Route path="lojas" element={<S7CardLojas />} />
+              <Route path="mapeamento" element={<S7CardMapeamento />} />
               <Route path="lojas/:id" element={<S7CardLojaDetalhe />} />
               <Route path="placas" element={<S7CardPlacas />} />
-              <Route path="mapeamento" element={<S7CardMapeamento />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,11 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Copy, Check, Upload, Trash2, PhoneCall, Ban, DollarSign, ArrowRight, Undo2 } from 'lucide-react';
+import {
+  Copy, Check, Upload, Trash2, PhoneCall, Ban, DollarSign, Undo2, Plus,
+  MousePointerClick, Star, ChevronRight,
+} from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import type { S7CardProspect, ProspectStatus } from '../../lib/s7card';
+import type { S7CardProspect, ProspectStatus, S7CardStore } from '../../lib/s7card';
 import { prospectDedupKey } from '../../lib/s7card';
 import { parseImportFile } from '../../lib/importParse';
 import { buildGenericImportPrompt } from '../../lib/prospectPrompt';
+import { brl, fullDate } from '../../lib/format';
 import { Card, PageHeader, Btn, Field, inputClass, Badge } from '../../components/admin/ui';
 
 type Tab = 'a_prospectar' | 'prospectado' | 'vendido' | 'descartado' | 'todas';
@@ -23,8 +27,15 @@ const STATUS_TONE: Record<ProspectStatus, 'default' | 'amber' | 'green' | 'red'>
   descartado: 'red',
 };
 
+const emptyStore = {
+  name: '', category: '', address: '', city: '', uf: '', contact_name: '', contact_phone: '',
+  sold_value: '', sold_at: new Date().toISOString().slice(0, 10), reviews_baseline: '',
+};
+
 export default function S7CardMapeamento() {
   const [prospects, setProspects] = useState<S7CardProspect[]>([]);
+  const [stores, setStores] = useState<S7CardStore[]>([]);
+  const [storeTaps, setStoreTaps] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>('a_prospectar');
 
@@ -40,14 +51,30 @@ export default function S7CardMapeamento() {
   const [importMsg, setImportMsg] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // marcar como vendido
+  // cadastro direto de loja (sem passar pelo pipeline)
+  const [showNewStore, setShowNewStore] = useState(false);
+  const [storeForm, setStoreForm] = useState(emptyStore);
+  const [savingStore, setSavingStore] = useState(false);
+
+  // marcar prospect como vendido
   const [sellingId, setSellingId] = useState<string | null>(null);
-  const [sellForm, setSellForm] = useState({ value: '', sold_at: new Date().toISOString().slice(0, 10) });
+  const [sellForm, setSellForm] = useState({ value: '', sold_at: new Date().toISOString().slice(0, 10), reviews_baseline: '' });
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from('s7card_prospects').select('*').order('created_at', { ascending: false });
-    setProspects((data as S7CardProspect[]) ?? []);
+    const [{ data: p }, { data: s }, { data: tapRows }] = await Promise.all([
+      supabase.from('s7card_prospects').select('*').order('created_at', { ascending: false }),
+      supabase.from('s7card_stores').select('*').order('created_at', { ascending: false }),
+      supabase.from('s7card_taps').select('tag:s7card_tags(store_id)'),
+    ]);
+    setProspects((p as S7CardProspect[]) ?? []);
+    setStores((s as S7CardStore[]) ?? []);
+    const counts: Record<string, number> = {};
+    (tapRows as unknown as { tag: { store_id: string | null } | null }[] ?? []).forEach((r) => {
+      const sid = r.tag?.store_id;
+      if (sid) counts[sid] = (counts[sid] ?? 0) + 1;
+    });
+    setStoreTaps(counts);
     setLoading(false);
   };
   useEffect(() => {
@@ -56,11 +83,14 @@ export default function S7CardMapeamento() {
 
   const counts = useMemo(() => {
     const c: Record<ProspectStatus, number> = { a_prospectar: 0, prospectado: 0, vendido: 0, descartado: 0 };
-    prospects.forEach((p) => c[p.status]++);
+    prospects.forEach((p) => {
+      if (p.status !== 'vendido') c[p.status]++;
+    });
+    c.vendido = stores.length;
     return c;
-  }, [prospects]);
+  }, [prospects, stores]);
 
-  const visible = tab === 'todas' ? prospects : prospects.filter((p) => p.status === tab);
+  const totalTodas = counts.a_prospectar + counts.prospectado + counts.vendido + counts.descartado;
 
   const copyPrompt = () => {
     navigator.clipboard.writeText(buildGenericImportPrompt(ramo, city || 'sua cidade', uf || undefined));
@@ -127,15 +157,21 @@ export default function S7CardMapeamento() {
     load();
   };
 
-  const remove = async (id: string, name: string) => {
+  const removeProspect = async (id: string, name: string) => {
     if (!confirm(`Apagar "${name}" do mapeamento? Não dá pra desfazer.`)) return;
     await supabase.from('s7card_prospects').delete().eq('id', id);
     load();
   };
 
+  const removeStore = async (id: string, name: string) => {
+    if (!confirm(`Apagar a loja "${name}"? As placas dela ficam sem loja vinculada. Não dá pra desfazer.`)) return;
+    await supabase.from('s7card_stores').delete().eq('id', id);
+    load();
+  };
+
   const startSell = (p: S7CardProspect) => {
     setSellingId(p.id);
-    setSellForm({ value: '', sold_at: new Date().toISOString().slice(0, 10) });
+    setSellForm({ value: '', sold_at: new Date().toISOString().slice(0, 10), reviews_baseline: '' });
   };
 
   const confirmSell = async (p: S7CardProspect) => {
@@ -149,6 +185,8 @@ export default function S7CardMapeamento() {
         uf: p.uf,
         sold_value: Number(sellForm.value) || 0,
         sold_at: sellForm.sold_at,
+        reviews_baseline: sellForm.reviews_baseline ? Number(sellForm.reviews_baseline) : null,
+        reviews_baseline_at: sellForm.reviews_baseline ? sellForm.sold_at : null,
       })
       .select('id')
       .single();
@@ -158,17 +196,89 @@ export default function S7CardMapeamento() {
     load();
   };
 
+  const addStore = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingStore(true);
+    const { error } = await supabase.from('s7card_stores').insert({
+      name: storeForm.name,
+      category: storeForm.category || null,
+      address: storeForm.address || null,
+      city: storeForm.city || null,
+      uf: storeForm.uf || null,
+      contact_name: storeForm.contact_name || null,
+      contact_phone: storeForm.contact_phone || null,
+      sold_value: Number(storeForm.sold_value) || 0,
+      sold_at: storeForm.sold_at,
+      reviews_baseline: storeForm.reviews_baseline ? Number(storeForm.reviews_baseline) : null,
+      reviews_baseline_at: storeForm.reviews_baseline ? storeForm.sold_at : null,
+    });
+    setSavingStore(false);
+    if (!error) {
+      setStoreForm(emptyStore);
+      setShowNewStore(false);
+      load();
+    }
+  };
+
   return (
     <div>
       <PageHeader
         title="Mapeamento"
         subtitle="Estabelecimentos-alvo pra vender a placa S7 Card — quem prospectar, quem já foi visitado, quem comprou."
         actions={
-          <Btn onClick={() => setShowImport((s) => !s)}>
-            <Upload size={14} /> Importar lista
-          </Btn>
+          <>
+            <Btn variant="outline" onClick={() => setShowNewStore((s) => !s)}>
+              <Plus size={14} /> Nova loja
+            </Btn>
+            <Btn onClick={() => setShowImport((s) => !s)}>
+              <Upload size={14} /> Importar lista
+            </Btn>
+          </>
         }
       />
+
+      {showNewStore && (
+        <Card className="p-6 mb-6">
+          <h3 className="font-bold tracking-tight mb-4">Cadastrar loja direto (já vendida)</h3>
+          <form onSubmit={addStore} className="grid gap-4 sm:grid-cols-2">
+            <Field label="Nome da loja">
+              <input required value={storeForm.name} onChange={(e) => setStoreForm({ ...storeForm, name: e.target.value })} className={inputClass} />
+            </Field>
+            <Field label="Categoria">
+              <input value={storeForm.category} onChange={(e) => setStoreForm({ ...storeForm, category: e.target.value })} className={inputClass} placeholder="Ex: Restaurante" />
+            </Field>
+            <Field label="Endereço">
+              <input value={storeForm.address} onChange={(e) => setStoreForm({ ...storeForm, address: e.target.value })} className={inputClass} />
+            </Field>
+            <div className="grid grid-cols-[1fr_90px] gap-3">
+              <Field label="Cidade">
+                <input value={storeForm.city} onChange={(e) => setStoreForm({ ...storeForm, city: e.target.value })} className={inputClass} />
+              </Field>
+              <Field label="UF">
+                <input value={storeForm.uf} onChange={(e) => setStoreForm({ ...storeForm, uf: e.target.value.toUpperCase() })} maxLength={2} className={inputClass} />
+              </Field>
+            </div>
+            <Field label="Contato">
+              <input value={storeForm.contact_name} onChange={(e) => setStoreForm({ ...storeForm, contact_name: e.target.value })} className={inputClass} />
+            </Field>
+            <Field label="Telefone">
+              <input value={storeForm.contact_phone} onChange={(e) => setStoreForm({ ...storeForm, contact_phone: e.target.value })} className={inputClass} />
+            </Field>
+            <Field label="Valor da venda (R$)">
+              <input type="number" step="0.01" value={storeForm.sold_value} onChange={(e) => setStoreForm({ ...storeForm, sold_value: e.target.value })} className={inputClass} />
+            </Field>
+            <Field label="Data da venda">
+              <input type="date" value={storeForm.sold_at} onChange={(e) => setStoreForm({ ...storeForm, sold_at: e.target.value })} className={inputClass} />
+            </Field>
+            <Field label="Avaliações no Google hoje (opcional)">
+              <input type="number" value={storeForm.reviews_baseline} onChange={(e) => setStoreForm({ ...storeForm, reviews_baseline: e.target.value })} className={inputClass} placeholder="Ex: 12" />
+            </Field>
+            <Btn type="submit" disabled={savingStore} className="sm:col-span-2 self-start">
+              {savingStore ? 'Salvando...' : 'Cadastrar loja'}
+            </Btn>
+          </form>
+        </Card>
+      )}
 
       {showImport && (
         <Card className="p-6 mb-6">
@@ -226,78 +336,121 @@ export default function S7CardMapeamento() {
               tab === t ? 'bg-[#fe0000] text-white border-[#fe0000]' : 'border-white/10 text-white/45 hover:text-white'
             }`}
           >
-            {t === 'todas' ? `Todas (${prospects.length})` : `${STATUS_LABEL[t]} (${counts[t]})`}
+            {t === 'todas' ? `Todas (${totalTodas})` : `${STATUS_LABEL[t]} (${counts[t]})`}
           </button>
         ))}
       </div>
 
       {loading ? (
         <p className="text-sm text-white/40">Carregando…</p>
-      ) : visible.length === 0 ? (
-        <Card className="p-10 text-center text-sm text-white/40">Nada por aqui — importe uma lista pra começar.</Card>
       ) : (
         <div className="grid gap-3">
-          {visible.map((p) => (
-            <Card key={p.id} className="p-5">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-bold">{p.name}</span>
-                    <Badge tone={STATUS_TONE[p.status]}>{STATUS_LABEL[p.status]}</Badge>
+          {/* --- lojas vendidas --- */}
+          {(tab === 'vendido' || tab === 'todas') &&
+            stores.map((s) => {
+              const delta =
+                s.reviews_baseline !== null && s.reviews_current !== null ? s.reviews_current - s.reviews_baseline : null;
+              return (
+                <Card key={s.id} className="p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-bold">{s.name}</span>
+                        <Badge tone="green">Vendido</Badge>
+                      </div>
+                      <p className="mt-1 text-xs text-white/40">
+                        {[s.category, s.city, s.uf].filter(Boolean).join(' · ')} · vendida em {fullDate(s.sold_at)} · {brl(s.sold_value)}
+                      </p>
+                      <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-white/50">
+                        <span className="inline-flex items-center gap-1">
+                          <MousePointerClick size={12} /> {storeTaps[s.id] ?? 0} toques
+                        </span>
+                        {s.reviews_baseline !== null && (
+                          <span className="inline-flex items-center gap-1">
+                            <Star size={12} /> {s.reviews_baseline} → {s.reviews_current ?? '?'} avaliações
+                            {delta !== null && ` (${delta >= 0 ? '+' : ''}${delta})`}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Link to={`/s7card/lojas/${s.id}`} className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-bold text-white/70 hover:bg-white/10">
+                        Ver loja <ChevronRight size={13} />
+                      </Link>
+                      <button onClick={() => removeStore(s.id, s.name)} className="rounded-lg bg-white/5 p-2.5 text-white/40 hover:bg-[#fe0000]/20 hover:text-[#ff5a5a]" title="Apagar loja">
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
-                  <p className="mt-1 text-xs text-white/40">
-                    {[p.category, p.city, p.uf].filter(Boolean).join(' · ')}
-                    {p.phone ? ` · ${p.phone}` : ''}
-                  </p>
-                  {p.status === 'vendido' && p.store_id && (
-                    <Link to={`/s7card/lojas/${p.store_id}`} className="mt-1 inline-flex items-center gap-1 text-xs text-[#fe0000]">
-                      Ver loja <ArrowRight size={12} />
-                    </Link>
-                  )}
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  {p.status === 'a_prospectar' && (
-                    <button onClick={() => setStatus(p.id, 'prospectado')} className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-bold text-white/70 hover:bg-white/10">
-                      <PhoneCall size={13} /> Marcar prospectado
-                    </button>
-                  )}
-                  {p.status !== 'vendido' && (
+                </Card>
+              );
+            })}
+
+          {/* --- pipeline de prospecção --- */}
+          {prospects
+            .filter((p) => p.status !== 'vendido' && (tab === 'todas' || tab === p.status))
+            .map((p) => (
+              <Card key={p.id} className="p-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-bold">{p.name}</span>
+                      <Badge tone={STATUS_TONE[p.status]}>{STATUS_LABEL[p.status]}</Badge>
+                    </div>
+                    <p className="mt-1 text-xs text-white/40">
+                      {[p.category, p.city, p.uf].filter(Boolean).join(' · ')}
+                      {p.phone ? ` · ${p.phone}` : ''}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {p.status === 'a_prospectar' && (
+                      <button onClick={() => setStatus(p.id, 'prospectado')} className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-bold text-white/70 hover:bg-white/10">
+                        <PhoneCall size={13} /> Marcar prospectado
+                      </button>
+                    )}
                     <button onClick={() => startSell(p)} className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/15 px-3 py-2 text-xs font-bold text-emerald-400 hover:bg-emerald-500/25">
                       <DollarSign size={13} /> Vendido
                     </button>
-                  )}
-                  {p.status !== 'descartado' && p.status !== 'vendido' && (
-                    <button onClick={() => setStatus(p.id, 'descartado')} className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-bold text-white/50 hover:bg-white/10">
-                      <Ban size={13} /> Descartar
+                    {p.status !== 'descartado' && (
+                      <button onClick={() => setStatus(p.id, 'descartado')} className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-bold text-white/50 hover:bg-white/10">
+                        <Ban size={13} /> Descartar
+                      </button>
+                    )}
+                    {p.status === 'descartado' && (
+                      <button onClick={() => setStatus(p.id, 'a_prospectar')} className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-bold text-white/50 hover:bg-white/10">
+                        <Undo2 size={13} /> Reabrir
+                      </button>
+                    )}
+                    <button onClick={() => removeProspect(p.id, p.name)} className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-2.5 py-2 text-xs font-bold text-white/50 hover:bg-[#fe0000]/20 hover:text-[#ff5a5a]" title="Apagar">
+                      <Trash2 size={13} />
                     </button>
-                  )}
-                  {p.status === 'descartado' && (
-                    <button onClick={() => setStatus(p.id, 'a_prospectar')} className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-bold text-white/50 hover:bg-white/10">
-                      <Undo2 size={13} /> Reabrir
-                    </button>
-                  )}
-                  <button onClick={() => remove(p.id, p.name)} className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-2.5 py-2 text-xs font-bold text-white/50 hover:bg-[#fe0000]/20 hover:text-[#ff5a5a]" title="Apagar">
-                    <Trash2 size={13} />
-                  </button>
-                </div>
-              </div>
-
-              {sellingId === p.id && (
-                <div className="mt-4 grid gap-3 border-t border-white/10 pt-4 sm:grid-cols-3">
-                  <Field label="Valor da venda (R$)">
-                    <input type="number" step="0.01" value={sellForm.value} onChange={(e) => setSellForm({ ...sellForm, value: e.target.value })} className={inputClass} />
-                  </Field>
-                  <Field label="Data">
-                    <input type="date" value={sellForm.sold_at} onChange={(e) => setSellForm({ ...sellForm, sold_at: e.target.value })} className={inputClass} />
-                  </Field>
-                  <div className="flex items-end gap-2">
-                    <Btn onClick={() => confirmSell(p)}>Confirmar venda</Btn>
-                    <Btn variant="ghost" onClick={() => setSellingId(null)}>Cancelar</Btn>
                   </div>
                 </div>
-              )}
-            </Card>
-          ))}
+
+                {sellingId === p.id && (
+                  <div className="mt-4 grid gap-3 border-t border-white/10 pt-4 sm:grid-cols-4">
+                    <Field label="Valor da venda (R$)">
+                      <input type="number" step="0.01" value={sellForm.value} onChange={(e) => setSellForm({ ...sellForm, value: e.target.value })} className={inputClass} />
+                    </Field>
+                    <Field label="Data">
+                      <input type="date" value={sellForm.sold_at} onChange={(e) => setSellForm({ ...sellForm, sold_at: e.target.value })} className={inputClass} />
+                    </Field>
+                    <Field label="Avaliações no Google hoje">
+                      <input type="number" value={sellForm.reviews_baseline} onChange={(e) => setSellForm({ ...sellForm, reviews_baseline: e.target.value })} className={inputClass} placeholder="Ex: 12" />
+                    </Field>
+                    <div className="flex items-end gap-2">
+                      <Btn onClick={() => confirmSell(p)}>Confirmar</Btn>
+                      <Btn variant="ghost" onClick={() => setSellingId(null)}>Cancelar</Btn>
+                    </div>
+                  </div>
+                )}
+              </Card>
+            ))}
+
+          {((tab !== 'vendido' && prospects.filter((p) => p.status !== 'vendido' && (tab === 'todas' || tab === p.status)).length === 0) ||
+            (tab === 'vendido' && stores.length === 0)) && (
+            <Card className="p-10 text-center text-sm text-white/40">Nada por aqui ainda.</Card>
+          )}
         </div>
       )}
     </div>
