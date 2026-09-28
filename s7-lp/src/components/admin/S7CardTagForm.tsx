@@ -45,7 +45,7 @@ export default function S7CardTagForm({
     const placeId = extractPlaceId(value);
     if (placeId) {
       setDestination(buildReviewLink(placeId));
-      setPlaceIdFound(/^ChIJ/.test(value) ? 'manual' : 'auto');
+      setPlaceIdFound(value === placeId ? 'manual' : 'auto');
       return;
     }
     setDestination(value);
@@ -107,17 +107,15 @@ export default function S7CardTagForm({
             value={destination}
             onChange={(e) => handleReviewPaste(e.target.value)}
             className={inputClass}
-            placeholder="Cole o link do Google Maps da loja, ou o Place ID (ChIJ...)"
+            placeholder="Cole o link da loja no google.com/maps"
           />
           {placeIdFound && (
-            <p className="mt-1.5 text-xs text-emerald-400">
-              Link direto de avaliação gerado automaticamente a partir do Place ID.
-            </p>
+            <p className="mt-1.5 text-xs text-emerald-400">Link direto de avaliação gerado automaticamente.</p>
           )}
           {!placeIdFound && destination && !isReviewLink(destination) && (
             <p className="mt-1.5 text-xs text-amber-400">
-              Não achei o Place ID nesse link — ele vai como está. Pra gerar o link direto de avaliação, pegue o
-              Place ID de graça no{' '}
+              Não achei o CID nesse link — confira se copiou direto do google.com/maps (não de outro buscador). Como
+              alternativa, pegue o Place ID de graça no{' '}
               <a href={PLACE_ID_FINDER_URL} target="_blank" rel="noreferrer" className="underline">
                 buscador oficial do Google
               </a>{' '}
