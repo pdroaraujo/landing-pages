@@ -8,6 +8,8 @@ import {
   LogOut,
   Menu,
   X,
+  KeyRound,
+  ArrowLeftRight,
 } from 'lucide-react';
 import { useAuth } from '../../lib/auth';
 
@@ -19,9 +21,10 @@ const nav = [
 ];
 
 export default function AdminLayout() {
-  const { profile, signOut } = useAuth();
+  const { profile, workspaces, signOut } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const hasS7Card = workspaces?.includes('s7card');
 
   const doSignOut = async () => {
     await signOut();
@@ -59,16 +62,32 @@ export default function AdminLayout() {
         <img src="/logo.png" alt="S7" className="h-14 w-auto self-start object-contain mb-10" />
         {navItems}
         <div className="mt-auto pt-6 border-t border-white/10">
+          {hasS7Card && (
+            <NavLink
+              to="/s7card"
+              className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white transition-colors"
+            >
+              <ArrowLeftRight size={14} /> S7 Card
+            </NavLink>
+          )}
           <p className="text-sm font-bold">{profile?.full_name ?? '—'}</p>
           <p className="text-xs text-white/40 uppercase tracking-widest mb-4">
             {profile?.role === 'admin' ? 'Administrador' : 'Vendedor'}
           </p>
-          <button
-            onClick={doSignOut}
-            className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-[#fe0000] transition-colors"
-          >
-            <LogOut size={14} /> Sair
-          </button>
+          <div className="flex flex-col gap-2">
+            <NavLink
+              to="/conta/senha"
+              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white transition-colors"
+            >
+              <KeyRound size={14} /> Trocar senha
+            </NavLink>
+            <button
+              onClick={doSignOut}
+              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-[#fe0000] transition-colors"
+            >
+              <LogOut size={14} /> Sair
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -89,12 +108,22 @@ export default function AdminLayout() {
             </button>
           </div>
           {navItems}
-          <button
-            onClick={doSignOut}
-            className="mt-auto flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-[#fe0000]"
-          >
-            <LogOut size={14} /> Sair
-          </button>
+          {hasS7Card && (
+            <NavLink to="/s7card" className="mt-6 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50">
+              <ArrowLeftRight size={14} /> S7 Card
+            </NavLink>
+          )}
+          <div className="mt-auto flex flex-col gap-3">
+            <NavLink to="/conta/senha" className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50">
+              <KeyRound size={14} /> Trocar senha
+            </NavLink>
+            <button
+              onClick={doSignOut}
+              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-[#fe0000]"
+            >
+              <LogOut size={14} /> Sair
+            </button>
+          </div>
         </div>
       )}
 

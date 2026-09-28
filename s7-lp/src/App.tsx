@@ -5,6 +5,7 @@ import Landing from './pages/Landing';
 
 const TapRedirect = lazy(() => import('./pages/TapRedirect'));
 const Login = lazy(() => import('./pages/Login'));
+const ChangePassword = lazy(() => import('./pages/ChangePassword'));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
 const Prospeccao = lazy(() => import('./pages/admin/Prospeccao'));
@@ -62,6 +63,14 @@ export default function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/r/:code" element={<TapRedirect />} />
+            <Route
+              path="/conta/senha"
+              element={
+                <Protected>
+                  <ChangePassword />
+                </Protected>
+              }
+            />
 
             <Route
               path="/admin"

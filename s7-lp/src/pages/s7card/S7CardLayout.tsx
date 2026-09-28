@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Store, Nfc, LogOut, Menu, X, ArrowLeftRight } from 'lucide-react';
+import { LayoutDashboard, Store, Nfc, LogOut, Menu, X, ArrowLeftRight, KeyRound } from 'lucide-react';
 import { useAuth } from '../../lib/auth';
 
 const nav = [
@@ -63,12 +63,20 @@ export default function S7CardLayout() {
           )}
           <p className="text-sm font-bold">{profile?.full_name ?? '—'}</p>
           <p className="text-xs text-white/40 uppercase tracking-widest mb-4">S7 Card</p>
-          <button
-            onClick={doSignOut}
-            className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-[#fe0000] transition-colors"
-          >
-            <LogOut size={14} /> Sair
-          </button>
+          <div className="flex flex-col gap-2">
+            <NavLink
+              to="/conta/senha"
+              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white transition-colors"
+            >
+              <KeyRound size={14} /> Trocar senha
+            </NavLink>
+            <button
+              onClick={doSignOut}
+              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-[#fe0000] transition-colors"
+            >
+              <LogOut size={14} /> Sair
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -96,9 +104,14 @@ export default function S7CardLayout() {
               <ArrowLeftRight size={14} /> Painel da Agência
             </NavLink>
           )}
-          <button onClick={doSignOut} className="mt-auto flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-[#fe0000]">
-            <LogOut size={14} /> Sair
-          </button>
+          <div className="mt-auto flex flex-col gap-3">
+            <NavLink to="/conta/senha" className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50">
+              <KeyRound size={14} /> Trocar senha
+            </NavLink>
+            <button onClick={doSignOut} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-[#fe0000]">
+              <LogOut size={14} /> Sair
+            </button>
+          </div>
         </div>
       )}
 
