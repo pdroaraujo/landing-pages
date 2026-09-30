@@ -109,9 +109,31 @@ export type S7CardTag = {
   status: 'em_estoque' | 'instalada' | 'defeito';
   installed_at: string | null;
   created_at: string;
+  created_by: string | null;
+  /** valor cobrado por essa(s) placa(s) — entra no faturamento */
+  sold_value: number;
+  /** quantas placas físicas usam esse mesmo código/link (ex: 4 mesas) */
+  quantity: number;
   store?: S7CardStore;
   taps_count?: number;
 };
+
+export type S7CardClient = {
+  user_id: string;
+  store_id: string;
+  trial_ends_at: string;
+  paid_until: string | null;
+  monthly_price: number;
+  created_at: string;
+};
+
+/** acesso do cliente ao painel: grátis nos 30 primeiros dias, depois só com mensalidade em dia */
+export function clientAccess(c: Pick<S7CardClient, 'trial_ends_at' | 'paid_until'>) {
+  const today = new Date().toISOString().slice(0, 10);
+  if (c.paid_until && c.paid_until >= today) return { active: true, kind: 'pago' as const, until: c.paid_until };
+  if (c.trial_ends_at >= today) return { active: true, kind: 'teste' as const, until: c.trial_ends_at };
+  return { active: false, kind: 'vencido' as const, until: c.paid_until ?? c.trial_ends_at };
+}
 
 export type ProspectStatus = 'a_prospectar' | 'prospectado' | 'vendido' | 'descartado';
 

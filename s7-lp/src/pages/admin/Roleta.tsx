@@ -2,13 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Dices, ArrowRight, Loader2, Copy, Check, Upload } from 'lucide-react';
 import { NICHES, type Niche } from '../../lib/niches';
-import { loadBrCities, loadCountries, worldCountries, UFS, EMPTY_PLACE, type BrCity, type Country, type Place } from '../../lib/places';
+import { loadBrCities, loadCountries, worldCountries, UF_OPTIONS, EMPTY_PLACE, type BrCity, type Country, type Place } from '../../lib/places';
 import NichePicker, { TypeChips } from '../../components/admin/NichePicker';
 import PlacePicker from '../../components/admin/PlacePicker';
 import { runProspect, type ProspectResponse } from '../../lib/api';
 import { buildImportPrompt } from '../../lib/prospectPrompt';
 import { parseImportFile, type ImportedBiz } from '../../lib/importParse';
-import { Card, PageHeader, Btn, Field, inputClass } from '../../components/admin/ui';
+import { Card, PageHeader, Btn, Field } from '../../components/admin/ui';
+import Select from '../../components/admin/Select';
 import SlotReel, { type SlotReelHandle } from '../../components/admin/SlotReel';
 
 const randInt = (n: number) => Math.floor(Math.random() * n);
@@ -27,7 +28,8 @@ export default function Roleta() {
   const [scope, setScope] = useState<Scope>('brasil');
   const [sortMode, setSortMode] = useState<SortMode>('ambos');
   const [ufFilter, setUfFilter] = useState(''); // '' = todos os estados (só vale pra Brasil)
-  const [manualNicheSlug, setManualNicheSlug] = useState(NICHES[0].slug);
+  const [manualNicheSlug, setManualNicheSlug] = useState<string | null>(null);
+  const [manualType, setManualType] = useState('');
   const [fixedPlace, setFixedPlace] = useState<Place>(EMPTY_PLACE);
   const [via, setVia] = useState<Via>('roleta');
   const [pickSlug, setPickSlug] = useState<string | null>(null);
@@ -64,7 +66,8 @@ export default function Roleta() {
       ? brCitiesFiltered.map((c) => `${c.n} · ${c.uf}`)
       : worldPlaces.map((c) => `${c.cap} · ${c.n}`);
 
-  const ready = sortMode === 'so_nicho' ? !!fixedPlace.city : cityLabels.length > 0;
+  const ready =
+    sortMode === 'so_nicho' ? !!fixedPlace.city : sortMode === 'so_cidade' ? !!manualNicheSlug && cityLabels.length > 0 : cityLabels.length > 0;
   const busy = phase === 'spinning' || phase === 'running';
 
   const placeAt = (idx: number) => {
@@ -113,7 +116,7 @@ export default function Roleta() {
           countryCode: fixedPlace.countryCode,
           place: [fixedPlace.city, fixedPlace.uf || fixedPlace.country].join(' · '),
         };
-    setDrawn({ niche, type: '', ...place });
+    setDrawn({ niche, type: spinNiche ? '' : manualType, ...place });
     setPhase('ready');
   };
 
@@ -275,27 +278,34 @@ export default function Roleta() {
           </div>
         </div>
 
-        <div className="mb-6 flex flex-wrap justify-center gap-4">
-          {scope === 'brasil' && sortMode !== 'so_nicho' && (
+        {scope === 'brasil' && sortMode !== 'so_nicho' && (
+          <div className="mx-auto mb-6 max-w-xs">
             <Field label="Estado (filtra a cidade sorteada)">
-              <select value={ufFilter} onChange={(e) => setUfFilter(e.target.value)} disabled={busy} className={inputClass}>
-                <option value="" className="bg-[#161616]">Todos os estados</option>
-                {UFS.map((uf) => (
-                  <option key={uf} value={uf} className="bg-[#161616]">{uf}</option>
-                ))}
-              </select>
+              <Select
+                value={ufFilter}
+                onChange={setUfFilter}
+                options={[{ value: '', label: 'Todos os estados' }, ...UF_OPTIONS]}
+                disabled={busy}
+                searchable
+              />
             </Field>
-          )}
-          {sortMode === 'so_cidade' && (
-            <Field label="Nicho fixo">
-              <select value={manualNicheSlug} onChange={(e) => setManualNicheSlug(e.target.value)} disabled={busy} className={inputClass}>
-                {NICHES.map((n) => (
-                  <option key={n.slug} value={n.slug} className="bg-[#161616]">{n.label}</option>
-                ))}
-              </select>
-            </Field>
-          )}
-        </div>
+          </div>
+        )}
+
+        {sortMode === 'so_cidade' && (
+          <div className="mb-6">
+            <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-white/40">Nicho fixo (categoria e tipo)</p>
+            <NichePicker
+              nicheSlug={manualNicheSlug}
+              type={manualType}
+              onChange={(slug, t) => {
+                setManualNicheSlug(slug);
+                setManualType(t);
+              }}
+              disabled={busy}
+            />
+          </div>
+        )}
 
         {sortMode === 'so_nicho' && (
           <div className="mb-6">

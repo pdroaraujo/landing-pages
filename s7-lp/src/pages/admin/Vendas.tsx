@@ -6,6 +6,7 @@ import { useTeam } from '../../lib/useTeam';
 import type { Sale } from '../../lib/types';
 import { brl, fullDate } from '../../lib/format';
 import { Card, PageHeader, Btn, Field, inputClass, Badge } from '../../components/admin/ui';
+import Select from '../../components/admin/Select';
 
 const PRODUTOS = ['Criação de Site', 'SEO', 'Google Meu Negócio', 'Manutenção Mensal', 'Landing Page', 'Tráfego Pago', 'Outro'];
 
@@ -147,11 +148,11 @@ export default function Vendas() {
               <input required value={form.client_name} onChange={(e) => setForm({ ...form, client_name: e.target.value })} className={inputClass} />
             </Field>
             <Field label="Produto">
-              <select value={form.product} onChange={(e) => setForm({ ...form, product: e.target.value })} className={inputClass}>
-                {PRODUTOS.map((p) => (
-                  <option key={p} className="bg-[#161616]">{p}</option>
-                ))}
-              </select>
+              <Select
+                value={form.product}
+                onChange={(product) => setForm({ ...form, product })}
+                options={PRODUTOS.map((p) => ({ value: p, label: p }))}
+              />
             </Field>
             <Field label="Valor (R$)">
               <input required type="number" step="0.01" value={form.value} onChange={(e) => setForm({ ...form, value: e.target.value })} className={inputClass} />
@@ -170,16 +171,11 @@ export default function Vendas() {
               Contrato assinado
             </label>
             <Field label="Quem fechou">
-              <select
+              <Select
                 value={form.seller}
-                onChange={(e) => setForm({ ...form, seller: e.target.value })}
-                className={inputClass}
-              >
-                {team.map((m) => (
-                  <option key={m.id} className="bg-[#161616]">{m.full_name}</option>
-                ))}
-                {!team.length && <option className="bg-[#161616]">{profile?.full_name}</option>}
-              </select>
+                onChange={(seller) => setForm({ ...form, seller })}
+                options={(team.length ? team.map((m) => m.full_name) : [profile?.full_name ?? '']).map((n) => ({ value: n, label: n }))}
+              />
             </Field>
             <Field label="Data">
               <input type="date" value={form.sold_at} onChange={(e) => setForm({ ...form, sold_at: e.target.value })} className={inputClass} />

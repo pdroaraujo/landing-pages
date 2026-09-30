@@ -1,16 +1,20 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Nfc, LogOut, Menu, X, ArrowLeftRight, KeyRound, MapPinned } from 'lucide-react';
+import { LayoutDashboard, Nfc, LogOut, Menu, X, ArrowLeftRight, KeyRound, MapPinned, Users } from 'lucide-react';
 import { useAuth } from '../../lib/auth';
 
-const nav = [
+const baseNav = [
   { to: '/s7card', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/s7card/mapeamento', label: 'Mapeamento', icon: MapPinned },
   { to: '/s7card/placas', label: 'Placas', icon: Nfc },
 ];
 
+const ROLE_LABEL: Record<string, string> = { owner: 'Administrador', member: 'Administrador', socio: 'Sócio', vendedor: 'Vendedor' };
+
 export default function S7CardLayout() {
-  const { profile, workspaces, signOut } = useAuth();
+  const { profile, workspaces, s7Role, s7Full, signOut } = useAuth();
+  const nav = s7Full ? [...baseNav, { to: '/s7card/equipe', label: 'Equipe e clientes', icon: Users }] : baseNav;
+  const roleLabel = ROLE_LABEL[s7Role ?? ''] ?? 'S7 Card';
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
@@ -59,7 +63,7 @@ export default function S7CardLayout() {
             </NavLink>
           )}
           <p className="text-sm font-bold">{profile?.full_name ?? '—'}</p>
-          <p className="text-xs text-white/40 uppercase tracking-widest mb-4">S7 Card</p>
+          <p className="text-xs text-white/40 uppercase tracking-widest mb-4">{roleLabel} · S7 Card</p>
           <div className="flex flex-col gap-2">
             <NavLink
               to="/conta/senha"

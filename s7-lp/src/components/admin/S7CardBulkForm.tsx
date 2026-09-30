@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { LINK_TYPES, linkTypeInfo, type LinkType } from '../../lib/s7card';
 import { Btn, Field, inputClass } from './ui';
+import Select from './Select';
 
 const randomCode = () => Math.random().toString(36).slice(2, 8);
 
@@ -49,11 +50,11 @@ export default function S7CardBulkForm({ onCreated }: { onCreated: () => void })
           <input type="number" min={1} max={200} value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} className={inputClass} />
         </Field>
         <Field label="Tipo de placa (padrão do lote)">
-          <select value={linkType} onChange={(e) => setLinkType(e.target.value as LinkType)} className={inputClass}>
-            {LINK_TYPES.map((t) => (
-              <option key={t.key} value={t.key} className="bg-[#161616]">{t.label}</option>
-            ))}
-          </select>
+          <Select
+            value={linkType}
+            onChange={(v) => setLinkType(v as LinkType)}
+            options={LINK_TYPES.map((t) => ({ value: t.key, label: t.label }))}
+          />
         </Field>
         <Field label="Prefixo do código (opcional)">
           <input value={prefix} onChange={(e) => setPrefix(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))} className={inputClass} placeholder="Ex: lote1" />

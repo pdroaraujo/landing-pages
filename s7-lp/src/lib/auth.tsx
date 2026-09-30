@@ -3,12 +3,17 @@ import type { Session } from '@supabase/supabase-js';
 import { supabase, supabaseReady } from './supabase';
 import type { Profile } from './types';
 
-export type Workspace = 'agencia' | 's7card';
+export type Workspace = 'agencia' | 's7card' | 'cliente';
+/** papel dentro do S7 Card: owner/member = dono, socio = sócio, vendedor = só vê o que vendeu */
+export type S7Role = 'owner' | 'member' | 'socio' | 'vendedor' | 'cliente';
 
 type AuthCtx = {
   session: Session | null;
   profile: Profile | null;
   workspaces: Workspace[] | null; // null = ainda carregando
+  s7Role: S7Role | null;
+  /** dono ou sócio do S7 Card (vê faturamento geral, equipe, clientes) */
+  s7Full: boolean;
   loading: boolean;
   ready: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
@@ -21,6 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [workspaces, setWorkspaces] = useState<Workspace[] | null>(null);
+  const [s7Role, setS7Role] = useState<S7Role | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,6 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!session) {
       setProfile(null);
       setWorkspaces(null);
+      setS7Role(null);
       return;
     }
     supabase
@@ -50,9 +57,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then(({ data }) => setProfile((data as Profile) ?? null));
     supabase
       .from('workspace_access')
-      .select('workspace')
+      .select('workspace, role')
       .eq('user_id', session.user.id)
-      .then(({ data }) => setWorkspaces(((data ?? []) as { workspace: Workspace }[]).map((w) => w.workspace)));
+      .then(({ data }) => {
+        const rows = (data ?? []) as { workspace: Workspace; role: S7Role }[];
+        setS7Role(rows.find((w) => w.workspace === 's7card')?.role ?? null);
+        setWorkspaces(rows.map((w) => w.workspace));
+      });
   }, [session]);
 
   const signIn: AuthCtx['signIn'] = async (email, password) => {
@@ -65,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <Ctx.Provider value={{ session, profile, workspaces, loading, ready: supabaseReady, signIn, signOut }}>
+    <Ctx.Provider value={{ session, profile, workspaces, s7Role, s7Full: s7Role === 'owner' || s7Role === 'member' || s7Role === 'socio', loading, ready: supabaseReady, signIn, signOut }}>
       {children}
     </Ctx.Provider>
   );

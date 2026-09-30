@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { loadBrCities, loadCountries, worldCountries, UFS, type BrCity, type Country, type Place } from '../../lib/places';
+import { loadBrCities, loadCountries, worldCountries, UF_OPTIONS, type BrCity, type Country, type Place } from '../../lib/places';
 import { Field, inputClass } from './ui';
+import Select from './Select';
 
 /** País -> Estado (só Brasil) -> Cidade. Fora do Brasil a cidade é texto livre (vem preenchida com a capital). */
 export default function PlacePicker({
@@ -21,8 +22,18 @@ export default function PlacePicker({
   }, []);
 
   const world = useMemo(() => worldCountries(countries), [countries]);
-  const cities = useMemo(
-    () => (value.uf ? brCities.filter((c) => c.uf === value.uf).sort((a, b) => a.n.localeCompare(b.n, 'pt')) : []),
+  const countryOptions = useMemo(
+    () => [{ value: 'BR', label: 'Brasil' }, ...world.map((c) => ({ value: c.cc, label: c.n }))],
+    [world],
+  );
+  const cityOptions = useMemo(
+    () =>
+      value.uf
+        ? brCities
+            .filter((c) => c.uf === value.uf)
+            .sort((a, b) => a.n.localeCompare(b.n, 'pt'))
+            .map((c) => ({ value: c.n, label: c.n }))
+        : [],
     [brCities, value.uf],
   );
   const isBr = value.countryCode === 'BR';
@@ -36,41 +47,30 @@ export default function PlacePicker({
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       <Field label="País">
-        <select value={value.countryCode} onChange={(e) => setCountry(e.target.value)} disabled={disabled} className={inputClass}>
-          <option value="BR" className="bg-[#161616]">Brasil</option>
-          {world.map((c) => (
-            <option key={c.cc} value={c.cc} className="bg-[#161616]">{c.n}</option>
-          ))}
-        </select>
+        <Select value={value.countryCode} onChange={setCountry} options={countryOptions} disabled={disabled} searchable />
       </Field>
       {isBr && (
         <Field label="Estado">
-          <select
+          <Select
             value={value.uf}
-            onChange={(e) => onChange({ ...value, uf: e.target.value, city: '' })}
+            onChange={(uf) => onChange({ ...value, uf, city: '' })}
+            options={UF_OPTIONS}
+            placeholder="Escolha o estado"
             disabled={disabled}
-            className={inputClass}
-          >
-            <option value="" className="bg-[#161616]">Escolha o estado</option>
-            {UFS.map((uf) => (
-              <option key={uf} value={uf} className="bg-[#161616]">{uf}</option>
-            ))}
-          </select>
+            searchable
+          />
         </Field>
       )}
       <Field label="Cidade">
         {isBr ? (
-          <select
+          <Select
             value={value.city}
-            onChange={(e) => onChange({ ...value, city: e.target.value })}
+            onChange={(city) => onChange({ ...value, city })}
+            options={cityOptions}
+            placeholder={value.uf ? 'Escolha a cidade' : 'Escolha o estado antes'}
             disabled={disabled || !value.uf}
-            className={inputClass}
-          >
-            <option value="" className="bg-[#161616]">{value.uf ? 'Escolha a cidade' : 'Escolha o estado antes'}</option>
-            {cities.map((c) => (
-              <option key={c.n} value={c.n} className="bg-[#161616]">{c.n}</option>
-            ))}
-          </select>
+            searchable
+          />
         ) : (
           <input
             value={value.city}

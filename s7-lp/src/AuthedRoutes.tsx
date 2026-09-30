@@ -18,6 +18,8 @@ const S7CardDashboard = lazy(() => import('./pages/s7card/S7CardDashboard'));
 const S7CardLojaDetalhe = lazy(() => import('./pages/s7card/S7CardLojaDetalhe'));
 const S7CardPlacas = lazy(() => import('./pages/s7card/S7CardPlacas'));
 const S7CardMapeamento = lazy(() => import('./pages/s7card/S7CardMapeamento'));
+const S7CardEquipe = lazy(() => import('./pages/s7card/S7CardEquipe'));
+const ClientePainel = lazy(() => import('./pages/cliente/ClientePainel'));
 
 function Blank() {
   return <div className="min-h-screen bg-[#0f0f0f]" />;
@@ -34,6 +36,13 @@ function Protected({ children, workspace }: { children: React.ReactNode; workspa
     if (workspaces === null) return <Blank />;
     if (!workspaces.includes(workspace)) return <Navigate to="/login" replace />;
   }
+  return <>{children}</>;
+}
+
+/** telas só pra dono/sócio do S7 Card (vendedor é mandado pro dashboard dele) */
+function S7FullOnly({ children }: { children: React.ReactNode }) {
+  const { s7Full } = useAuth();
+  if (!s7Full) return <Navigate to="/s7card" replace />;
   return <>{children}</>;
 }
 
@@ -94,7 +103,24 @@ export default function AuthedRoutes() {
             <Route path="mapeamento" element={<S7CardMapeamento />} />
             <Route path="lojas/:id" element={<S7CardLojaDetalhe />} />
             <Route path="placas" element={<S7CardPlacas />} />
+            <Route
+              path="equipe"
+              element={
+                <S7FullOnly>
+                  <S7CardEquipe />
+                </S7FullOnly>
+              }
+            />
           </Route>
+
+          <Route
+            path="/cliente"
+            element={
+              <Protected workspace="cliente">
+                <ClientePainel />
+              </Protected>
+            }
+          />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

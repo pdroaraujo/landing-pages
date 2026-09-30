@@ -37,7 +37,12 @@ export default function Listas() {
     e.preventDefault();
     e.stopPropagation();
     if (!confirm(`Apagar a lista "${name}"? As empresas ficam salvas (não prospectamos de novo), só a lista some. Não dá pra desfazer.`)) return;
-    await supabase.from('lists').delete().eq('id', id);
+    // sem .select() o delete bloqueado pela RLS volta "sucesso" com 0 linhas — por isso confere
+    const { data, error } = await supabase.from('lists').delete().eq('id', id).select('id');
+    if (error || !data?.length) {
+      alert('Não consegui apagar essa lista (sem permissão no banco). Fale com o admin.');
+      return;
+    }
     load();
   };
 

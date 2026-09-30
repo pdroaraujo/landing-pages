@@ -17,21 +17,21 @@ if (!URL || !KEY) {
 const DEFAULT_PASSWORD = 'PadraoS7@';
 
 const USERS = [
-  { key: 'PEDRO',    email: 'pedro@agencias7.com.br',    full_name: 'Pedro Aráujo',       role: 'admin',  workspaces: ['agencia', 's7card'] },
+  { key: 'PEDRO',    email: 'pedro@agencias7.com.br',    full_name: 'Pedro Aráujo',       role: 'admin',  workspaces: ['agencia', 's7card'], s7role: 'owner' },
   { key: 'ANTONIO',  email: 'antonio@agencias7.com.br',  full_name: 'Antonio Papadopoli', role: 'seller', workspaces: ['agencia'] },
   { key: 'VINICIUS', email: 'vinicius@agencias7.com.br', full_name: 'Vinicius Amaral',    role: 'seller', workspaces: ['agencia'] },
-  { key: 'ENZO',     email: 'enzo@agencias7.com.br',     full_name: 'Enzo Luchetti',      role: 'seller', workspaces: ['s7card'] },
+  { key: 'ENZO',     email: 'enzo@agencias7.com.br',     full_name: 'Enzo Luchetti',      role: 'seller', workspaces: ['s7card'], s7role: 'socio' },
 ];
 
 const db = createClient(URL, KEY, { auth: { autoRefreshToken: false, persistSession: false } });
 
 const pwd = (u) => process.env[`S7_PWD_${u.key}`] || DEFAULT_PASSWORD;
 
-const grantWorkspaces = async (userId, workspaces) => {
+// no S7 Card o papel importa: owner (Pedro) e socio (Enzo) veem tudo; vendedor só o que vendeu
+const grantWorkspaces = async (userId, workspaces, s7role) => {
   for (const workspace of workspaces) {
-    await db
-      .from('workspace_access')
-      .upsert({ user_id: userId, workspace, role: 'member' }, { onConflict: 'user_id,workspace' });
+    const role = workspace === 's7card' ? s7role ?? 'vendedor' : 'member';
+    await db.from('workspace_access').upsert({ user_id: userId, workspace, role }, { onConflict: 'user_id,workspace' });
   }
 };
 
@@ -63,6 +63,6 @@ for (const u of USERS) {
     console.log(`✔ criado      ${u.email}  (senha: ${password})`);
   }
   await db.from('profiles').upsert({ id: userId, full_name: u.full_name, role: u.role });
-  await grantWorkspaces(userId, u.workspaces);
+  await grantWorkspaces(userId, u.workspaces, u.s7role);
 }
 console.log(`\nPronto. Senha padrão de todos: ${DEFAULT_PASSWORD} — cada um troca a própria em Conta → Trocar senha.`);

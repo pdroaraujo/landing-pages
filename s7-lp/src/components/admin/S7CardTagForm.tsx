@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { LINK_TYPES, linkTypeInfo, type LinkType } from '../../lib/s7card';
 import { buildReviewLink, extractPlaceId, isReviewLink, PLACE_ID_FINDER_URL } from '../../lib/googleReview';
 import { Btn, Field, inputClass } from './ui';
+import Select from './Select';
 
 const randomCode = () => Math.random().toString(36).slice(2, 8);
 
@@ -21,6 +22,8 @@ export default function S7CardTagForm({
   const [destination, setDestination] = useState('');
   const [label, setLabel] = useState('');
   const [reviewsBaseline, setReviewsBaseline] = useState('');
+  const [soldValue, setSoldValue] = useState('');
+  const [quantity, setQuantity] = useState('1');
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -64,6 +67,8 @@ export default function S7CardTagForm({
       store_id: storeId ?? null,
       status: storeId ? 'instalada' : 'em_estoque',
       installed_at: storeId ? new Date().toISOString().slice(0, 10) : null,
+      sold_value: Number(soldValue) || 0,
+      quantity: Math.max(1, Number(quantity) || 1),
     });
     if (error) {
       setSaving(false);
@@ -82,6 +87,8 @@ export default function S7CardTagForm({
     setDestination('');
     setLabel('');
     setReviewsBaseline('');
+    setSoldValue('');
+    setQuantity('1');
     setPlaceIdFound(false);
     onCreated();
   };
@@ -90,11 +97,11 @@ export default function S7CardTagForm({
     <form onSubmit={submit} className="flex flex-col gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Tipo de placa">
-          <select value={linkType} onChange={(e) => setLinkType(e.target.value as LinkType)} className={inputClass}>
-            {LINK_TYPES.map((t) => (
-              <option key={t.key} value={t.key} className="bg-[#161616]">{t.label}</option>
-            ))}
-          </select>
+          <Select
+            value={linkType}
+            onChange={(v) => setLinkType(v as LinkType)}
+            options={LINK_TYPES.map((t) => ({ value: t.key, label: t.label }))}
+          />
         </Field>
         <Field label="Apelido (opcional)">
           <input value={label} onChange={(e) => setLabel(e.target.value)} className={inputClass} placeholder="Ex: balcão, mesa 4" />
@@ -129,6 +136,22 @@ export default function S7CardTagForm({
           <input value={destination} onChange={(e) => setDestination(e.target.value)} className={inputClass} placeholder={info.placeholder} />
         </Field>
       )}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Valor vendido (R$)">
+          <input
+            type="number"
+            min={0}
+            step="0.01"
+            value={soldValue}
+            onChange={(e) => setSoldValue(e.target.value)}
+            className={inputClass}
+            placeholder="Ex: 89,90 (deixe vazio se ainda não foi vendida)"
+          />
+        </Field>
+        <Field label="Quantidade (placas com esse mesmo link)">
+          <input type="number" min={1} value={quantity} onChange={(e) => setQuantity(e.target.value)} className={inputClass} />
+        </Field>
+      </div>
       {askReviews && (
         <Field label="Avaliações no Google hoje (fica salvo pra comparar depois)">
           <input

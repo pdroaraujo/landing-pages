@@ -6,6 +6,8 @@ import Landing from './pages/Landing';
 // grupo autenticado pra não baixar esse peso pra quem só visita o site.
 const TapRedirect = lazy(() => import('./pages/TapRedirect'));
 const AuthedRoutes = lazy(() => import('./AuthedRoutes'));
+// loja (e-commerce) — página separada, ainda sem link no site
+const Loja = lazy(() => import('./pages/loja/Loja'));
 
 function Blank() {
   return <div className="min-h-screen bg-[#0f0f0f]" />;
@@ -18,6 +20,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/r/:code" element={<TapRedirect />} />
+          <Route path="/loja" element={<Loja />} />
           <Route path="/*" element={<AuthedRoutes />} />
         </Routes>
       </Suspense>

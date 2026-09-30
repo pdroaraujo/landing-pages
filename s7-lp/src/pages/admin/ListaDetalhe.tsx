@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Globe, AtSign, Link2, PhoneOff, Phone, Star, Check, X, Users, Sparkles } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
+import Select from '../../components/admin/Select';
 import { useTeam } from '../../lib/useTeam';
 import { analyzePending } from '../../lib/api';
 import type { CallStatus, ListItem, WebsiteStatus } from '../../lib/types';
@@ -237,26 +238,23 @@ export default function ListaDetalhe() {
                     {it.qualified === true && (
                       <div className="flex flex-wrap justify-end gap-2">
                         {isAdmin && (
-                          <select
-                            value={it.assigned_to ?? ''}
-                            onChange={(e) => patch(it.id, { assigned_to: e.target.value || null })}
-                            className="rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1.5 text-xs text-white"
-                          >
-                            <option value="" className="bg-[#161616]">— sem dono —</option>
-                            {team.map((s) => (
-                              <option key={s.id} value={s.id} className="bg-[#161616]">{s.full_name}</option>
-                            ))}
-                          </select>
+                          <div className="w-44">
+                            <Select
+                              size="sm"
+                              value={it.assigned_to ?? ''}
+                              onChange={(v) => patch(it.id, { assigned_to: v || null })}
+                              options={[{ value: '', label: 'Sem responsável' }, ...team.map((s) => ({ value: s.id, label: s.full_name }))]}
+                            />
+                          </div>
                         )}
-                        <select
-                          value={it.call_status}
-                          onChange={(e) => setStatus(it.id, e.target.value as CallStatus)}
-                          className="rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1.5 text-xs text-white"
-                        >
-                          {Object.entries(CALL_LABELS).map(([k, v]) => (
-                            <option key={k} value={k} className="bg-[#161616]">{v}</option>
-                          ))}
-                        </select>
+                        <div className="w-44">
+                          <Select
+                            size="sm"
+                            value={it.call_status}
+                            onChange={(v) => setStatus(it.id, v as CallStatus)}
+                            options={Object.entries(CALL_LABELS).map(([k, v]) => ({ value: k, label: v }))}
+                          />
+                        </div>
                       </div>
                     )}
                   </div>

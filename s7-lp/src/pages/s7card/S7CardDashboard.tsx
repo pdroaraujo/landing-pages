@@ -1,58 +1,67 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Store, Nfc, MousePointerClick, DollarSign, Plus } from 'lucide-react';
+import { DollarSign, TrendingUp, ShoppingCart, Nfc, MousePointerClick, Plus, RefreshCw } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../lib/auth';
 import { brl, num } from '../../lib/format';
 import { Card, PageHeader, Btn } from '../../components/admin/ui';
 import AreaChart from '../../components/admin/AreaChart';
 
 type Tap = { tapped_at: string; tag: { store_id: string | null; store: { name: string } | null } | null };
+type StoreRow = { status: string; sold_value: number };
+type TagRow = { status: string; sold_value: number; quantity: number };
+type ClientRow = { paid_until: string | null; trial_ends_at: string; monthly_price: number };
 
 export default function S7CardDashboard() {
-  const [storesCount, setStoresCount] = useState({ ativa: 0, total: 0 });
-  const [tagsCount, setTagsCount] = useState({ instalada: 0, em_estoque: 0, total: 0 });
-  const [revenue, setRevenue] = useState(0);
+  const { s7Full } = useAuth();
+  const [stores, setStores] = useState<StoreRow[]>([]);
+  const [tags, setTags] = useState<TagRow[]>([]);
+  const [clients, setClients] = useState<ClientRow[]>([]);
   const [taps, setTaps] = useState<Tap[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const load = async () => {
+    setLoading(true);
+    const since = new Date(Date.now() - 60 * 864e5).toISOString();
+    // a RLS já filtra: vendedor só recebe as lojas/placas/toques dele
+    const [{ data: s }, { data: t }, { data: c }, { data: tp }] = await Promise.all([
+      supabase.from('s7card_stores').select('status, sold_value'),
+      supabase.from('s7card_tags').select('status, sold_value, quantity'),
+      s7Full ? supabase.from('s7card_clients').select('paid_until, trial_ends_at, monthly_price') : Promise.resolve({ data: [] }),
+      supabase
+        .from('s7card_taps')
+        .select('tapped_at, tag:s7card_tags(store_id, store:s7card_stores(name))')
+        .gte('tapped_at', since)
+        .order('tapped_at', { ascending: true }),
+    ]);
+    setStores((s as StoreRow[]) ?? []);
+    setTags((t as TagRow[]) ?? []);
+    setClients((c as ClientRow[]) ?? []);
+    setTaps((tp as unknown as Tap[]) ?? []);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const since = new Date(Date.now() - 60 * 864e5).toISOString();
-      const [{ data: stores }, { data: tags }, { data: tapsData }] = await Promise.all([
-        supabase.from('s7card_stores').select('status, sold_value'),
-        supabase.from('s7card_tags').select('status'),
-        supabase
-          .from('s7card_taps')
-          .select('tapped_at, tag:s7card_tags(store_id, store:s7card_stores(name))')
-          .gte('tapped_at', since)
-          .order('tapped_at', { ascending: true }),
-      ]);
-
-      const s = (stores as { status: string; sold_value: number }[]) ?? [];
-      setStoresCount({ ativa: s.filter((x) => x.status === 'ativa').length, total: s.length });
-      setRevenue(s.reduce((a, x) => a + Number(x.sold_value || 0), 0));
-
-      const t = (tags as { status: string }[]) ?? [];
-      setTagsCount({
-        instalada: t.filter((x) => x.status === 'instalada').length,
-        em_estoque: t.filter((x) => x.status === 'em_estoque').length,
-        total: t.length,
-      });
-
-      setTaps((tapsData as unknown as Tap[]) ?? []);
-      setLoading(false);
-    })();
-  }, []);
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [s7Full]);
 
   const m = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    const saleValues = [...stores.map((x) => Number(x.sold_value || 0)), ...tags.map((x) => Number(x.sold_value || 0))].filter((v) => v > 0);
+    const faturamento = saleValues.reduce((a, v) => a + v, 0);
+    const vendas = saleValues.length;
+    const pagantes = clients.filter((c) => c.paid_until && c.paid_until >= today);
+    const emTeste = clients.filter((c) => !(c.paid_until && c.paid_until >= today) && c.trial_ends_at >= today).length;
+    const recorrencia = pagantes.reduce((a, c) => a + Number(c.monthly_price || 0), 0);
+
+    const placas = (status: string) => tags.filter((x) => x.status === status).reduce((a, x) => a + (x.quantity || 1), 0);
+
     const now = new Date();
-    const thisMonth = taps.filter((t) => {
-      const d = new Date(t.tapped_at);
+    const thisMonth = taps.filter((x) => {
+      const d = new Date(x.tapped_at);
       return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
     });
-
-    // últimos 14 dias, um ponto por dia
     const days = Array.from({ length: 14 }, (_, i) => {
       const d = new Date();
       d.setDate(d.getDate() - (13 - i));
@@ -60,42 +69,75 @@ export default function S7CardDashboard() {
     });
     const evo = days.map((d) => ({
       label: d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
-      value: taps.filter((t) => new Date(t.tapped_at).toDateString() === d.toDateString()).length,
+      value: taps.filter((x) => new Date(x.tapped_at).toDateString() === d.toDateString()).length,
     }));
-
     const byStore = new Map<string, number>();
-    thisMonth.forEach((t) => {
-      const name = t.tag?.store?.name ?? 'Sem loja';
+    thisMonth.forEach((x) => {
+      const name = x.tag?.store?.name ?? 'Placa sem loja';
       byStore.set(name, (byStore.get(name) ?? 0) + 1);
     });
-    const ranking = [...byStore.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const ranking = [...byStore.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6);
 
-    return { monthTotal: thisMonth.length, evo, ranking };
-  }, [taps]);
+    return {
+      faturamento,
+      vendas,
+      ticket: vendas ? faturamento / vendas : 0,
+      recorrencia,
+      pagantes: pagantes.length,
+      emTeste,
+      lojasAtivas: stores.filter((x) => x.status === 'ativa').length,
+      lojasTotal: stores.length,
+      instaladas: placas('instalada'),
+      estoque: placas('em_estoque'),
+      toquesMes: thisMonth.length,
+      evo,
+      ranking,
+    };
+  }, [stores, tags, clients, taps]);
 
-  const stats = [
-    { label: 'Lojas ativas', value: num(storesCount.ativa), sub: `${storesCount.total} cadastradas`, icon: Store },
-    { label: 'Placas instaladas', value: num(tagsCount.instalada), sub: `${tagsCount.em_estoque} em estoque`, icon: Nfc },
-    { label: 'Toques este mês', value: num(m.monthTotal), sub: 'nos últimos 14 dias no gráfico', icon: MousePointerClick },
-    { label: 'Faturamento (placas)', value: brl(revenue), sub: 'venda única acumulada', icon: DollarSign },
+  const kpis = s7Full
+    ? [
+        { label: 'Faturamento total', value: brl(m.faturamento), sub: 'valor acumulado', icon: DollarSign },
+        { label: 'Recorrência mensal', value: brl(m.recorrencia), sub: `${m.pagantes} contratos assinados`, icon: TrendingUp },
+        { label: 'Ticket médio', value: brl(m.ticket), sub: `${m.vendas} vendas realizadas`, icon: ShoppingCart },
+        { label: 'Total de vendas', value: num(m.vendas), sub: 'vendas realizadas', icon: ShoppingCart },
+      ]
+    : [
+        { label: 'Meu faturamento', value: brl(m.faturamento), sub: 'só as suas vendas', icon: DollarSign },
+        { label: 'Ticket médio', value: brl(m.ticket), sub: `${m.vendas} vendas realizadas`, icon: ShoppingCart },
+        { label: 'Minhas vendas', value: num(m.vendas), sub: 'vendas realizadas', icon: ShoppingCart },
+        { label: 'Placas instaladas', value: num(m.instaladas), sub: 'nas suas lojas', icon: Nfc },
+      ];
+
+  const operacao = [
+    { label: 'Lojas ativas', value: num(m.lojasAtivas), sub: `de ${m.lojasTotal} cadastradas` },
+    { label: 'Placas instaladas', value: num(m.instaladas), sub: 'em lojas' },
+    { label: 'Em estoque', value: num(m.estoque), sub: 'prontas pra vender' },
+    { label: 'Toques no mês', value: num(m.toquesMes), sub: 'todas as placas' },
+    ...(s7Full ? [{ label: 'Clientes em teste', value: num(m.emTeste), sub: '30 dias grátis' }] : []),
   ];
 
   return (
     <div>
       <PageHeader
         title="Dashboard"
-        subtitle="S7 Card — lojas, placas instaladas e toques registrados."
+        subtitle={s7Full ? 'S7 Card — vendas, recorrência e desempenho das placas.' : 'Suas vendas de placas e o desempenho das suas lojas.'}
         actions={
-          <Link to="/s7card/mapeamento">
-            <Btn>
-              <Plus size={14} /> Nova loja
+          <>
+            <Btn variant="outline" onClick={load}>
+              <RefreshCw size={14} /> Atualizar
             </Btn>
-          </Link>
+            <Link to="/s7card/mapeamento">
+              <Btn>
+                <Plus size={14} /> Nova loja
+              </Btn>
+            </Link>
+          </>
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-6">
-        {stats.map((s) => (
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-10">
+        {kpis.map((s) => (
           <Card key={s.label} className="p-6">
             <div className="flex items-start justify-between">
               <span className="text-[11px] font-bold uppercase tracking-widest text-white/45">{s.label}</span>
@@ -109,32 +151,44 @@ export default function S7CardDashboard() {
         ))}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Card className="p-6 lg:col-span-2">
-          <h3 className="font-bold tracking-tight mb-5 flex items-center gap-2">
-            <MousePointerClick size={16} className="text-[#fe0000]" /> Toques nos últimos 14 dias
-          </h3>
+      {/* operação: uma faixa corrida, sem blocos */}
+      <section className="mb-10">
+        <h2 className="mb-4 text-[11px] font-bold uppercase tracking-widest text-white/40">Operação</h2>
+        <div className="flex flex-wrap border-y border-white/10">
+          {operacao.map((o, i) => (
+            <div key={o.label} className={`min-w-[150px] flex-1 px-5 py-5 ${i > 0 ? 'border-l border-white/10' : ''}`}>
+              <p className="text-2xl font-bold tracking-tighter">{loading ? '—' : o.value}</p>
+              <p className="mt-1 text-xs font-bold text-white/70">{o.label}</p>
+              <p className="text-[11px] text-white/35">{o.sub}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="grid gap-10 lg:grid-cols-[1fr_320px]">
+        <div>
+          <h2 className="mb-5 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/40">
+            <MousePointerClick size={13} className="text-[#fe0000]" /> Toques nos últimos 14 dias
+          </h2>
           <AreaChart data={m.evo} />
-        </Card>
-        <Card className="p-6">
-          <h3 className="font-bold tracking-tight mb-5">Ranking do mês</h3>
+        </div>
+        <div>
+          <h2 className="mb-4 text-[11px] font-bold uppercase tracking-widest text-white/40">Lojas com mais toques no mês</h2>
           {m.ranking.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-white/10 px-4 py-8 text-center text-xs text-white/35">
-              Nenhum toque registrado ainda.
-            </p>
+            <p className="border-t border-white/10 py-6 text-xs text-white/35">Nenhum toque registrado ainda.</p>
           ) : (
-            <ul className="flex flex-col gap-3">
+            <ol className="divide-y divide-white/10 border-y border-white/10">
               {m.ranking.map(([name, count], i) => (
-                <li key={name} className="flex items-center gap-3">
-                  <span className="text-xs font-bold text-white/30 w-4">{i + 1}</span>
-                  <span className="flex-1 text-sm">{name}</span>
+                <li key={name} className="flex items-center gap-3 py-3">
+                  <span className="w-5 text-xs font-bold text-white/30">{i + 1}</span>
+                  <span className="flex-1 truncate text-sm">{name}</span>
                   <span className="text-sm font-bold">{count}</span>
                 </li>
               ))}
-            </ul>
+            </ol>
           )}
-        </Card>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

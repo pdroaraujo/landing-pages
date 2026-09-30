@@ -1,13 +1,24 @@
 import { useEffect, useState } from 'react';
-import { Copy, Check, Plus, Trash2, Pencil, MousePointerClick, Layers } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Copy, Check, Plus, Trash2, Pencil, MousePointerClick, Layers, Store, Undo2, Link2, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import type { S7CardStore, S7CardTag } from '../../lib/s7card';
 import { LINK_TYPES, linkTypeInfo, type LinkType } from '../../lib/s7card';
+import { brl } from '../../lib/format';
 import { Card, PageHeader, Badge, Btn, Field, inputClass } from '../../components/admin/ui';
+import Select from '../../components/admin/Select';
 import S7CardTagForm from '../../components/admin/S7CardTagForm';
 import S7CardBulkForm from '../../components/admin/S7CardBulkForm';
 
 type Tab = 'todas' | 'em_estoque' | 'instalada' | 'defeito';
+
+const STATUS_LABEL: Record<S7CardTag['status'], string> = {
+  em_estoque: 'Em estoque',
+  instalada: 'Instalada',
+  defeito: 'Defeito',
+};
+
+type EditForm = { link_type: LinkType; destination: string; label: string; sold_value: string; quantity: string };
 
 export default function S7CardPlacas() {
   const [tags, setTags] = useState<S7CardTag[]>([]);
@@ -18,7 +29,8 @@ export default function S7CardPlacas() {
   const [mode, setMode] = useState<'nenhum' | 'nova' | 'lote'>('nenhum');
   const [copied, setCopied] = useState<string | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<{ link_type: LinkType; destination: string; label: string } | null>(null);
+  const [editForm, setEditForm] = useState<EditForm | null>(null);
+  const [linking, setLinking] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -40,15 +52,21 @@ export default function S7CardPlacas() {
     load();
   }, []);
 
-  const assign = async (tagId: string, storeId: string) => {
+  /** vincula a placa a uma loja (vira "instalada") */
+  const linkToStore = async (tagId: string, storeId: string) => {
+    if (!storeId) return;
     await supabase
       .from('s7card_tags')
-      .update({
-        store_id: storeId || null,
-        status: storeId ? 'instalada' : 'em_estoque',
-        installed_at: storeId ? new Date().toISOString().slice(0, 10) : null,
-      })
+      .update({ store_id: storeId, status: 'instalada', installed_at: new Date().toISOString().slice(0, 10) })
       .eq('id', tagId);
+    setLinking(null);
+    load();
+  };
+
+  /** tira a placa da loja e devolve pro estoque (ex: loja cancelou, placa foi trocada) */
+  const backToStock = async (tagId: string, storeName: string) => {
+    if (!confirm(`Tirar essa placa da loja "${storeName}" e devolver pro estoque? Os toques já registrados continuam salvos.`)) return;
+    await supabase.from('s7card_tags').update({ store_id: null, status: 'em_estoque', installed_at: null }).eq('id', tagId);
     load();
   };
 
@@ -65,14 +83,26 @@ export default function S7CardPlacas() {
 
   const startEdit = (t: S7CardTag) => {
     setEditing(t.id);
-    setEditForm({ link_type: t.link_type, destination: t.destination, label: t.label ?? '' });
+    setEditForm({
+      link_type: t.link_type,
+      destination: t.destination,
+      label: t.label ?? '',
+      sold_value: t.sold_value ? String(t.sold_value) : '',
+      quantity: String(t.quantity ?? 1),
+    });
   };
 
   const saveEdit = async (tagId: string) => {
     if (!editForm) return;
     await supabase
       .from('s7card_tags')
-      .update({ link_type: editForm.link_type, destination: editForm.destination, label: editForm.label || null })
+      .update({
+        link_type: editForm.link_type,
+        destination: editForm.destination,
+        label: editForm.label || null,
+        sold_value: Number(editForm.sold_value) || 0,
+        quantity: Math.max(1, Number(editForm.quantity) || 1),
+      })
       .eq('id', tagId);
     setEditing(null);
     load();
@@ -85,12 +115,14 @@ export default function S7CardPlacas() {
   };
 
   const visible = tags.filter((t) => tab === 'todas' || t.status === tab);
+  const storeOptions = stores.map((s) => ({ value: s.id, label: s.name, hint: s.city ?? undefined }));
+  const iconBtn = 'inline-flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-2 text-xs font-bold text-white/70 hover:bg-white/10';
 
   return (
     <div>
       <PageHeader
         title="Placas"
-        subtitle="Inventário de todas as placas NFC — em estoque, instaladas ou com defeito."
+        subtitle="Inventário de todas as placas NFC. Placa em estoque ainda não está em nenhuma loja; ao vincular a uma loja ela vira instalada."
         actions={
           <>
             <Btn variant="outline" onClick={() => setMode(mode === 'lote' ? 'nenhum' : 'lote')}>
@@ -105,7 +137,8 @@ export default function S7CardPlacas() {
 
       {mode === 'nova' && (
         <Card className="p-6 mb-6">
-          <h3 className="font-bold tracking-tight mb-4">Cadastrar placa (sem loja — fica em estoque)</h3>
+          <h3 className="font-bold tracking-tight mb-1">Nova placa</h3>
+          <p className="mb-4 text-xs text-white/40">Entra no estoque. Pra já criar dentro de uma loja, use a página da loja.</p>
           <S7CardTagForm
             onCreated={() => {
               load();
@@ -136,7 +169,7 @@ export default function S7CardPlacas() {
               tab === t ? 'bg-[#fe0000] text-white' : 'text-white/45'
             }`}
           >
-            {t === 'todas' ? 'Todas' : t.replace('_', ' ')}
+            {t === 'todas' ? 'Todas' : STATUS_LABEL[t]}
           </button>
         ))}
       </div>
@@ -156,46 +189,52 @@ export default function S7CardPlacas() {
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-bold">{t.label || info.label}</span>
-                      <Badge tone={t.status === 'instalada' ? 'green' : t.status === 'defeito' ? 'red' : 'default'}>{t.status}</Badge>
+                      {t.quantity > 1 && <Badge tone="default">{t.quantity} placas</Badge>}
+                      <Badge tone={t.status === 'instalada' ? 'green' : t.status === 'defeito' ? 'red' : 'default'}>
+                        {STATUS_LABEL[t.status]}
+                      </Badge>
                       <Badge tone="blue">{info.label}</Badge>
-                      {t.store?.name && <Badge tone="default">{t.store.name}</Badge>}
                     </div>
                     <p className="mt-1 truncate max-w-md text-xs text-white/40">{t.destination}</p>
-                    <p className="mt-1 inline-flex items-center gap-1 text-xs text-white/50">
-                      <MousePointerClick size={12} /> {taps[t.id] ?? 0} toques
-                    </p>
+                    <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-white/50">
+                      {t.store ? (
+                        <Link to={`/s7card/lojas/${t.store.id}`} className="inline-flex items-center gap-1 text-white/80 hover:text-white">
+                          <Store size={12} /> {t.store.name}
+                        </Link>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-white/35">
+                          <Store size={12} /> Ainda não está em nenhuma loja
+                        </span>
+                      )}
+                      <span className="inline-flex items-center gap-1">
+                        <MousePointerClick size={12} /> {taps[t.id] ?? 0} toques
+                      </span>
+                      {t.sold_value > 0 && <span>Vendida por {brl(t.sold_value)}</span>}
+                    </div>
                   </div>
+
                   <div className="flex flex-wrap items-center gap-2">
-                    <select
-                      value={t.store_id ?? ''}
-                      onChange={(e) => assign(t.id, e.target.value)}
-                      className="rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1.5 text-xs text-white"
-                    >
-                      <option value="" className="bg-[#161616]">Sem loja (fica em estoque)</option>
-                      {stores.map((s) => (
-                        <option key={s.id} value={s.id} className="bg-[#161616]">{s.name}</option>
-                      ))}
-                    </select>
-                    <select
-                      value={t.status}
-                      onChange={(e) => setStatus(t.id, e.target.value as S7CardTag['status'])}
-                      className="rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1.5 text-xs text-white"
-                    >
-                      <option value="em_estoque" className="bg-[#161616]">Em estoque</option>
-                      <option value="instalada" className="bg-[#161616]">Instalada</option>
-                      <option value="defeito" className="bg-[#161616]">Defeito</option>
-                    </select>
-                    <button
-                      onClick={() => copyLink(t.code)}
-                      className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-bold text-white/70 hover:bg-white/10"
-                    >
+                    {t.store ? (
+                      <button onClick={() => backToStock(t.id, t.store?.name ?? '')} className={iconBtn} title="Tirar da loja e devolver pro estoque">
+                        <Undo2 size={13} /> Devolver ao estoque
+                      </button>
+                    ) : (
+                      <button onClick={() => setLinking(linking === t.id ? null : t.id)} className={iconBtn}>
+                        <Link2 size={13} /> Vincular a uma loja
+                      </button>
+                    )}
+                    <div className="w-36">
+                      <Select
+                        size="sm"
+                        value={t.status}
+                        onChange={(v) => setStatus(t.id, v as S7CardTag['status'])}
+                        options={(Object.keys(STATUS_LABEL) as S7CardTag['status'][]).map((k) => ({ value: k, label: STATUS_LABEL[k] }))}
+                      />
+                    </div>
+                    <button onClick={() => copyLink(t.code)} className={iconBtn}>
                       {copied === t.code ? <Check size={13} /> : <Copy size={13} />} /r/{t.code}
                     </button>
-                    <button
-                      onClick={() => (isEditing ? setEditing(null) : startEdit(t))}
-                      className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-2.5 py-2 text-xs font-bold text-white/70 hover:bg-white/10"
-                      title="Editar destino"
-                    >
+                    <button onClick={() => (isEditing ? setEditing(null) : startEdit(t))} className={iconBtn} title="Editar placa">
                       <Pencil size={13} />
                     </button>
                     <button
@@ -208,18 +247,30 @@ export default function S7CardPlacas() {
                   </div>
                 </div>
 
+                {linking === t.id && (
+                  <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-white/10 pt-4">
+                    <span className="text-xs text-white/50">Em qual loja essa placa foi instalada?</span>
+                    <div className="w-72">
+                      {storeOptions.length ? (
+                        <Select value="" onChange={(v) => linkToStore(t.id, v)} options={storeOptions} placeholder="Escolha a loja" searchable />
+                      ) : (
+                        <p className="text-xs text-white/35">Nenhuma loja cadastrada ainda (cadastre em Mapeamento).</p>
+                      )}
+                    </div>
+                    <button onClick={() => setLinking(null)} className="text-white/40 hover:text-white" aria-label="Cancelar">
+                      <X size={16} />
+                    </button>
+                  </div>
+                )}
+
                 {isEditing && editForm && (
-                  <div className="mt-4 grid gap-3 border-t border-white/10 pt-4 sm:grid-cols-3">
+                  <div className="mt-4 grid gap-3 border-t border-white/10 pt-4 sm:grid-cols-2 lg:grid-cols-5">
                     <Field label="Tipo">
-                      <select
+                      <Select
                         value={editForm.link_type}
-                        onChange={(e) => setEditForm({ ...editForm, link_type: e.target.value as LinkType })}
-                        className={inputClass}
-                      >
-                        {LINK_TYPES.map((lt) => (
-                          <option key={lt.key} value={lt.key} className="bg-[#161616]">{lt.label}</option>
-                        ))}
-                      </select>
+                        onChange={(v) => setEditForm({ ...editForm, link_type: v as LinkType })}
+                        options={LINK_TYPES.map((lt) => ({ value: lt.key, label: lt.label }))}
+                      />
                     </Field>
                     <Field label="Destino">
                       <input value={editForm.destination} onChange={(e) => setEditForm({ ...editForm, destination: e.target.value })} className={inputClass} />
@@ -227,7 +278,28 @@ export default function S7CardPlacas() {
                     <Field label="Apelido">
                       <input value={editForm.label} onChange={(e) => setEditForm({ ...editForm, label: e.target.value })} className={inputClass} />
                     </Field>
-                    <Btn onClick={() => saveEdit(t.id)} className="sm:col-span-3 self-start">Salvar</Btn>
+                    <Field label="Valor vendido (R$)">
+                      <input
+                        type="number"
+                        min={0}
+                        step="0.01"
+                        value={editForm.sold_value}
+                        onChange={(e) => setEditForm({ ...editForm, sold_value: e.target.value })}
+                        className={inputClass}
+                      />
+                    </Field>
+                    <Field label="Quantidade">
+                      <input
+                        type="number"
+                        min={1}
+                        value={editForm.quantity}
+                        onChange={(e) => setEditForm({ ...editForm, quantity: e.target.value })}
+                        className={inputClass}
+                      />
+                    </Field>
+                    <Btn onClick={() => saveEdit(t.id)} className="self-start sm:col-span-2 lg:col-span-5">
+                      Salvar
+                    </Btn>
                   </div>
                 )}
               </Card>

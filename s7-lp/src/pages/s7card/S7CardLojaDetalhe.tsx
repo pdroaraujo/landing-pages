@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Copy, Check, MousePointerClick, Trash2, Star } from 'lucide-react';
+import { ArrowLeft, Copy, Check, MousePointerClick, Trash2, Star, UserRound } from 'lucide-react';
+import { useAuth } from '../../lib/auth';
 import { supabase } from '../../lib/supabase';
-import type { S7CardStore, S7CardTag } from '../../lib/s7card';
-import { linkTypeInfo } from '../../lib/s7card';
+import type { S7CardStore, S7CardTag, S7CardClient } from '../../lib/s7card';
+import { linkTypeInfo, clientAccess } from '../../lib/s7card';
 import { brl, fullDate } from '../../lib/format';
 import { Card, PageHeader, Badge, inputClass, Btn } from '../../components/admin/ui';
 import S7CardTagForm from '../../components/admin/S7CardTagForm';
@@ -17,6 +18,11 @@ export default function S7CardLojaDetalhe() {
   const [copied, setCopied] = useState<string | null>(null);
   const [reviewsInput, setReviewsInput] = useState('');
   const [savingReviews, setSavingReviews] = useState(false);
+  const { s7Full } = useAuth();
+  const [client, setClient] = useState<(S7CardClient & { profile: { full_name: string } | null }) | null>(null);
+  const [clientForm, setClientForm] = useState({ full_name: '', email: '', password: '' });
+  const [clientMsg, setClientMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [savingClient, setSavingClient] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -25,6 +31,14 @@ export default function S7CardLojaDetalhe() {
       supabase.from('s7card_tags').select('*').eq('store_id', id).order('created_at', { ascending: false }),
     ]);
     setStore(s as S7CardStore);
+    if (s7Full) {
+      const { data: c } = await supabase
+        .from('s7card_clients')
+        .select('*, profile:profiles(full_name)')
+        .eq('store_id', id)
+        .maybeSingle();
+      setClient((c as S7CardClient & { profile: { full_name: string } | null }) ?? null);
+    }
     const tagList = (t as S7CardTag[]) ?? [];
     setTags(tagList);
     if (tagList.length) {
@@ -42,7 +56,7 @@ export default function S7CardLojaDetalhe() {
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { load(); }, [id]);
+  useEffect(() => { load(); }, [id, s7Full]);
 
   const copyLink = (code: string) => {
     navigator.clipboard.writeText(`${window.location.origin}/r/${code}`);
@@ -68,6 +82,36 @@ export default function S7CardLojaDetalhe() {
     await supabase.from('s7card_stores').update(patch).eq('id', store.id);
     setSavingReviews(false);
     setReviewsInput('');
+    load();
+  };
+
+  const createClient = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!store) return;
+    setSavingClient(true);
+    setClientMsg(null);
+    const { data, error } = await supabase.functions.invoke('s7card-users', {
+      body: { action: 'cliente', store_id: store.id, ...clientForm },
+    });
+    setSavingClient(false);
+    const errText = (data as { error?: string } | null)?.error ?? (error ? 'Falha ao criar o acesso.' : null);
+    if (errText) {
+      setClientMsg({ ok: false, text: errText });
+      return;
+    }
+    setClientMsg({ ok: true, text: `Acesso criado. Login: ${clientForm.email} · senha: ${clientForm.password}` });
+    setClientForm({ full_name: '', email: '', password: '' });
+    load();
+  };
+
+  /** registra 1 mensalidade paga: estende o acesso 30 dias a partir do que for maior (hoje ou vencimento atual) */
+  const registerPayment = async () => {
+    if (!client) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const base = [today, client.paid_until ?? '', client.trial_ends_at].sort().pop()!;
+    const d = new Date(base + 'T12:00:00');
+    d.setDate(d.getDate() + 30);
+    await supabase.from('s7card_clients').update({ paid_until: d.toISOString().slice(0, 10) }).eq('user_id', client.user_id);
     load();
   };
 
@@ -109,6 +153,8 @@ export default function S7CardLojaDetalhe() {
                           <span className="font-bold">{t.label || info.label}</span>
                           <Badge tone={t.status === 'instalada' ? 'green' : t.status === 'defeito' ? 'red' : 'default'}>{t.status}</Badge>
                           <Badge tone="blue">{info.label}</Badge>
+                          {t.quantity > 1 && <Badge tone="default">{t.quantity} placas</Badge>}
+                          {t.sold_value > 0 && <Badge tone="default">{brl(t.sold_value)}</Badge>}
                         </div>
                         <p className="mt-1 truncate max-w-md text-xs text-white/40">{t.destination}</p>
                       </div>
@@ -167,6 +213,48 @@ export default function S7CardLojaDetalhe() {
               </Btn>
             </div>
           </Card>
+
+          {s7Full && (
+            <Card className="p-6">
+              <h3 className="font-bold tracking-tight mb-1 flex items-center gap-2">
+                <UserRound size={16} className="text-[#fe0000]" /> Painel do cliente
+              </h3>
+              <p className="mb-4 text-xs text-white/40">O dono da loja vê as métricas das placas. 30 dias grátis, depois R$ 10/mês.</p>
+              {client ? (
+                (() => {
+                  const a = clientAccess(client);
+                  return (
+                    <div className="flex flex-col gap-3 text-sm">
+                      <p>
+                        <span className="font-bold">{client.profile?.full_name ?? 'Cliente'}</span>{' '}
+                        <Badge tone={a.kind === 'pago' ? 'green' : a.kind === 'teste' ? 'amber' : 'red'}>
+                          {a.kind === 'pago' ? 'Assinante' : a.kind === 'teste' ? 'Teste grátis' : 'Vencido'}
+                        </Badge>
+                      </p>
+                      <p className="text-xs text-white/50">
+                        {a.kind === 'vencido' ? 'Acesso bloqueado desde ' : 'Acesso liberado até '}
+                        {fullDate(a.until)}
+                      </p>
+                      <Btn variant="outline" onClick={registerPayment} className="self-start">
+                        Registrar mensalidade paga (+30 dias)
+                      </Btn>
+                    </div>
+                  );
+                })()
+              ) : (
+                <form onSubmit={createClient} className="flex flex-col gap-3">
+                  <input required placeholder="Nome do cliente" value={clientForm.full_name} onChange={(e) => setClientForm({ ...clientForm, full_name: e.target.value })} className={inputClass} />
+                  <input required type="email" placeholder="E-mail (login)" value={clientForm.email} onChange={(e) => setClientForm({ ...clientForm, email: e.target.value })} className={inputClass} />
+                  <input required minLength={6} placeholder="Senha inicial (mín. 6)" value={clientForm.password} onChange={(e) => setClientForm({ ...clientForm, password: e.target.value })} className={inputClass} />
+                  {clientMsg && <p className={`text-xs ${clientMsg.ok ? 'text-emerald-400' : 'text-[#ff5a5a]'}`}>{clientMsg.text}</p>}
+                  <Btn type="submit" disabled={savingClient} className="self-start">
+                    {savingClient ? 'Criando...' : 'Criar acesso do cliente'}
+                  </Btn>
+                </form>
+              )}
+              {clientMsg?.ok && client && <p className="mt-3 text-xs text-emerald-400">{clientMsg.text}</p>}
+            </Card>
+          )}
 
           <Card className="p-6">
             <h3 className="font-bold tracking-tight mb-4">Vincular nova placa</h3>
