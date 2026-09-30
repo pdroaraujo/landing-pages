@@ -106,7 +106,7 @@ export type S7CardTag = {
   destination: string;
   label: string | null;
   store_id: string | null;
-  status: 'em_estoque' | 'instalada' | 'defeito';
+  status: 'em_estoque' | 'instalada' | 'defeito' | 'revenda';
   installed_at: string | null;
   created_at: string;
   created_by: string | null;

@@ -125,3 +125,15 @@ create policy profiles_s7card_team on public.profiles for select
     public.s7card_full()
     and exists (select 1 from public.workspace_access w where w.user_id = profiles.id and w.workspace in ('s7card', 'cliente'))
   );
+
+-- ---------- 6. Enzo só no S7 Card ----------
+-- ele tinha ganhado acesso à agência sem querer (migration antiga deu
+-- workspace "agencia" pra todo mundo que já existia)
+delete from public.workspace_access
+  where workspace = 'agencia' and user_id in (select id from auth.users where lower(email) = 'enzo@agencias7.com.br');
+
+-- ---------- 7. Placas de revenda ----------
+-- placa separada pra revender (não vai pra loja nenhuma da S7)
+alter table public.s7card_tags drop constraint if exists s7card_tags_status_check;
+alter table public.s7card_tags add constraint s7card_tags_status_check
+  check (status in ('em_estoque', 'instalada', 'defeito', 'revenda'));

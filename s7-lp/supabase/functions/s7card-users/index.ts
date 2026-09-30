@@ -38,7 +38,9 @@ Deno.serve(async (req) => {
   } catch {
     return json({ error: 'json inválido' }, 400);
   }
-  const email = body.email?.trim().toLowerCase();
+  // todo login do painel usa o domínio da agência (regra do Felipe)
+  const user = body.email?.trim().toLowerCase().split('@')[0];
+  const email = user ? `${user}@agencias7.com.br` : '';
   const full_name = body.full_name?.trim();
   if (!email || !body.password || body.password.length < 6 || !full_name) {
     return json({ error: 'Preencha nome, e-mail e uma senha de pelo menos 6 caracteres.' }, 400);

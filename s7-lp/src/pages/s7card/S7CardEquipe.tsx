@@ -4,7 +4,8 @@ import { UserPlus, ShieldCheck, BadgeDollarSign, Store } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { clientAccess, type S7CardClient } from '../../lib/s7card';
 import { fullDate } from '../../lib/format';
-import { Card, PageHeader, Btn, Field, inputClass, Badge } from '../../components/admin/ui';
+import { Card, PageHeader, Btn, Field, inputClass, Badge, AgencyEmailInput } from '../../components/admin/ui';
+import { AGENCY_DOMAIN } from '../../lib/agency';
 
 type Member = { user_id: string; role: string; profile: { full_name: string } | null };
 type ClientRow = S7CardClient & { profile: { full_name: string } | null; store: { id: string; name: string } | null };
@@ -34,14 +35,15 @@ export default function S7CardEquipe() {
     e.preventDefault();
     setSaving(true);
     setMsg(null);
-    const { data, error } = await supabase.functions.invoke('s7card-users', { body: { action: 'vendedor', ...form } });
+    const email = `${form.email}@${AGENCY_DOMAIN}`;
+    const { data, error } = await supabase.functions.invoke('s7card-users', { body: { action: 'vendedor', ...form, email } });
     setSaving(false);
     const errText = (data as { error?: string } | null)?.error ?? (error ? 'Falha ao criar o acesso.' : null);
     if (errText) {
       setMsg({ ok: false, text: errText });
       return;
     }
-    setMsg({ ok: true, text: `Acesso criado. Login: ${form.email} · senha: ${form.password}` });
+    setMsg({ ok: true, text: `Acesso criado. Login: ${email} · senha: ${form.password}` });
     setForm({ full_name: '', email: '', password: '' });
     load();
   };
@@ -115,7 +117,7 @@ export default function S7CardEquipe() {
               <input required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} className={inputClass} />
             </Field>
             <Field label="E-mail (login)">
-              <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputClass} />
+              <AgencyEmailInput value={form.email} onChange={(email) => setForm({ ...form, email })} />
             </Field>
             <Field label="Senha inicial">
               <input

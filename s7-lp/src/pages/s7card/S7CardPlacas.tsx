@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Copy, Check, Plus, Trash2, Pencil, MousePointerClick, Layers, Store, Undo2, Link2, X } from 'lucide-react';
+import { Copy, Check, Plus, Trash2, Pencil, MousePointerClick, Layers, Store, Undo2, Link2, X, Repeat } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import type { S7CardStore, S7CardTag } from '../../lib/s7card';
 import { LINK_TYPES, linkTypeInfo, type LinkType } from '../../lib/s7card';
@@ -10,12 +10,20 @@ import Select from '../../components/admin/Select';
 import S7CardTagForm from '../../components/admin/S7CardTagForm';
 import S7CardBulkForm from '../../components/admin/S7CardBulkForm';
 
-type Tab = 'todas' | 'em_estoque' | 'instalada' | 'defeito';
+type Tab = 'todas' | 'em_estoque' | 'instalada' | 'revenda' | 'defeito';
 
 const STATUS_LABEL: Record<S7CardTag['status'], string> = {
   em_estoque: 'Em estoque',
   instalada: 'Instalada',
+  revenda: 'Revenda',
   defeito: 'Defeito',
+};
+
+const STATUS_TONE: Record<S7CardTag['status'], 'default' | 'green' | 'red' | 'amber'> = {
+  em_estoque: 'default',
+  instalada: 'green',
+  revenda: 'amber',
+  defeito: 'red',
 };
 
 type EditForm = { link_type: LinkType; destination: string; label: string; sold_value: string; quantity: string };
@@ -31,6 +39,7 @@ export default function S7CardPlacas() {
   const [editing, setEditing] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<EditForm | null>(null);
   const [linking, setLinking] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const load = async () => {
     setLoading(true);
@@ -108,6 +117,31 @@ export default function S7CardPlacas() {
     load();
   };
 
+  // ---- seleção em massa ----
+  const toggle = (id: string) =>
+    setSelected((s) => {
+      const n = new Set(s);
+      if (n.has(id)) n.delete(id);
+      else n.add(id);
+      return n;
+    });
+
+  const bulk = async (action: 'apagar' | 'estoque' | 'revenda') => {
+    const ids = [...selected];
+    if (!ids.length) return;
+    const n = ids.length;
+    if (action === 'apagar') {
+      if (!confirm(`Apagar ${n} placa${n > 1 ? 's' : ''}? Os toques registrados delas também somem. Não dá pra desfazer.`)) return;
+      await supabase.from('s7card_tags').delete().in('id', ids);
+    } else if (action === 'estoque') {
+      await supabase.from('s7card_tags').update({ store_id: null, status: 'em_estoque', installed_at: null }).in('id', ids);
+    } else {
+      await supabase.from('s7card_tags').update({ store_id: null, status: 'revenda', installed_at: null }).in('id', ids);
+    }
+    setSelected(new Set());
+    load();
+  };
+
   const copyLink = (code: string) => {
     navigator.clipboard.writeText(`${window.location.origin}/r/${code}`);
     setCopied(code);
@@ -115,6 +149,8 @@ export default function S7CardPlacas() {
   };
 
   const visible = tags.filter((t) => tab === 'todas' || t.status === tab);
+  const allSelected = visible.length > 0 && visible.every((t) => selected.has(t.id));
+  const toggleAll = () => setSelected(allSelected ? new Set() : new Set(visible.map((t) => t.id)));
   const storeOptions = stores.map((s) => ({ value: s.id, label: s.name, hint: s.city ?? undefined }));
   const iconBtn = 'inline-flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-2 text-xs font-bold text-white/70 hover:bg-white/10';
 
@@ -161,10 +197,13 @@ export default function S7CardPlacas() {
       )}
 
       <div className="mb-5 inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
-        {(['todas', 'em_estoque', 'instalada', 'defeito'] as const).map((t) => (
+        {(['todas', 'em_estoque', 'instalada', 'revenda', 'defeito'] as const).map((t) => (
           <button
             key={t}
-            onClick={() => setTab(t)}
+            onClick={() => {
+              setTab(t);
+              setSelected(new Set());
+            }}
             className={`rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest ${
               tab === t ? 'bg-[#fe0000] text-white' : 'text-white/45'
             }`}
@@ -180,17 +219,55 @@ export default function S7CardPlacas() {
         <Card className="p-10 text-center text-sm text-white/40">Nenhuma placa nessa categoria.</Card>
       ) : (
         <div className="grid gap-3">
+          <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-3">
+            <label className="flex cursor-pointer items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/60">
+              <input type="checkbox" checked={allSelected} onChange={toggleAll} className="h-4 w-4 accent-[#fe0000]" />
+              Selecionar todas ({visible.length})
+            </label>
+            {selected.size > 0 && (
+              <>
+                <span className="text-xs text-white/40">
+                  {selected.size} selecionada{selected.size > 1 ? 's' : ''}
+                </span>
+                <div className="ml-auto flex flex-wrap gap-2">
+                  <button onClick={() => bulk('estoque')} className={iconBtn}>
+                    <Undo2 size={13} /> Devolver ao estoque
+                  </button>
+                  <button onClick={() => bulk('revenda')} className={iconBtn}>
+                    <Repeat size={13} /> Mover pra revenda
+                  </button>
+                  <button
+                    onClick={() => bulk('apagar')}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-[#fe0000]/15 px-3 py-2 text-xs font-bold text-[#ff5a5a] hover:bg-[#fe0000]/25"
+                  >
+                    <Trash2 size={13} /> Apagar selecionadas
+                  </button>
+                  <button onClick={() => setSelected(new Set())} className="px-2 text-xs text-white/40 hover:text-white">
+                    Limpar
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
           {visible.map((t) => {
             const info = linkTypeInfo(t.link_type);
             const isEditing = editing === t.id;
             return (
-              <Card key={t.id} className="p-5">
+              <Card key={t.id} className={`p-5 ${selected.has(t.id) ? 'ring-1 ring-[#fe0000]/60' : ''}`}>
                 <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex min-w-0 items-start gap-4">
+                  <input
+                    type="checkbox"
+                    checked={selected.has(t.id)}
+                    onChange={() => toggle(t.id)}
+                    className="mt-1 h-4 w-4 shrink-0 accent-[#fe0000]"
+                    aria-label="Selecionar placa"
+                  />
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-bold">{t.label || info.label}</span>
                       {t.quantity > 1 && <Badge tone="default">{t.quantity} placas</Badge>}
-                      <Badge tone={t.status === 'instalada' ? 'green' : t.status === 'defeito' ? 'red' : 'default'}>
+                      <Badge tone={STATUS_TONE[t.status]}>
                         {STATUS_LABEL[t.status]}
                       </Badge>
                       <Badge tone="blue">{info.label}</Badge>
@@ -203,7 +280,7 @@ export default function S7CardPlacas() {
                         </Link>
                       ) : (
                         <span className="inline-flex items-center gap-1 text-white/35">
-                          <Store size={12} /> Ainda não está em nenhuma loja
+                          <Store size={12} /> {t.status === 'revenda' ? 'Separada pra revenda' : 'Ainda não está em nenhuma loja'}
                         </span>
                       )}
                       <span className="inline-flex items-center gap-1">
@@ -211,6 +288,7 @@ export default function S7CardPlacas() {
                       </span>
                       {t.sold_value > 0 && <span>Vendida por {brl(t.sold_value)}</span>}
                     </div>
+                  </div>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">

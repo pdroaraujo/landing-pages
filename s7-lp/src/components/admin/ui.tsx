@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { AGENCY_DOMAIN, emailUser } from '../../lib/agency';
 
 export function Card({ className = '', children }: { className?: string; children: ReactNode }) {
   return (
@@ -83,5 +84,21 @@ export function Badge({ children, tone = 'default' }: { children: ReactNode; ton
     <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${tones[tone]}`}>
       {children}
     </span>
+  );
+}
+
+/** todo login criado pelo painel usa o domínio da agência: a pessoa só digita o usuário */
+export function AgencyEmailInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="flex items-stretch overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] focus-within:border-[#fe0000]/60">
+      <input
+        required
+        value={value}
+        onChange={(e) => onChange(emailUser(e.target.value))}
+        placeholder="usuario"
+        className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm text-white placeholder-white/30 outline-none"
+      />
+      <span className="flex items-center border-l border-white/10 px-3 text-sm text-white/40">@{AGENCY_DOMAIN}</span>
+    </div>
   );
 }

@@ -11,6 +11,7 @@ export default function S7CardBulkForm({ onCreated }: { onCreated: () => void })
   const [linkType, setLinkType] = useState<LinkType>('google_review');
   const [destination, setDestination] = useState('');
   const [prefix, setPrefix] = useState('');
+  const [revenda, setRevenda] = useState(false);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [done, setDone] = useState<number | null>(null);
@@ -27,7 +28,7 @@ export default function S7CardBulkForm({ onCreated }: { onCreated: () => void })
       code: `${prefix.trim() ? prefix.trim() + '-' : ''}${randomCode()}${i}`,
       link_type: linkType,
       destination: destination.trim() || info.placeholder,
-      status: 'em_estoque' as const,
+      status: revenda ? ('revenda' as const) : ('em_estoque' as const),
     }));
     const { data, error } = await supabase.from('s7card_tags').insert(rows).select('id');
     setSaving(false);
@@ -65,6 +66,10 @@ export default function S7CardBulkForm({ onCreated }: { onCreated: () => void })
       </Field>
       {err && <p className="text-xs text-[#ff5a5a]">{err}</p>}
       {done !== null && <p className="text-xs text-emerald-400">{done} placas criadas em estoque.</p>}
+      <label className="flex items-center gap-2 text-xs text-white/60">
+        <input type="checkbox" checked={revenda} onChange={(e) => setRevenda(e.target.checked)} className="accent-[#fe0000]" />
+        Lote pra revenda (fica separado do estoque, na aba Revenda)
+      </label>
       <Btn type="submit" disabled={saving} className="self-start">
         {saving ? 'Gerando...' : `Gerar ${Math.min(Math.max(quantity, 1), 200)} placas`}
       </Btn>

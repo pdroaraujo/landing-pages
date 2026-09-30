@@ -54,6 +54,7 @@ export default function S7CardMapeamento() {
   // cadastro direto de loja (sem passar pelo pipeline)
   const [showNewStore, setShowNewStore] = useState(false);
   const [storeForm, setStoreForm] = useState(emptyStore);
+  const [newStatus, setNewStatus] = useState<ProspectStatus>('a_prospectar');
   const [savingStore, setSavingStore] = useState(false);
 
   // marcar prospect como vendido
@@ -169,6 +170,30 @@ export default function S7CardMapeamento() {
     load();
   };
 
+  /** cadastrou como vendida por engano: volta pro pipeline com outra situação (a loja sai de "Vendido") */
+  const unsell = async (st: S7CardStore, status: ProspectStatus) => {
+    if (!confirm(`Mover "${st.name}" de Vendido para ${STATUS_LABEL[status]}? As placas dela voltam pro estoque.`)) return;
+    const linked = prospects.find((p) => p.store_id === st.id);
+    if (linked) {
+      await supabase.from('s7card_prospects').update({ status, store_id: null }).eq('id', linked.id);
+    } else {
+      await supabase.from('s7card_prospects').insert({
+        name: st.name,
+        category: st.category,
+        address: st.address,
+        city: st.city,
+        uf: st.uf,
+        phone: st.contact_phone,
+        status,
+        dedup_key: prospectDedupKey(st.name, st.contact_phone, st.city),
+      });
+    }
+    await supabase.from('s7card_tags').update({ status: 'em_estoque', installed_at: null }).eq('store_id', st.id);
+    await supabase.from('s7card_stores').delete().eq('id', st.id);
+    setTab(status);
+    load();
+  };
+
   const startSell = (p: S7CardProspect) => {
     setSellingId(p.id);
     setSellForm({ value: '', sold_at: new Date().toISOString().slice(0, 10), reviews_baseline: '' });
@@ -199,6 +224,30 @@ export default function S7CardMapeamento() {
   const addStore = async (e: React.FormEvent) => {
     e.preventDefault();
     setSavingStore(true);
+    if (newStatus !== 'vendido') {
+      // ainda não comprou: vai pro pipeline (a prospectar / prospectado / descartado)
+      const { error } = await supabase.from('s7card_prospects').insert({
+        name: storeForm.name,
+        category: storeForm.category || null,
+        address: storeForm.address || null,
+        city: storeForm.city || null,
+        uf: storeForm.uf || null,
+        phone: storeForm.contact_phone || null,
+        notes: storeForm.contact_name ? `Contato: ${storeForm.contact_name}` : null,
+        status: newStatus,
+        dedup_key: prospectDedupKey(storeForm.name, storeForm.contact_phone || null, storeForm.city || null),
+      });
+      setSavingStore(false);
+      if (error) {
+        alert(error.message.includes('duplicate') ? 'Esse estabelecimento já está no mapeamento.' : error.message);
+        return;
+      }
+      setStoreForm(emptyStore);
+      setShowNewStore(false);
+      setTab(newStatus);
+      load();
+      return;
+    }
     const { error } = await supabase.from('s7card_stores').insert({
       name: storeForm.name,
       category: storeForm.category || null,
@@ -228,7 +277,7 @@ export default function S7CardMapeamento() {
         actions={
           <>
             <Btn variant="outline" onClick={() => setShowNewStore((s) => !s)}>
-              <Plus size={14} /> Nova loja
+              <Plus size={14} /> Adicionar estabelecimento
             </Btn>
             <Btn onClick={() => setShowImport((s) => !s)}>
               <Upload size={14} /> Importar lista
@@ -239,7 +288,24 @@ export default function S7CardMapeamento() {
 
       {showNewStore && (
         <Card className="p-6 mb-6">
-          <h3 className="font-bold tracking-tight mb-4">Cadastrar loja direto (já vendida)</h3>
+          <h3 className="font-bold tracking-tight mb-4">Adicionar estabelecimento</h3>
+          <div className="mb-5">
+            <span className="mb-2 block text-xs font-medium uppercase tracking-widest text-white/50">Situação</span>
+            <div className="inline-flex flex-wrap rounded-full border border-white/10 bg-white/[0.03] p-1">
+              {(['a_prospectar', 'prospectado', 'vendido', 'descartado'] as const).map((st) => (
+                <button
+                  key={st}
+                  type="button"
+                  onClick={() => setNewStatus(st)}
+                  className={`rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest ${
+                    newStatus === st ? 'bg-[#fe0000] text-white' : 'text-white/45 hover:text-white'
+                  }`}
+                >
+                  {STATUS_LABEL[st]}
+                </button>
+              ))}
+            </div>
+          </div>
           <form onSubmit={addStore} className="grid gap-4 sm:grid-cols-2">
             <Field label="Nome da loja">
               <input required value={storeForm.name} onChange={(e) => setStoreForm({ ...storeForm, name: e.target.value })} className={inputClass} />
@@ -264,17 +330,21 @@ export default function S7CardMapeamento() {
             <Field label="Telefone">
               <input value={storeForm.contact_phone} onChange={(e) => setStoreForm({ ...storeForm, contact_phone: e.target.value })} className={inputClass} />
             </Field>
-            <Field label="Valor da venda (R$)">
-              <input type="number" step="0.01" value={storeForm.sold_value} onChange={(e) => setStoreForm({ ...storeForm, sold_value: e.target.value })} className={inputClass} />
-            </Field>
-            <Field label="Data da venda">
-              <input type="date" value={storeForm.sold_at} onChange={(e) => setStoreForm({ ...storeForm, sold_at: e.target.value })} className={inputClass} />
-            </Field>
-            <Field label="Avaliações no Google hoje (opcional)">
-              <input type="number" value={storeForm.reviews_baseline} onChange={(e) => setStoreForm({ ...storeForm, reviews_baseline: e.target.value })} className={inputClass} placeholder="Ex: 12" />
-            </Field>
+            {newStatus === 'vendido' && (
+              <>
+                <Field label="Valor da venda (R$)">
+                  <input type="number" step="0.01" value={storeForm.sold_value} onChange={(e) => setStoreForm({ ...storeForm, sold_value: e.target.value })} className={inputClass} />
+                </Field>
+                <Field label="Data da venda">
+                  <input type="date" value={storeForm.sold_at} onChange={(e) => setStoreForm({ ...storeForm, sold_at: e.target.value })} className={inputClass} />
+                </Field>
+                <Field label="Avaliações no Google hoje (opcional)">
+                  <input type="number" value={storeForm.reviews_baseline} onChange={(e) => setStoreForm({ ...storeForm, reviews_baseline: e.target.value })} className={inputClass} placeholder="Ex: 12" />
+                </Field>
+              </>
+            )}
             <Btn type="submit" disabled={savingStore} className="sm:col-span-2 self-start">
-              {savingStore ? 'Salvando...' : 'Cadastrar loja'}
+              {savingStore ? 'Salvando...' : newStatus === 'vendido' ? 'Cadastrar loja vendida' : `Adicionar em ${STATUS_LABEL[newStatus]}`}
             </Btn>
           </form>
         </Card>
@@ -377,6 +447,20 @@ export default function S7CardMapeamento() {
                       <Link to={`/s7card/lojas/${s.id}`} className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-bold text-white/70 hover:bg-white/10">
                         Ver loja <ChevronRight size={13} />
                       </Link>
+                      <button
+                        onClick={() => unsell(s, 'prospectado')}
+                        className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-bold text-white/60 hover:bg-white/10"
+                        title="Não fechou ainda: volta pra Prospectado"
+                      >
+                        <Undo2 size={13} /> Não vendeu
+                      </button>
+                      <button
+                        onClick={() => unsell(s, 'descartado')}
+                        className="inline-flex items-center gap-1 rounded-lg bg-white/5 px-3 py-2 text-xs font-bold text-white/60 hover:bg-[#fe0000]/20 hover:text-[#ff5a5a]"
+                        title="Mover para Descartado"
+                      >
+                        <Ban size={13} /> Descartar
+                      </button>
                       <button onClick={() => removeStore(s.id, s.name)} className="rounded-lg bg-white/5 p-2.5 text-white/40 hover:bg-[#fe0000]/20 hover:text-[#ff5a5a]" title="Apagar loja">
                         <Trash2 size={14} />
                       </button>

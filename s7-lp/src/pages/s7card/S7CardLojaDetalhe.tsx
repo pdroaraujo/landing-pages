@@ -6,7 +6,8 @@ import { supabase } from '../../lib/supabase';
 import type { S7CardStore, S7CardTag, S7CardClient } from '../../lib/s7card';
 import { linkTypeInfo, clientAccess } from '../../lib/s7card';
 import { brl, fullDate } from '../../lib/format';
-import { Card, PageHeader, Badge, inputClass, Btn } from '../../components/admin/ui';
+import { Card, PageHeader, Badge, inputClass, Btn, AgencyEmailInput } from '../../components/admin/ui';
+import { AGENCY_DOMAIN } from '../../lib/agency';
 import S7CardTagForm from '../../components/admin/S7CardTagForm';
 
 export default function S7CardLojaDetalhe() {
@@ -91,7 +92,7 @@ export default function S7CardLojaDetalhe() {
     setSavingClient(true);
     setClientMsg(null);
     const { data, error } = await supabase.functions.invoke('s7card-users', {
-      body: { action: 'cliente', store_id: store.id, ...clientForm },
+      body: { action: 'cliente', store_id: store.id, ...clientForm, email: `${clientForm.email}@${AGENCY_DOMAIN}` },
     });
     setSavingClient(false);
     const errText = (data as { error?: string } | null)?.error ?? (error ? 'Falha ao criar o acesso.' : null);
@@ -99,7 +100,7 @@ export default function S7CardLojaDetalhe() {
       setClientMsg({ ok: false, text: errText });
       return;
     }
-    setClientMsg({ ok: true, text: `Acesso criado. Login: ${clientForm.email} · senha: ${clientForm.password}` });
+    setClientMsg({ ok: true, text: `Acesso criado. Login: ${clientForm.email}@${AGENCY_DOMAIN} · senha: ${clientForm.password}` });
     setClientForm({ full_name: '', email: '', password: '' });
     load();
   };
@@ -244,7 +245,7 @@ export default function S7CardLojaDetalhe() {
               ) : (
                 <form onSubmit={createClient} className="flex flex-col gap-3">
                   <input required placeholder="Nome do cliente" value={clientForm.full_name} onChange={(e) => setClientForm({ ...clientForm, full_name: e.target.value })} className={inputClass} />
-                  <input required type="email" placeholder="E-mail (login)" value={clientForm.email} onChange={(e) => setClientForm({ ...clientForm, email: e.target.value })} className={inputClass} />
+                  <AgencyEmailInput value={clientForm.email} onChange={(email) => setClientForm({ ...clientForm, email })} />
                   <input required minLength={6} placeholder="Senha inicial (mín. 6)" value={clientForm.password} onChange={(e) => setClientForm({ ...clientForm, password: e.target.value })} className={inputClass} />
                   {clientMsg && <p className={`text-xs ${clientMsg.ok ? 'text-emerald-400' : 'text-[#ff5a5a]'}`}>{clientMsg.text}</p>}
                   <Btn type="submit" disabled={savingClient} className="self-start">
