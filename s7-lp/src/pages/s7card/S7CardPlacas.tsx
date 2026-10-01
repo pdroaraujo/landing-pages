@@ -196,7 +196,7 @@ export default function S7CardPlacas() {
         </Card>
       )}
 
-      <div className="mb-5 inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
+      <div className="mb-5 tabs-track inline-flex max-w-full overflow-x-auto rounded-full border border-white/10 bg-white/[0.03] p-1">
         {(['todas', 'em_estoque', 'instalada', 'revenda', 'defeito'] as const).map((t) => (
           <button
             key={t}

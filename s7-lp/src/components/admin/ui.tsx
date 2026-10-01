@@ -70,7 +70,7 @@ export function Field({ label, children }: { label: string; children: ReactNode 
 }
 
 export const inputClass =
-  'w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white placeholder-white/30 outline-none focus:border-[#fe0000]/60 transition-colors';
+  'w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-base sm:text-sm text-white placeholder-white/30 outline-none focus:border-[#fe0000]/60 transition-colors';
 
 export function Badge({ children, tone = 'default' }: { children: ReactNode; tone?: 'default' | 'red' | 'green' | 'amber' | 'blue' }) {
   const tones = {
@@ -96,7 +96,7 @@ export function AgencyEmailInput({ value, onChange }: { value: string; onChange:
         value={value}
         onChange={(e) => onChange(emailUser(e.target.value))}
         placeholder="usuario"
-        className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm text-white placeholder-white/30 outline-none"
+        className="min-w-0 flex-1 bg-transparent px-4 py-3 text-base sm:text-sm text-white placeholder-white/30 outline-none"
       />
       <span className="flex items-center border-l border-white/10 px-3 text-sm text-white/40">@{AGENCY_DOMAIN}</span>
     </div>

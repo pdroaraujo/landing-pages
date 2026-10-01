@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { prefetchWhenIdle } from '../../lib/prefetch';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Nfc, LogOut, Menu, X, ArrowLeftRight, KeyRound, MapPinned, Users } from 'lucide-react';
 import { useAuth } from '../../lib/auth';
@@ -17,6 +18,15 @@ export default function S7CardLayout() {
   const roleLabel = ROLE_LABEL[s7Role ?? ''] ?? 'S7 Card';
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    prefetchWhenIdle([
+      () => import('./S7CardDashboard'),
+      () => import('./S7CardMapeamento'),
+      () => import('./S7CardPlacas'),
+      () => import('./S7CardLojaDetalhe'),
+    ]);
+  }, []);
 
   const doSignOut = async () => {
     await signOut();

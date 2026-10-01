@@ -197,7 +197,7 @@ export default function Roleta() {
 
       <Card className="mx-auto max-w-3xl p-8">
         <div className="mb-6 flex justify-center">
-          <div className="inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
+          <div className="tabs-track inline-flex max-w-full overflow-x-auto rounded-full border border-white/10 bg-white/[0.03] p-1">
             {([
               { key: 'roleta', label: 'Roleta' },
               { key: 'escolher', label: 'Escolher' },
@@ -243,7 +243,7 @@ export default function Roleta() {
         {via === 'roleta' && (<>
         <div className="mb-4 flex flex-wrap justify-center gap-2">
           {sortMode !== 'so_nicho' && (
-          <div className="inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
+          <div className="tabs-track inline-flex max-w-full overflow-x-auto rounded-full border border-white/10 bg-white/[0.03] p-1">
             {(['brasil', 'mundo'] as const).map((s) => (
               <button
                 key={s}
@@ -258,7 +258,7 @@ export default function Roleta() {
             ))}
           </div>
           )}
-          <div className="inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
+          <div className="tabs-track inline-flex max-w-full overflow-x-auto rounded-full border border-white/10 bg-white/[0.03] p-1">
             {([
               { key: 'ambos', label: 'Nicho + cidade' },
               { key: 'so_nicho', label: 'Só o nicho' },

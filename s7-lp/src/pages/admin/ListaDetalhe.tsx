@@ -146,7 +146,7 @@ export default function ListaDetalhe() {
         }
       />
 
-      <div className="mb-5 inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
+      <div className="mb-5 tabs-track inline-flex max-w-full overflow-x-auto rounded-full border border-white/10 bg-white/[0.03] p-1">
         {tabs.map((t) => (
           <button
             key={t.key}

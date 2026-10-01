@@ -119,7 +119,7 @@ export default function Select({
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   placeholder="Buscar..."
-                  className="w-full bg-transparent text-sm text-white outline-none placeholder-white/30"
+                  className="w-full bg-transparent text-base sm:text-sm text-white outline-none placeholder-white/30"
                 />
               </div>
             )}

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { prefetchWhenIdle } from '../../lib/prefetch';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -24,6 +25,16 @@ export default function AdminLayout() {
   const { profile, workspaces, signOut } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    prefetchWhenIdle([
+      () => import('./Dashboard'),
+      () => import('./Roleta'),
+      () => import('./Listas'),
+      () => import('./ListaDetalhe'),
+      () => import('./Vendas'),
+    ]);
+  }, []);
   const hasS7Card = workspaces?.includes('s7card');
 
   const doSignOut = async () => {

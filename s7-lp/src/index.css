@@ -25,3 +25,8 @@
 ::selection {
   @apply bg-primary text-white;
 }
+
+/* trilho de abas do painel: no celular rola pro lado em vez de quebrar/estourar */
+.tabs-track { scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.tabs-track::-webkit-scrollbar { display: none; }
+.tabs-track > * { flex-shrink: 0; white-space: nowrap; }
