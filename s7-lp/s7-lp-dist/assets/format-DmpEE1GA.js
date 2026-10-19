@@ -1,0 +1,1 @@
+var e=e=>new Intl.NumberFormat(`pt-BR`,{style:`currency`,currency:`BRL`}).format(e||0),t=e=>new Intl.NumberFormat(`pt-BR`).format(e||0),n=e=>new Intl.DateTimeFormat(`pt-BR`,{day:`2-digit`,month:`short`}).format(new Date(e)),r=e=>new Intl.DateTimeFormat(`pt-BR`,{day:`2-digit`,month:`2-digit`,year:`numeric`}).format(new Date(e));export{n as i,r as n,t as r,e as t};
