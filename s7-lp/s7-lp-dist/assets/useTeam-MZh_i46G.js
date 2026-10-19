@@ -1,1 +1,0 @@
-import{n as e,s as t}from"./jsx-runtime-CnSBKPes.js";import{t as n}from"./supabase-h-YE0jRq.js";var r=t(e(),1);function i(){let[e,t]=(0,r.useState)([]);return(0,r.useEffect)(()=>{n.from(`profiles`).select(`id, full_name, role`).order(`created_at`,{ascending:!0}).then(({data:e})=>t(e??[]))},[]),e}export{i as t};
