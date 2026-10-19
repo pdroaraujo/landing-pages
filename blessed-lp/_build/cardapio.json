@@ -1,0 +1,600 @@
+{
+ "categorias": [
+  {
+   "id": "matcha",
+   "nome": "Matcha",
+   "descricao": "Chá verde japonês em pó, produzido a partir de folhas cultivadas à sombra e moídas em pedra. Sabor vegetal, notas umami e leve dulçor natural."
+  },
+  {
+   "id": "cafes",
+   "nome": "Cafés",
+   "descricao": "Grãos especiais 86+ SCA. Substitua por leite zero lactose ou vegetal de aveia por R$ 3."
+  },
+  {
+   "id": "gelados",
+   "nome": "Cafés Gelados",
+   "descricao": "Substitua por leite zero lactose ou vegetal de aveia por R$ 3."
+  },
+  {
+   "id": "chas",
+   "nome": "Chás & Chocolates",
+   "descricao": null
+  },
+  {
+   "id": "salgados",
+   "nome": "Salgados",
+   "descricao": null
+  },
+  {
+   "id": "brunch",
+   "nome": "Brunch & Fit",
+   "descricao": null
+  },
+  {
+   "id": "doces",
+   "nome": "Sobremesas",
+   "descricao": null
+  },
+  {
+   "id": "bebidas",
+   "nome": "Bebidas",
+   "descricao": null
+  }
+ ],
+ "itens": [
+  {
+   "cat": "matcha",
+   "nome": "Matcha Latte",
+   "desc": "Matcha premium e leite vaporizado, ou leite e gelo.",
+   "preco": "Quente R$ 16 · Gelado R$ 18",
+   "img": "matcha_laptop"
+  },
+  {
+   "cat": "matcha",
+   "nome": "Matcha Blessed",
+   "desc": "Matcha premium, leite vaporizado e ganache de chocolate branco, ou leite e gelo.",
+   "preco": "Quente R$ 20 · Gelado R$ 22",
+   "img": "iced_matcha"
+  },
+  {
+   "cat": "matcha",
+   "nome": "Matcha Lemonade",
+   "desc": "Sprite, matcha premium, gelo e rodelas de limão.",
+   "preco": "R$ 20",
+   "img": "watermelon_matcha"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Espresso",
+   "desc": "Café especial extraído na hora.",
+   "preco": "Simples R$ 9 · Duplo R$ 12",
+   "img": "espresso"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Flat White",
+   "desc": "Dose dupla de café espresso e leite vaporizado (+ café).",
+   "preco": "R$ 15",
+   "img": "cappuccino"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Latte",
+   "desc": "Dose curta de café espresso e leite vaporizado (+ leite).",
+   "preco": "R$ 14",
+   "img": "latte_glass"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Cappuccino Blessed",
+   "desc": "Café espresso, ganache de chocolate, leite vaporizado e canela.",
+   "preco": "R$ 18",
+   "img": "capp_blue"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Pão de Queijo",
+   "desc": "Porção com 5 unidades. Adicione Catupiry ou Nutella por R$ 5.",
+   "preco": "R$ 12",
+   "img": "pao_queijo"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Latte Saborizado",
+   "desc": "Baunilha, macadâmia ou caramelo.",
+   "preco": "R$ 17",
+   "img": "latte_cup"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Coado da Casa",
+   "desc": "Perfil intenso ou frutado, no método que você escolher: V60, Clever, Prensa Francesa ou AeroPress.",
+   "preco": "R$ 15",
+   "img": "cafe_top"
+  },
+  {
+   "cat": "doces",
+   "nome": "Cookie",
+   "desc": "Tradicional ou matcha.",
+   "preco": "R$ 12 · Matcha R$ 15",
+   "img": "ig_cookie"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Croissant Simples",
+   "desc": "Adicione Catupiry, cream cheese ou manteiga por R$ 6.",
+   "preco": "R$ 14",
+   "img": "croissant_dark"
+  },
+  {
+   "cat": "doces",
+   "nome": "Croissant Nutella",
+   "desc": "Recheado com Nutella, ou com Nutella e morangos.",
+   "preco": "R$ 30 · c/ morango R$ 35",
+   "img": "croissants_latte"
+  },
+  {
+   "cat": "bebidas",
+   "nome": "Soda Italiana",
+   "desc": "Morango, maçã verde, limão siciliano, framboesa, uva, pink lemonade ou blue lemonade.",
+   "preco": "R$ 15",
+   "img": "red_drink"
+  },
+  {
+   "cat": "matcha",
+   "nome": "Chá Matcha",
+   "desc": "Água quente e matcha premium.",
+   "preco": "R$ 12"
+  },
+  {
+   "cat": "matcha",
+   "nome": "Hojicha Latte",
+   "desc": "Matcha premium tostado e leite vaporizado. Adicional de xarope de baunilha.",
+   "preco": "R$ 16 · Baunilha R$ 18"
+  },
+  {
+   "cat": "matcha",
+   "nome": "Matcha Saborizado",
+   "desc": "Matcha premium, gelo, leite e xarope: morango, pêssego, manga, mirtilo ou limão japonês.",
+   "preco": "R$ 25"
+  },
+  {
+   "cat": "matcha",
+   "nome": "Matcha Latte Baunilha",
+   "desc": "Matcha premium, leite vaporizado e xarope de baunilha, ou leite e gelo.",
+   "preco": "Quente R$ 16 · Gelado R$ 18"
+  },
+  {
+   "cat": "matcha",
+   "nome": "Matcha Coconut",
+   "desc": "Água de coco, matcha premium e gelo.",
+   "preco": "R$ 22"
+  },
+  {
+   "cat": "matcha",
+   "nome": "Matcha Yakult",
+   "desc": "Yakult, matcha premium e gelo.",
+   "preco": "R$ 22"
+  },
+  {
+   "cat": "matcha",
+   "nome": "Matcha Orange",
+   "desc": "Suco de laranja natural, matcha premium e gelo.",
+   "preco": "R$ 25"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Carioca",
+   "desc": "Café espresso suavizado com água quente.",
+   "preco": "R$ 9"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Americano",
+   "desc": "Café espresso com água quente.",
+   "preco": "R$ 12"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Macchiato",
+   "desc": "Espresso com espuma de leite.",
+   "preco": "P R$ 10 · G R$ 14"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Espresso Panna",
+   "desc": "Espresso com chantilly.",
+   "preco": "P R$ 12 · G R$ 15"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Cappuccino Italiano",
+   "desc": "Café espresso e leite vaporizado, meio a meio.",
+   "preco": "R$ 15"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Café Bombom",
+   "desc": "Leite condensado, café espresso e chantilly.",
+   "preco": "R$ 12"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Chai Latte",
+   "desc": "Leite vaporizado com especiarias indianas.",
+   "preco": "R$ 17"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Velvet Latte",
+   "desc": "Café espresso, leite vaporizado e ganache de chocolate branco caramelizado com toque de noz-moscada.",
+   "preco": "R$ 17"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Mocha",
+   "desc": "Chocolate ou caramelo.",
+   "preco": "R$ 16"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Mocha Mineiro",
+   "desc": "Paçoca com doce de leite.",
+   "preco": "R$ 17"
+  },
+  {
+   "cat": "cafes",
+   "nome": "Coado do Barista",
+   "desc": "Grãos sazonais de micro e nanolotes selecionados. Consulte a disponibilidade do dia.",
+   "preco": "R$ 18"
+  },
+  {
+   "cat": "gelados",
+   "nome": "Cappuccino Blessed Gelado",
+   "desc": "Café espresso, ganache de chocolate, leite, gelo e canela.",
+   "preco": "R$ 20"
+  },
+  {
+   "cat": "gelados",
+   "nome": "Iced Latte",
+   "desc": "Café espresso, leite e gelo.",
+   "preco": "R$ 15"
+  },
+  {
+   "cat": "gelados",
+   "nome": "Iced Latte Saborizado",
+   "desc": "Café espresso, leite, gelo e xarope de baunilha, caramelo ou macadâmia.",
+   "preco": "R$ 18"
+  },
+  {
+   "cat": "gelados",
+   "nome": "Espresso Tônica",
+   "desc": "Café espresso, gelo e água tônica. Adicione xarope por R$ 3.",
+   "preco": "R$ 15"
+  },
+  {
+   "cat": "gelados",
+   "nome": "Orange Coffee",
+   "desc": "Café espresso, gelo e suco natural de laranja.",
+   "preco": "R$ 22"
+  },
+  {
+   "cat": "gelados",
+   "nome": "Cold Brew",
+   "desc": "Café extraído a frio, gelo e rodelas de laranja.",
+   "preco": "R$ 18"
+  },
+  {
+   "cat": "gelados",
+   "nome": "Shakerato",
+   "desc": "Dose dupla de espresso, açúcar mascavo, xarope de limão siciliano e gelo.",
+   "preco": "R$ 20"
+  },
+  {
+   "cat": "chas",
+   "nome": "Chocolate Cremoso",
+   "desc": "Chocolate quente tipo europeu, meio amargo.",
+   "preco": "R$ 15"
+  },
+  {
+   "cat": "chas",
+   "nome": "Chocolate Pão de Mel",
+   "desc": "Chocolate quente cremoso com mel e canela.",
+   "preco": "R$ 15"
+  },
+  {
+   "cat": "chas",
+   "nome": "Chocolate Marshmallow",
+   "desc": "Chocolate quente cremoso com marshmallow maçaricado.",
+   "preco": "R$ 20"
+  },
+  {
+   "cat": "chas",
+   "nome": "Chocolate Blessed",
+   "desc": "Chocolate quente cremoso com borda de Nutella e chantilly.",
+   "preco": "R$ 25"
+  },
+  {
+   "cat": "chas",
+   "nome": "Achocolatado",
+   "desc": "Toddy e leite vaporizado, ou Toddy, leite e gelo.",
+   "preco": "R$ 10"
+  },
+  {
+   "cat": "chas",
+   "nome": "Chai",
+   "desc": "Cremoso, à base de chá preto e especiarias.",
+   "preco": "Quente R$ 18 · Gelado R$ 20"
+  },
+  {
+   "cat": "chas",
+   "nome": "Namaste Chai",
+   "desc": "Chá preto com especiarias.",
+   "preco": "Quente R$ 18 · Gelado R$ 20"
+  },
+  {
+   "cat": "chas",
+   "nome": "Chás Especiais",
+   "desc": "Aconchego, Intimidade, Intuição, Ilumina-te, Felicidade ou Natureza.",
+   "preco": "Quente R$ 14 · Gelado R$ 18"
+  },
+  {
+   "cat": "chas",
+   "nome": "Chá Mate Gelado",
+   "desc": "Pêssego ou limão.",
+   "preco": "R$ 12"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Torta de Frango com Catupiry",
+   "desc": "Fatia da torta da casa.",
+   "preco": "R$ 22"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Pão na Chapa",
+   "desc": "Com manteiga.",
+   "preco": "R$ 12"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Quiche",
+   "desc": "Consulte os sabores disponíveis.",
+   "preco": "R$ 15"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Panini Italiano",
+   "desc": "Focaccia de fermentação natural com mussarela, presunto, tomate confit e molho pesto.",
+   "preco": "R$ 25"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Panini Minas",
+   "desc": "Focaccia de fermentação natural com queijo minas e orégano.",
+   "preco": "R$ 25"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Panini Caprese",
+   "desc": "Mussarela de búfala, tomate seco e molho pesto.",
+   "preco": "R$ 20"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Toast 3 Queijos",
+   "desc": "Pão, cream cheese, mussarela e parmesão.",
+   "preco": "R$ 20"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Toast Parma",
+   "desc": "Pão, cream cheese, rúcula, presunto parma e mel.",
+   "preco": "R$ 32"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Toast Blessed",
+   "desc": "Pão, ovo mexido, mussarela e bacon.",
+   "preco": "R$ 25"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Toast Mineirinho",
+   "desc": "Pão, doce de leite, banana, mussarela e canela.",
+   "preco": "R$ 20"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Baguete Bauru",
+   "desc": "Mussarela, presunto e orégano.",
+   "preco": "R$ 17"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Baguete Queijo",
+   "desc": "Mussarela e Catupiry.",
+   "preco": "R$ 17"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Croissant Misto",
+   "desc": "Presunto e mussarela.",
+   "preco": "R$ 28"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Croissant Caprese",
+   "desc": "Mussarela de búfala, tomate seco e molho pesto.",
+   "preco": "R$ 32"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Croissant Frango com Catupiry",
+   "desc": "Frango cremoso e Catupiry original.",
+   "preco": "R$ 32"
+  },
+  {
+   "cat": "salgados",
+   "nome": "Croissant Blessed",
+   "desc": "Cream cheese, rúcula, presunto parma e tomate seco.",
+   "preco": "R$ 38"
+  },
+  {
+   "cat": "brunch",
+   "nome": "Ovo Mexido Tradicional",
+   "desc": "Ovos mexidos com torrada.",
+   "preco": "R$ 15"
+  },
+  {
+   "cat": "brunch",
+   "nome": "Ovo Mexido Blessed",
+   "desc": "Ovos mexidos, tomate confit e torrada com azeite e orégano. Adicione bacon por R$ 6.",
+   "preco": "R$ 22"
+  },
+  {
+   "cat": "brunch",
+   "nome": "Omelete com Salada",
+   "desc": "Misto, frango cremoso ou queijo minas. Acompanha mix de folhas com tomate-cereja.",
+   "preco": "R$ 27"
+  },
+  {
+   "cat": "brunch",
+   "nome": "Tapioca",
+   "desc": "Frango cremoso, mista (mussarela e presunto) ou mineira (doce de leite com banana).",
+   "preco": "R$ 16"
+  },
+  {
+   "cat": "brunch",
+   "nome": "Tapioca Doce",
+   "desc": "Leite condensado com coco.",
+   "preco": "R$ 12"
+  },
+  {
+   "cat": "brunch",
+   "nome": "Salada da Casa",
+   "desc": "Mix de folhas, tomate-cereja e cenoura. Molho pesto, ceasar ou mostarda e mel.",
+   "preco": "R$ 16"
+  },
+  {
+   "cat": "brunch",
+   "nome": "Salada Caprese",
+   "desc": "Rúcula, tomate-cereja, mussarela de búfala e molho pesto.",
+   "preco": "R$ 20"
+  },
+  {
+   "cat": "brunch",
+   "nome": "Salada Ceasar",
+   "desc": "Alface americana, croutons, parmesão ralado e molho ceasar.",
+   "preco": "R$ 20"
+  },
+  {
+   "cat": "brunch",
+   "nome": "Cappuccino Whey",
+   "desc": "Café espresso e leite vaporizado com whey de baunilha.",
+   "preco": "R$ 15"
+  },
+  {
+   "cat": "brunch",
+   "nome": "Shake Whey",
+   "desc": "Morango e banana, whey de baunilha, leite e gelo.",
+   "preco": "R$ 25"
+  },
+  {
+   "cat": "brunch",
+   "nome": "Suco Detox",
+   "desc": "Verde: abacaxi, couve, gengibre e hortelã. Roxo: laranja com beterraba.",
+   "preco": "R$ 18"
+  },
+  {
+   "cat": "doces",
+   "nome": "Tortinha Cookie Nutella",
+   "desc": "Adicione sorvete de baunilha por R$ 6.",
+   "preco": "R$ 18"
+  },
+  {
+   "cat": "doces",
+   "nome": "Cheesecake de Morango",
+   "desc": "Fatia.",
+   "preco": "R$ 20"
+  },
+  {
+   "cat": "doces",
+   "nome": "Brownie",
+   "desc": "Brownie de chocolate.",
+   "preco": "R$ 12"
+  },
+  {
+   "cat": "doces",
+   "nome": "Brownie Blessed",
+   "desc": "Brownie com sorvete e calda de chocolate.",
+   "preco": "R$ 20"
+  },
+  {
+   "cat": "doces",
+   "nome": "Bolo Recheado",
+   "desc": "Fatia.",
+   "preco": "R$ 25"
+  },
+  {
+   "cat": "doces",
+   "nome": "Bolo Caseiro do Dia",
+   "desc": "Fatia.",
+   "preco": "R$ 8"
+  },
+  {
+   "cat": "doces",
+   "nome": "Macarons",
+   "desc": "Unidade.",
+   "preco": "R$ 12"
+  },
+  {
+   "cat": "doces",
+   "nome": "Milkshake",
+   "desc": "Morango, chocolate ou Ovomaltine.",
+   "preco": "R$ 25"
+  },
+  {
+   "cat": "doces",
+   "nome": "Frappuccino",
+   "desc": "Base de café, leite e gelo: chocolate, caramelo ou Ovomaltine.",
+   "preco": "R$ 22"
+  },
+  {
+   "cat": "doces",
+   "nome": "Affogato",
+   "desc": "Espresso sobre sorvete de baunilha.",
+   "preco": "R$ 15"
+  },
+  {
+   "cat": "bebidas",
+   "nome": "Suco Natural",
+   "desc": "Laranja, morango, abacaxi ou abacaxi com hortelã.",
+   "preco": "R$ 15"
+  },
+  {
+   "cat": "bebidas",
+   "nome": "Suco Especial",
+   "desc": "Limonada suíça, laranja com morango ou laranja com Yakult.",
+   "preco": "R$ 20"
+  },
+  {
+   "cat": "bebidas",
+   "nome": "Água 300 ml",
+   "desc": "Sem gás ou com gás.",
+   "preco": "R$ 6 · Com gás R$ 7"
+  },
+  {
+   "cat": "bebidas",
+   "nome": "Refrigerante KS 290 ml",
+   "desc": "Coca, Coca Zero ou Guaraná.",
+   "preco": "R$ 9"
+  },
+  {
+   "cat": "bebidas",
+   "nome": "Água Tônica",
+   "desc": "Gelada.",
+   "preco": "R$ 9"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+# Blessed Coffee & Matcha
+
+> Cafeteria de café especial e bar de matcha no Villa Branca, Jacareí – SP. Café 86+ SCA, matcha premium de grau cerimonial de Uji (Japão) batido no chasen, brunch, salgados e confeitaria artesanal.
+
+- Endereço: Av. José Cândido Pôrto, 435 – Loteamento Villa Branca, Jacareí – SP, 12301-000
+- WhatsApp / telefone: (12) 98888-7774
+- Instagram: https://www.instagram.com/blessedcoffeematcha/
+- Horário: terça a sábado 7h30–20h · domingo 8h–18h · segunda fechado
+- Comodidades: Wi-Fi rápido e tomadas (bom para trabalhar/estudar), pet friendly (varanda), estacionamento em frente, espaço térreo acessível, pedidos para viagem
+- Leite zero lactose ou vegetal de aveia em qualquer bebida (+R$ 3)
+- Métodos de coado: V60, Clever, Prensa Francesa, AeroPress
+- Reservas: grupos de 4+ pessoas pelo WhatsApp
+
+## Páginas
+- [Início](https://blessed-coffee-matcha.vercel.app/): apresentação, métodos, perguntas frequentes e contato
+- [Cardápio completo com preços](https://blessed-coffee-matcha.vercel.app/cardapio): matcha, cafés, cafés gelados, chás e chocolates, salgados, brunch & fit, sobremesas, bebidas
