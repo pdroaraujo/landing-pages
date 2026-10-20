@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://portuga-villa-branca.vercel.app/sitemap.xml

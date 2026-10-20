@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Portuga Villa Branca | Bar e Restaurante em Jacareí · Reservas, Cardápio e Delivery</title>
+<meta name="description" content="Portuga Villa Branca, Jacareí: faça sua reserva, veja o cardápio à la carte e o executivo, peça delivery, faça seu evento no Espaço Anexo e saiba como chegar. Experiência que vale a pena!">
+<link rel="canonical" href="https://portuga-villa-branca.vercel.app/">
+<meta name="theme-color" content="#0a0808">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Portuga Villa Branca · Jacareí">
+<meta property="og:description" content="Reservas, cardápio, delivery, eventos e como chegar. Experiência que vale a pena!">
+<meta property="og:url" content="https://portuga-villa-branca.vercel.app/">
+<meta property="og:image" content="https://portuga-villa-branca.vercel.app/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BarOrPub","name":"Portuga Villa Branca","alternateName":"Bar do Portuga Villa Branca",
+ "description":"Bar e restaurante do Grupo Portuga no Pátio Villa Branca, Jacareí: chopp, petiscos e pratos com toque português.",
+ "url":"https://portuga-villa-branca.vercel.app/","image":"https://portuga-villa-branca.vercel.app/img/og.jpg",
+ "telephone":"+55 12 98174-6139","servesCuisine":["Brasileira","Portuguesa","Petiscos"],"acceptsReservations":true,
+ "address":{"@type":"PostalAddress","streetAddress":"Av. das Letras, 659 - Pátio Villa Branca","addressLocality":"Jacareí","addressRegion":"SP","addressCountry":"BR"},
+ "geo":{"@type":"GeoCoordinates","latitude":-23.2674693,"longitude":-45.9414225},
+ "hasMenu":"https://ugc.production.linktr.ee/8a5c6276-03c6-4973-ad0e-82dbea660078_A-La-Carte---Portuga-Villa-Branca-linktree.pdf",
+ "parentOrganization":{"@type":"Organization","name":"Grupo Portuga","url":"https://grupoportuga.com.br"},
+ "sameAs":["https://www.instagram.com/portugavillabranca/","https://www.facebook.com/bardoportugavillabranca","https://linktr.ee/PortugaVillaBranca_Jacarei"]}
+</script>
+<style>
+:root{
+  --bg:#0a0808;--card:#171313;--card-hi:#1f1919;--line:rgba(255,255,255,.07);
+  --text:#fffaf5;--muted:#b3a89c;--dim:#7d746b;
+  --terra:#ae4c17;--terra-hi:#d0662a;--taupe:#ab9e88;
+  --r:18px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100dvh;background:var(--bg);color:var(--text);font:400 15px/1.5 Poppins,system-ui,-apple-system,"Segoe UI",sans-serif;
+  padding:max(20px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--terra-hi);outline-offset:3px}
+svg{flex:none}
+
+/* brilhos de fundo */
+.glow{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.glow::before,.glow::after{content:"";position:absolute;border-radius:50%;filter:blur(90px);opacity:.55}
+.glow::before{width:70vmax;height:70vmax;left:-30vmax;top:-34vmax;background:radial-gradient(circle,rgba(174,76,23,.55),transparent 65%);animation:drift 16s ease-in-out infinite alternate}
+.glow::after{width:60vmax;height:60vmax;right:-28vmax;bottom:-30vmax;background:radial-gradient(circle,rgba(171,158,136,.28),transparent 65%);animation:drift 20s ease-in-out infinite alternate-reverse}
+@keyframes drift{to{transform:translate(6vmax,4vmax)}}
+
+.page{position:relative;z-index:1;max-width:460px;margin:0 auto}
+.top{display:flex;justify-content:flex-end}
+.share{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);display:grid;place-items:center;cursor:pointer;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .25s}
+.share:hover{background:rgba(255,255,255,.1)}
+.share svg{width:18px;height:18px}
+
+/* perfil */
+.profile{text-align:center;margin-top:-6px}
+.avatar{width:124px;height:124px;margin:0 auto;border-radius:50%;padding:4px;background:conic-gradient(from 210deg,var(--terra),var(--taupe),var(--terra-hi),var(--terra));
+  box-shadow:0 18px 50px -12px rgba(174,76,23,.65);animation:pop .8s cubic-bezier(.2,.8,.2,1) both}
+.avatar img{width:100%;height:100%;border-radius:50%;border:3px solid var(--bg);object-fit:cover}
+@keyframes pop{from{opacity:0;transform:scale(.85)}}
+h1{font-size:24px;font-weight:700;margin:18px 0 2px;letter-spacing:-.01em}
+.tag{color:var(--terra-hi);font-weight:600;font-size:14px;margin:0}
+.bio{color:var(--muted);margin:10px auto 0;max-width:32ch}
+.meta{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.chip svg{width:14px;height:14px;color:var(--terra-hi)}
+
+/* redes */
+.socials{display:flex;justify-content:center;gap:12px;margin:22px 0 26px}
+.socials a{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line);transition:transform .3s cubic-bezier(.2,.8,.2,1),background .25s}
+.socials a:hover{transform:translateY(-3px);background:rgba(255,255,255,.12)}
+.socials svg{width:22px;height:22px}
+
+/* links */
+.links{display:grid;gap:12px;list-style:none;margin:0;padding:0}
+.links>li{min-width:0}
+.lk{display:flex;align-items:center;gap:14px;padding:12px 16px 12px 12px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),background .25s,border-color .25s;animation:up .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * 55ms + 150ms)}
+.lk:hover{transform:translateY(-2px);background:var(--card-hi);border-color:rgba(255,255,255,.14)}
+.lk:active{transform:scale(.985)}
+@keyframes up{from{opacity:0;transform:translateY(14px)}}
+.ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:var(--c,#2a2222);color:#fff}
+.ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.ic svg.fill{fill:currentColor;stroke:none}
+.tx{flex:1;min-width:0}
+.tx b{display:block;font-weight:600;font-size:15px;line-height:1.3}
+.tx small{display:block;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chev{width:18px;height:18px;color:var(--dim);fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s}
+.lk:hover .chev{transform:translateX(3px);color:var(--text)}
+.lk.hero{background:linear-gradient(120deg,var(--terra) 0%,#c45a1f 55%,#8e3a0e 100%);border-color:transparent;box-shadow:0 18px 40px -16px rgba(174,76,23,.8);padding-block:16px}
+.lk.hero .ic{background:rgba(255,255,255,.18)}
+.lk.hero small,.lk.hero .chev{color:rgba(255,255,255,.85)}
+.lk.hero:hover{background:linear-gradient(120deg,var(--terra-hi) 0%,#c45a1f 55%,#8e3a0e 100%)}
+
+.group{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:14px 4px 0}
+
+footer{text-align:center;color:var(--dim);font-size:12px;margin-top:34px;display:grid;gap:4px}
+footer a{color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;background:#fff;color:#111;font-weight:600;font-size:13px;padding:10px 16px;border-radius:999px;transition:.3s;z-index:5;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="glow" aria-hidden="true"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.15a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.23 8.23 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.11-.22-.17-.47-.29z"/></symbol>
+  <symbol id="i-ig" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.2c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.21 15.58 2.2 15.2 2.2 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.21 8.8 2.2 12 2.2zm0 1.8c-3.15 0-3.5.01-4.74.07-1.07.05-1.65.23-2.04.38-.51.2-.88.44-1.27.83-.39.39-.63.76-.83 1.27-.15.39-.33.97-.38 2.04C2.68 9.83 2.67 10.2 2.67 12s.01 2.17.07 3.41c.05 1.07.23 1.65.38 2.04.2.51.44.88.83 1.27.39.39.76.63 1.27.83.39.15.97.33 2.04.38 1.24.06 1.6.07 4.74.07s3.5-.01 4.74-.07c1.07-.05 1.65-.23 2.04-.38.51-.2.88-.44 1.27-.83.39-.39.63-.76.83-1.27.15-.39.33-.97.38-2.04.06-1.24.07-1.6.07-3.41s-.01-2.17-.07-3.41c-.05-1.07-.23-1.65-.38-2.04-.2-.51-.44-.88-.83-1.27a3.4 3.4 0 0 0-1.27-.83c-.39-.15-.97-.33-2.04-.38C15.5 4.01 15.15 4 12 4zm0 3.06a4.94 4.94 0 1 1 0 9.88 4.94 4.94 0 0 1 0-9.88zm0 8.15a3.21 3.21 0 1 0 0-6.42 3.21 3.21 0 0 0 0 6.42zm5.14-8.35a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3z"/></symbol>
+  <symbol id="i-fb" viewBox="0 0 24 24"><path fill="currentColor" d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.87.25-1.46 1.5-1.46h1.6V4.46A21 21 0 0 0 14.27 4.3c-2.3 0-3.87 1.4-3.87 3.98v2.22H7.8v3h2.6V21z"/></symbol>
+  <symbol id="i-nav" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" d="M3 11 21 3l-8 18-2-8z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+</svg>
+
+<main class="page">
+  <div class="top">
+    <button class="share" id="share" type="button" aria-label="Compartilhar esta página">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+    </button>
+  </div>
+
+  <header class="profile">
+    <div class="avatar"><img src="img/logo.webp" alt="Logo Portuga Villa Branca" width="256" height="256" fetchpriority="high"></div>
+    <h1>Portuga Villa Branca</h1>
+    <p class="tag">Bar &amp; Restaurante · Jacareí</p>
+    <p class="bio">Chopp gelado, petiscos e pratos com toque português. Experiência que vale a pena!</p>
+    <div class="meta">
+      <span class="chip"><svg aria-hidden="true"><use href="#i-pin"/></svg>Av. das Letras, 659 · Pátio Villa Branca</span>
+      <span class="chip"><svg aria-hidden="true"><use href="#i-clock"/></svg>Das 11h à meia-noite</span>
+    </div>
+  </header>
+
+  <nav class="socials" aria-label="Redes sociais">
+    <a href="https://www.instagram.com/portugavillabranca/" target="_blank" rel="noopener" aria-label="Instagram"><svg aria-hidden="true"><use href="#i-ig"/></svg></a>
+    <a href="https://www.facebook.com/bardoportugavillabranca" target="_blank" rel="noopener" aria-label="Facebook"><svg aria-hidden="true"><use href="#i-fb"/></svg></a>
+    <a href="https://wa.me/5512981746139" target="_blank" rel="noopener" aria-label="WhatsApp"><svg aria-hidden="true"><use href="#i-wa"/></svg></a>
+    <a href="https://ul.waze.com/ul?place=ChIJ8atY-u81zJQRKCvtX7Y2Tt4&amp;ll=-23.26746930%2C-45.94142250&amp;navigate=yes" target="_blank" rel="noopener" aria-label="Como chegar pelo Waze"><svg aria-hidden="true"><use href="#i-nav"/></svg></a>
+  </nav>
+
+  <ul class="links">
+    <li><a class="lk hero" style="--i:0" href="https://wa.me/5512981746139?text=Ol%C3%A1!%20Gostaria%20de%20fazer%20uma%20reserva%20no%20Portuga%20Villa%20Branca." target="_blank" rel="noopener">
+      <span class="ic"><svg class="fill" aria-hidden="true"><use href="#i-wa"/></svg></span>
+      <span class="tx"><b>Faça sua reserva</b><small>WhatsApp · (12) 98174-6139</small></span>
+      <svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></a></li>
+
+    <li><a class="lk" style="--i:1;--c:#5b2d14" href="https://ugc.production.linktr.ee/8a5c6276-03c6-4973-ad0e-82dbea660078_A-La-Carte---Portuga-Villa-Branca-linktree.pdf" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg></span>
+      <span class="tx"><b>Cardápio à la carte</b><small>Pratos, petiscos e bebidas · PDF</small></span>
+      <svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></a></li>
+
+    <li><a class="lk" style="--i:2;--c:#6b5a3f" href="https://ugc.production.linktr.ee/544764b4-9830-48fe-ac66-e6c0d294703d_Executivo---Portuga-Villa-Branca-linktree.pdf" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg></span>
+      <span class="tx"><b>Menu executivo</b><small>Almoço de segunda a sexta · PDF</small></span>
+      <svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></a></li>
+
+    <li><a class="lk" style="--i:3;--c:#c8102e" href="https://www.ifood.com.br/delivery/jacarei-sp/portuga-centro/4a0f7298-b7ec-4a9e-8544-2fa7a299fe6d" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg></span>
+      <span class="tx"><b>Delivery</b><small>Peça pelo iFood</small></span>
+      <svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></a></li>
+
+    <li><a class="lk" style="--i:4;--c:#8a6a2e" href="https://wa.me/5512988876112?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20eventos%20no%20Espa%C3%A7o%20Anexo%20do%20Portuga%20Villa%20Branca." target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 22h8M7 10h10M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5z"/></svg></span>
+      <span class="tx"><b>Faça seu evento no Espaço Anexo</b><small>Aniversários, casamentos e corporativos</small></span>
+      <svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></a></li>
+
+    <li class="group">Visite</li>
+
+    <li><a class="lk" style="--i:5;--c:#1d6fd6" href="https://ul.waze.com/ul?place=ChIJ8atY-u81zJQRKCvtX7Y2Tt4&amp;ll=-23.26746930%2C-45.94142250&amp;navigate=yes" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 21 3l-8 18-2-8z"/></svg></span>
+      <span class="tx"><b>Como chegar</b><small>Av. das Letras, 659 · Abrir no Waze</small></span>
+      <svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></a></li>
+
+    <li><a class="lk" style="--i:6;--c:#e0a100" href="https://search.google.com/local/writereview?placeid=ChIJ8atY-u81zJQRKCvtX7Y2Tt4" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg></span>
+      <span class="tx"><b>Avalie sua experiência</b><small>Deixe sua nota no Google</small></span>
+      <svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></a></li>
+
+    <li class="group">Grupo Portuga</li>
+
+    <li><a class="lk" style="--i:7;--c:#3a2f2a" href="https://grupoportuga.com.br" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></span>
+      <span class="tx"><b>Venha conhecer nossa história</b><small>Desde 1999 · grupoportuga.com.br</small></span>
+      <svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></a></li>
+
+    <li><a class="lk" style="--i:8;--c:#2f4a3a" href="https://forms.gle/59AbtENcaufxAMn36" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+      <span class="tx"><b>Trabalhe conosco!</b><small>Envie seu currículo pelo formulário</small></span>
+      <svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></a></li>
+  </ul>
+
+  <footer>
+    <span>© 2026 Portuga Villa Branca · Grupo Portuga</span>
+    <span>Feito por <a href="https://agencias7.com.br/" target="_blank" rel="noopener">Agência S7</a></span>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite">Link copiado!</div>
+
+<script>
+document.getElementById('share').addEventListener('click',async()=>{
+  const data={title:'Portuga Villa Branca',text:'Reservas, cardápio, delivery e eventos do Portuga Villa Branca',url:location.href};
+  if(navigator.share){try{await navigator.share(data)}catch(e){}return}
+  try{await navigator.clipboard.writeText(location.href);const t=document.getElementById('toast');t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)}catch(e){}
+});
+</script>
+</body>
+</html>
