@@ -11,12 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Pop-up de avaliação: aparece 15s após abrir e volta 1 min depois de cada fechamento,
+  // Pop-up de avaliação: aparece 5s após abrir e volta 1 min depois de cada fechamento,
   // até a pessoa clicar em algum link de avaliação (aí some de vez neste aparelho).
   const pop = document.getElementById('reviewPop');
   if (!pop) return;
   const KEY = 'portuga-avaliou';
-  const FIRST = 15000, EVERY = 60000;
+  const FIRST = 5000, EVERY = 60000;
   const done = () => { try { return localStorage.getItem(KEY) === '1'; } catch (e) { return false; } };
   let timer;
   const schedule = ms => { clearTimeout(timer); if (!done()) timer = setTimeout(show, ms); };
