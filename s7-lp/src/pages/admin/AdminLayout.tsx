@@ -66,7 +66,7 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-[#f4f4f5] font-sans selection:bg-[#fe0000] selection:text-white">
       {/* glow */}
-      <div className="pointer-events-none fixed top-[-20%] left-1/2 -translate-x-1/2 w-[1100px] h-[700px] bg-[#fe0000] rounded-full blur-[200px] opacity-[0.15] z-0" />
+      <div aria-hidden className="pointer-events-none fixed top-[-20%] left-1/2 -translate-x-1/2 w-[1100px] h-[700px] z-0" style={{ background: 'radial-gradient(closest-side, rgba(254,0,0,0.19), rgba(254,0,0,0.06) 55%, transparent)' }} />
 
       {/* Sidebar desktop */}
       <aside className="hidden lg:flex fixed inset-y-0 left-0 w-64 flex-col border-r border-white/10 bg-[#0c0c0c]/80 backdrop-blur-md z-30 p-6">

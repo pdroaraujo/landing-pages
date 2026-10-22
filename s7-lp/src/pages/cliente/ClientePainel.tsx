@@ -89,7 +89,7 @@ export default function ClientePainel() {
 
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-[#f4f4f5] font-sans selection:bg-[#fe0000] selection:text-white">
-      <div className="pointer-events-none fixed top-[-20%] left-1/2 -translate-x-1/2 w-[1100px] h-[700px] bg-[#fe0000] rounded-full blur-[200px] opacity-[0.15] z-0" />
+      <div aria-hidden className="pointer-events-none fixed top-[-20%] left-1/2 -translate-x-1/2 w-[1100px] h-[700px] z-0" style={{ background: 'radial-gradient(closest-side, rgba(254,0,0,0.19), rgba(254,0,0,0.06) 55%, transparent)' }} />
 
       <header className="relative z-10 border-b border-white/10 bg-[#0c0c0c]/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 md:px-10">

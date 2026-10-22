@@ -30,3 +30,14 @@
 .tabs-track { scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .tabs-track::-webkit-scrollbar { display: none; }
 .tabs-track > * { flex-shrink: 0; white-space: nowrap; }
+
+/* animações da landing (CSS puro, sem lib) */
+@keyframes s7-fade { from { opacity: 0 } to { opacity: 1 } }
+@keyframes s7-rise { from { opacity: 0; transform: translateY(30px) } to { opacity: 1; transform: none } }
+@keyframes s7-slide-in { from { opacity: 0; transform: translateX(-20px) } to { opacity: 1; transform: none } }
+.s7-fade { animation: s7-fade .8s ease both; }
+.s7-rise { animation: s7-rise .8s cubic-bezier(.2,.65,.3,.9) both; }
+.s7-slide-in { animation: s7-slide-in .5s ease both; }
+@media (prefers-reduced-motion: reduce) {
+  .s7-fade, .s7-rise, .s7-slide-in { animation: none; }
+}

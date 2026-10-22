@@ -1,12 +1,46 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+
+// Animações em CSS puro + IntersectionObserver (sem framer-motion): a landing
+// fica bem mais leve e fluida no celular. Cada bloco anima uma vez só, ao entrar na tela.
+function useInView<T extends Element>(ref: React.RefObject<T | null>, { once = true, margin = '0px 0px -80px 0px' } = {}) {
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === 'undefined') {
+      setInView(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setInView(true);
+          if (once) io.disconnect();
+        } else if (!once) setInView(false);
+      },
+      { rootMargin: margin },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref, once, margin]);
+  return inView;
+}
+
+/** brilho vermelho do topo: gradiente radial (o filter blur gigante travava o celular) */
+const Glow = () => (
+  <div
+    aria-hidden
+    className="pointer-events-none absolute left-1/2 top-[-10%] z-0 h-[900px] w-[1200px] max-w-none -translate-x-1/2"
+    style={{ background: 'radial-gradient(closest-side, rgba(254,0,0,0.42), rgba(254,0,0,0.12) 55%, transparent)' }}
+  />
+);
 import { Menu, X, ArrowRight, ArrowUpRight } from 'lucide-react';
 
 // Animated Counter Component
 function AnimatedCounter({ to, suffix = "", duration = 2 }: { to: number, suffix?: string, duration?: number }) {
   const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, margin: "-100px" });
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref);
 
   useEffect(() => {
     if (isInView) {
@@ -28,52 +62,40 @@ function AnimatedCounter({ to, suffix = "", duration = 2 }: { to: number, suffix
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
-// Staggered Text Reveal Component (Nakula Style)
+// Staggered Text Reveal (palavra por palavra)
 const RevealText = ({ text, className = "" }: { text: string, className?: string }) => {
+  const ref = useRef<HTMLHeadingElement>(null);
+  const inView = useInView(ref);
   const words = text.split(" ");
-  
-  const container = {
-    hidden: { opacity: 0 },
-    visible: (i = 1) => ({
-      opacity: 1,
-      transition: { staggerChildren: 0.05, delayChildren: 0.1 * i },
-    }),
-  };
-
-  const child = {
-    visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.6, ease: [0.2, 0.65, 0.3, 0.9] as const } },
-    hidden: { opacity: 0, y: 20, filter: "blur(5px)" },
-  };
-
   return (
-    <motion.h2 
-      className={`flex flex-wrap gap-x-[0.25em] gap-y-2 ${className}`}
-      variants={container}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: false, margin: "-100px" }}
-    >
+    <h2 ref={ref} className={`flex flex-wrap gap-x-[0.25em] gap-y-2 ${className}`}>
       {words.map((word, index) => (
-        <motion.span variants={child} key={index} className="inline-block">
+        <span
+          key={index}
+          className={`inline-block transition-[opacity,transform] duration-[600ms] ease-[cubic-bezier(0.2,0.65,0.3,0.9)] ${inView ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'}`}
+          style={{ transitionDelay: `${100 + index * 40}ms` }}
+        >
           {word}
-        </motion.span>
+        </span>
       ))}
-    </motion.h2>
+    </h2>
   );
 };
 
 // Fade In Wrapper
-const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: false, margin: "-100px" }}
-    transition={{ duration: 0.7, delay, ease: [0.2, 0.65, 0.3, 0.9] as const }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
+const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref);
+  return (
+    <div
+      ref={ref}
+      className={`transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.2,0.65,0.3,0.9)] ${inView ? 'translate-y-0 opacity-100' : 'translate-y-7 opacity-0'} ${className}`}
+      style={{ transitionDelay: `${delay * 1000}ms` }}
+    >
+      {children}
+    </div>
+  );
+};
 
 export default function Landing() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -84,14 +106,14 @@ export default function Landing() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   if (view === 'portfolio') {
     return (
       <div className="min-h-screen bg-[#0f0f0f] text-[#f4f4f5] flex flex-col items-center justify-center font-sans relative overflow-hidden selection:bg-[#fe0000] selection:text-white">
-        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1200px] h-[900px] bg-[#fe0000] rounded-full blur-[180px] opacity-[0.35] pointer-events-none z-0"></div>
+        <Glow />
         <div className="relative z-10 flex flex-col items-center text-center px-6">
           <h1 className="text-5xl md:text-7xl font-bold tracking-tighter uppercase mb-6 text-white">
             Portfólio em <br/><span className="text-[#fe0000]">Construção</span>
@@ -110,9 +132,9 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-[#f4f4f5] font-sans selection:bg-[#fe0000] selection:text-white relative overflow-x-hidden">
-      
+
       {/* BACKGROUND DA HERO SECTION (Glow Vermelho Escuro) */}
-      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1200px] h-[900px] bg-[#fe0000] rounded-full blur-[180px] opacity-[0.35] pointer-events-none z-0"></div>
+      <Glow />
 
       {/* HEADER */}
       <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-[#0f0f0f]/90 backdrop-blur-md py-4' : 'bg-transparent py-6'}`}>
@@ -120,17 +142,17 @@ export default function Landing() {
           <a href="#" className="flex items-center gap-2 z-50 relative">
             <img src="/logo.png" alt="S7" width="500" height="500" className="h-20 md:h-28 w-auto drop-shadow-xl" />
           </a>
-          
+
           <div className="flex items-center gap-2 md:gap-4 z-50">
             {/* Botão Fale Conosco (Animação Esquerda -> Direita SEM SETA) */}
             <a href="https://wa.me/5513936283974?text=Ol%C3%A1%2C%20desejo%20falar%20com%20um%20especialista!" className="hidden sm:flex group relative overflow-hidden border border-white/20 rounded-full px-6 py-3 text-xs md:text-sm font-bold uppercase tracking-widest text-white items-center justify-center">
               <div className="absolute inset-0 bg-[#fe0000] transform -translate-x-[105%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0"></div>
               <span className="relative z-10 transition-colors">Fale Conosco</span>
             </a>
-            
+
             {/* Menu Toggle */}
-            <button 
-              className="w-10 h-10 md:w-12 md:h-12 border border-white/20 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors" 
+            <button
+              className="w-10 h-10 md:w-12 md:h-12 border border-white/20 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors"
               onClick={() => setIsMenuOpen(true)}
             >
               <Menu size={20} />
@@ -140,15 +162,8 @@ export default function Landing() {
       </header>
 
       {/* FULLSCREEN MENU NAKULA STYLE */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[60] bg-[#0c0c0c] flex flex-col justify-between"
-          >
+      {isMenuOpen && (
+          <div className="s7-fade fixed inset-0 z-[60] bg-[#0c0c0c] flex flex-col justify-between">
             {/* Menu Header */}
             <div className="flex justify-between items-center px-6 md:px-12 py-8 border-b border-white/5">
               <a href="#" onClick={() => setIsMenuOpen(false)}>
@@ -158,8 +173,8 @@ export default function Landing() {
                 <div className="flex items-center gap-2 text-white/50 text-xs tracking-widest font-medium uppercase">
                   <span className="w-1.5 h-1.5 bg-[#fe0000]"></span> MENU
                 </div>
-                <button 
-                  className="w-12 h-12 border border-white/20 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors" 
+                <button
+                  className="w-12 h-12 border border-white/20 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <X size={20} />
@@ -176,18 +191,16 @@ export default function Landing() {
                   { name: "SOBRE", href: "#about" },
                   { name: "SERVIÇOS", href: "#services" }
                 ].map((link, idx) => (
-                  <motion.a 
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 * idx }}
+                  <a
+                    style={{ animationDelay: `${idx * 100}ms` }}
                     key={idx} 
-                    href={link.href} 
-                    onClick={() => setIsMenuOpen(false)} 
-                    className="text-5xl md:text-8xl font-bold tracking-tighter uppercase py-4 border-b border-white/5 text-white/80 hover:text-white transition-colors group flex items-end gap-2"
+                    href={link.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="s7-slide-in text-5xl md:text-8xl font-bold tracking-tighter uppercase py-4 border-b border-white/5 text-white/80 hover:text-white transition-colors group flex items-end gap-2"
                   >
-                    {link.name} 
+                    {link.name}
                     <span className="w-2 h-2 md:w-3 md:h-3 bg-[#fe0000] mb-3 md:mb-5 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  </motion.a>
+                  </a>
                 ))}
               </nav>
             </div>
@@ -195,47 +208,39 @@ export default function Landing() {
             {/* Menu Footer */}
             <div className="px-6 md:px-12 pb-12 pt-8 max-w-[1400px] mx-auto w-full grid grid-cols-2 md:grid-cols-4 gap-8">
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+      )}
 
       <main className="pt-32 md:pt-48 relative z-10">
-        
+
         {/* HERO SECTION */}
         <section className="max-w-[1400px] mx-auto px-6 md:px-12 mb-32 md:mb-48 relative">
-          <motion.h1 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-[16vw] sm:text-[12vw] md:text-5xl lg:text-[8vw] font-bold tracking-tighter leading-[0.9] uppercase max-w-[1200px]"
+          <h1
+            className="s7-rise text-[16vw] sm:text-[12vw] md:text-5xl lg:text-[8vw] font-bold tracking-tighter leading-[0.9] uppercase max-w-[1200px]"
           >
             A ÚNICA <br className="md:hidden" /> AGÊNCIA <br /> QUE VOCÊ <br className="md:hidden" /> PRECISA.
-          </motion.h1>
-          
+          </h1>
+
           <div className="mt-16 md:mt-24 grid md:grid-cols-2 gap-12 items-end">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="flex items-center gap-4 text-sm sm:text-base md:text-sm font-medium tracking-widest text-white/50"
+            <div
+              style={{ animationDelay: '400ms' }}
+              className="s7-fade flex items-center gap-4 text-sm sm:text-base md:text-sm font-medium tracking-widest text-white/50"
             >
               <div className="w-12 h-[1px] bg-white/20"></div>
               <p className="uppercase">Disponível para novos projetos<br/>
               <span className="text-[#fe0000]">HOJE MESMO</span></p>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-              className="flex justify-start md:justify-end"
+            </div>
+
+            <div
+              style={{ animationDelay: '500ms' }}
+              className="s7-fade flex justify-start md:justify-end"
             >
               <a href="https://wa.me/5513936283974?text=Ol%C3%A1%2C%20desejo%20falar%20com%20um%20especialista!" className="group relative overflow-hidden border border-white/20 rounded-full px-6 py-4 sm:px-8 sm:py-4 text-sm sm:text-base md:text-base font-bold uppercase tracking-widest text-white flex items-center justify-between sm:justify-center gap-3 w-full sm:w-auto">
                 <div className="absolute inset-0 bg-[#fe0000] transform -translate-x-[105%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0"></div>
                 <span className="relative z-10 transition-colors">Falar com especialista</span>
                 <ArrowRight size={18} className="relative z-10 transition-colors duration-500 ease-out" />
               </a>
-            </motion.div>
+            </div>
           </div>
         </section>
 
@@ -246,8 +251,8 @@ export default function Landing() {
               <span className="text-sm font-medium tracking-widest text-white/50">(SOBRE NÓS)</span>
             </div>
             <div className="lg:col-span-9">
-              <RevealText 
-                text="Combinamos anos de experiência em Web Design, SEO e Google Meu Negócio para criar marcas fortes e experiências digitais focadas em conversão." 
+              <RevealText
+                text="Combinamos anos de experiência em Web Design, SEO e Google Meu Negócio para criar marcas fortes e experiências digitais focadas em conversão."
                 className="text-3xl md:text-5xl lg:text-[54px] font-medium tracking-tight text-white leading-[1.2]"
               />
             </div>
@@ -260,7 +265,7 @@ export default function Landing() {
             <h2 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase">Último Trabalho</h2>
             <span className="text-sm font-medium tracking-widest text-white/50">(PROJETOS)</span>
           </FadeIn>
-          
+
           <div className="max-w-5xl mx-auto">
             <a href="https://phcontainer.com.br" target="_blank" rel="noopener noreferrer" className="group block cursor-pointer">
               <FadeIn delay={0.2}>
@@ -268,7 +273,7 @@ export default function Landing() {
                   <img src="/phcontainer-site.jpg" alt="PH Container" width="1858" height="925" loading="lazy" decoding="async" className="w-full h-full object-cover opacity-80 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700" />
                 </div>
               </FadeIn>
-              
+
               <FadeIn delay={0.3} className="flex justify-between items-center mb-8">
                 <div>
                   <h3 className="text-3xl font-bold tracking-tight uppercase group-hover:text-[#fe0000] transition-colors">PH CONTAINER</h3>
@@ -283,7 +288,7 @@ export default function Landing() {
                 O seu projeto pode ser o próximo a estar aqui.
               </p>
             </FadeIn>
-            
+
             <FadeIn delay={0.5} className="flex justify-center mt-8">
               <button onClick={() => { window.scrollTo(0,0); setView('portfolio'); }} className="group relative overflow-hidden border border-white/20 rounded-full px-8 py-4 text-sm font-bold uppercase tracking-widest text-white flex items-center justify-center">
                 <div className="absolute inset-0 bg-[#fe0000] transform -translate-x-[105%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0"></div>
@@ -309,7 +314,7 @@ export default function Landing() {
                 </p>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 lg:grid-cols-4 border-t border-b border-white/10">
               {[
                 { num: 50, suffix: "+", label: "Serviços Entregues", duration: 0.75 },
@@ -388,7 +393,7 @@ export default function Landing() {
             <h2 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase">Como Nós Trabalhamos</h2>
             <span className="text-sm font-medium tracking-widest text-white/50">(PROCESSO)</span>
           </FadeIn>
-          
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 border-t border-l border-white/10">
             {[
               { num: "1", title: "Conteúdo / Pesquisa", items: ["Prospecção", "Estrutura de copy", "UX/UI research"] },
@@ -443,7 +448,7 @@ export default function Landing() {
             <h2 className="text-[10vw] leading-[0.8] font-bold tracking-tighter uppercase mb-16 cursor-pointer group transition-all duration-700 ease-out hover:scale-[1.02]">
               <span className="text-white group-hover:text-[#fe0000] transition-colors duration-700">VAMOS TRABALHAR <br/> JUNTOS?</span>
             </h2>
-            
+
             <div className="flex justify-center items-center mt-16">
               <a href="https://wa.me/5513936283974?text=Ol%C3%A1%2C%20desejo%20falar%20com%20um%20especialista!" className="group relative overflow-hidden border border-white/20 rounded-full px-12 py-5 text-sm font-bold uppercase tracking-widest text-white flex items-center justify-center gap-3">
                 <div className="absolute inset-0 bg-[#fe0000] transform -translate-x-[105%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0"></div>
@@ -458,9 +463,9 @@ export default function Landing() {
       {/* FOOTER */}
       <footer className="pt-16 pb-8 border-t border-white/10">
         <FadeIn className="max-w-[1400px] mx-auto px-6 md:px-12">
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-24">
-            
+
             {/* EMAIL */}
             <div className="flex flex-col items-start md:col-span-1">
               <span className="text-xs uppercase tracking-widest text-white/50 block mb-6">(EMAIL)</span>

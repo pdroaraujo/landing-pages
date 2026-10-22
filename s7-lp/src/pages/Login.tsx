@@ -34,7 +34,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-white font-sans flex items-center justify-center px-6 relative overflow-hidden selection:bg-[#fe0000]">
-      <div className="pointer-events-none absolute top-[-10%] left-1/2 -translate-x-1/2 w-[900px] h-[700px] bg-[#fe0000] rounded-full blur-[180px] opacity-25" />
+      <div aria-hidden className="pointer-events-none absolute top-[-10%] left-1/2 -translate-x-1/2 w-[900px] h-[700px]" style={{ background: 'radial-gradient(closest-side, rgba(254,0,0,0.32), rgba(254,0,0,0.1) 55%, transparent)' }} />
       <div className="relative z-10 w-full max-w-sm">
         <Link to="/" className="block mb-10 text-center">
           <img src="/logo.png" alt="Agência S7" className="h-20 w-auto mx-auto" />

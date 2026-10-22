@@ -4,7 +4,7 @@ import { AGENCY_DOMAIN, emailUser } from '../../lib/agency';
 export function Card({ className = '', children }: { className?: string; children: ReactNode }) {
   return (
     <div
-      className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm ${className}`}
+      className={`rounded-2xl border border-white/10 bg-white/[0.03] ${className}`}
     >
       {children}
     </div>
