@@ -19,6 +19,7 @@ const S7CardLojaDetalhe = lazy(() => import('./pages/s7card/S7CardLojaDetalhe'))
 const S7CardPlacas = lazy(() => import('./pages/s7card/S7CardPlacas'));
 const S7CardMapeamento = lazy(() => import('./pages/s7card/S7CardMapeamento'));
 const S7CardEquipe = lazy(() => import('./pages/s7card/S7CardEquipe'));
+const S7CardGrafica = lazy(() => import('./pages/s7card/S7CardGrafica'));
 const ClientePainel = lazy(() => import('./pages/cliente/ClientePainel'));
 
 function Blank() {
@@ -103,6 +104,7 @@ export default function AuthedRoutes() {
             <Route path="mapeamento" element={<S7CardMapeamento />} />
             <Route path="lojas/:id" element={<S7CardLojaDetalhe />} />
             <Route path="placas" element={<S7CardPlacas />} />
+            <Route path="grafica" element={<S7CardGrafica />} />
             <Route
               path="equipe"
               element={

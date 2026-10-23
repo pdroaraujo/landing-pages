@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { prefetchWhenIdle } from '../../lib/prefetch';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Nfc, LogOut, Menu, X, ArrowLeftRight, KeyRound, MapPinned, Users } from 'lucide-react';
+import { LayoutDashboard, Nfc, LogOut, Menu, X, ArrowLeftRight, KeyRound, MapPinned, Users, Printer } from 'lucide-react';
 import { useAuth } from '../../lib/auth';
 
 const baseNav = [
   { to: '/s7card', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/s7card/mapeamento', label: 'Mapeamento', icon: MapPinned },
   { to: '/s7card/placas', label: 'Placas', icon: Nfc },
+  { to: '/s7card/grafica', label: 'Gráfica', icon: Printer },
 ];
 
 const ROLE_LABEL: Record<string, string> = { owner: 'Administrador', member: 'Administrador', socio: 'Sócio', vendedor: 'Vendedor' };
@@ -25,6 +26,7 @@ export default function S7CardLayout() {
       () => import('./S7CardMapeamento'),
       () => import('./S7CardPlacas'),
       () => import('./S7CardLojaDetalhe'),
+      () => import('./S7CardGrafica'),
     ]);
   }, []);
 

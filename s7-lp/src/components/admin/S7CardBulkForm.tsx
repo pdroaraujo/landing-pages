@@ -6,8 +6,8 @@ import Select from './Select';
 
 const randomCode = () => Math.random().toString(36).slice(2, 8);
 
-export default function S7CardBulkForm({ onCreated }: { onCreated: () => void }) {
-  const [quantity, setQuantity] = useState(10);
+export default function S7CardBulkForm({ onCreated, initialQuantity }: { onCreated: () => void; initialQuantity?: number }) {
+  const [quantity, setQuantity] = useState(Math.min(200, initialQuantity ?? 10));
   const [linkType, setLinkType] = useState<LinkType>('google_review');
   const [destination, setDestination] = useState('');
   const [prefix, setPrefix] = useState('');
