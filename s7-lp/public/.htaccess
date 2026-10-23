@@ -7,6 +7,9 @@
   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
   # SPA: qualquer caminho que não seja arquivo/pasta real cai no index.html
+  # (menos /assets/: JS/CSS faltando tem que dar 404 de verdade, senão o
+  # navegador recebe HTML no lugar do JS e o site fica em tela branca)
+  RewriteCond %{REQUEST_URI} !^/assets/
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]
