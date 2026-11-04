@@ -46,6 +46,18 @@ export const whatsappUrl = site.whatsapp
     ? `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(site.whatsappMessage)}`
     : '';
 
+/**
+ * Link de WhatsApp com a linha de produto já na mensagem, para o representante
+ * receber o contexto do orçamento sem precisar perguntar de novo.
+ * Sem WhatsApp configurado, cai no mesmo destino dos demais CTAs.
+ */
+export const whatsappLinkFor = (topic: string) =>
+    site.whatsapp
+        ? `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(
+              `Olá! Vim pelo site da Luchetti e gostaria de um orçamento de ${topic}.`,
+          )}`
+        : '#contato';
+
 export const contactIsWhatsapp = Boolean(site.whatsapp);
 
 /**

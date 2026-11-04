@@ -15,6 +15,7 @@ import {
     phoneUrl,
     photos,
     site,
+    whatsappLinkFor,
     whatsappUrl,
     yearsInBusiness,
 } from '@/lib/site-config';
@@ -169,7 +170,7 @@ export function SiteSections() {
                         return (
                             <a
                                 className={`service-card${index === 3 ? ' service-card--featured' : ''}`}
-                                href={contactUrl}
+                                href={whatsappLinkFor(service.title.replace(/^\p{Lu}(?=\p{Ll})/u, (c) => c.toLowerCase()))}
                                 {...ctaLinkProps}
                                 aria-label={`Solicitar orçamento de ${service.title}`}
                                 key={service.title}
