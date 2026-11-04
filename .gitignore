@@ -40,3 +40,6 @@ _next/
 # vercel
 .vercel
 
+
+# next build
+.next/

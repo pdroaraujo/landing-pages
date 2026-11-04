@@ -1,0 +1,97 @@
+.floating-contact {
+    position: fixed;
+    z-index: 70;
+    right: clamp(1rem, 2vw, 2rem);
+    bottom: max(clamp(1rem, 3vh, 2rem), env(safe-area-inset-bottom));
+    display: grid;
+    justify-items: center;
+    gap: 0.38rem;
+    place-items: center;
+    color: #1c397f;
+    text-decoration: none;
+    transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.floating-contact__icon {
+    position: relative;
+    display: grid;
+    width: clamp(3.8rem, 4.6vw, 4.5rem);
+    height: clamp(3.8rem, 4.6vw, 4.5rem);
+    place-items: center;
+    border: 2px solid rgba(255, 255, 255, 0.92);
+    border-radius: 50%;
+    background: #2454b5;
+    box-shadow:
+        0 12px 30px rgba(28, 57, 127, 0.3),
+        0 0 0 5px rgba(36, 84, 181, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    color: #ffffff;
+    transition: background-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+}
+
+.floating-contact__icon::before {
+    position: absolute;
+    inset: -0.42rem;
+    border: 1px solid rgba(36, 84, 181, 0.34);
+    border-radius: inherit;
+    content: '';
+}
+
+.floating-contact__icon svg {
+    position: relative;
+    z-index: 1;
+    width: 57%;
+    height: 57%;
+    fill: none;
+}
+
+.floating-contact__label {
+    padding: 0.28rem 0.62rem 0.3rem;
+    border: 1px solid rgba(36, 84, 181, 0.3);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 6px 18px rgba(4, 16, 44, 0.16);
+    color: #1c397f;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1;
+}
+
+.floating-contact:hover {
+    transform: translateY(-3px) scale(1.035);
+}
+
+.floating-contact:hover .floating-contact__icon {
+    background: #1c397f;
+    box-shadow:
+        0 16px 34px rgba(28, 57, 127, 0.34),
+        0 0 0 7px rgba(36, 84, 181, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.floating-contact:active { transform: translateY(1px) scale(.98); }
+.floating-contact:focus-visible { outline: 3px solid #2454b5; outline-offset: 5px; border-radius: 1rem; }
+
+html.mobile-menu-open .floating-contact,
+.floating-contact--hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px) scale(.9);
+}
+
+@media (max-width: 700px) {
+    .floating-contact {
+        right: 0.9rem;
+        bottom: max(0.9rem, env(safe-area-inset-bottom));
+        gap: 0.32rem;
+    }
+
+    .floating-contact__icon {
+        width: 3.5rem;
+        height: 3.5rem;
+    }
+
+    .floating-contact__label { font-size: 0.75rem; }
+}
