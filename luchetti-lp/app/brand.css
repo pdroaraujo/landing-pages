@@ -1,0 +1,28 @@
+/* Identidade Luchetti — ajustes finos por cima do template.
+   Verde #0B6B2D (marca), petróleo #00342B, vivo #009640, vermelho #ED1C24. */
+:root {
+    --luchetti-green: #0b6b2d;
+    --luchetti-green-deep: #00342b;
+    --luchetti-green-bright: #009640;
+    --luchetti-red: #ed1c24;
+    --luchetti-mint: #f4fff9;
+}
+
+/* Logo no header */
+.owner-nav__brand img { display: block; width: clamp(128px, 8.6vw, 158px); height: auto; }
+@media (max-width: 700px) {
+    .owner-nav__brand img { width: 118px; }
+}
+
+/* Logo no rodapé */
+.footer-brand__logo { max-width: none; }
+.footer-brand__logo img { display: block; width: clamp(150px, 12vw, 190px); height: auto; }
+
+/* Vermelho da marca como acento, como no site original */
+.section-label > span,
+.owner-nav__mobile-eyebrow > span { color: var(--luchetti-red); }
+.work-process__intro > .section-label > span,
+.section-label--dark > span { color: #ff5a5f; }
+
+/* Ícone do WhatsApp no botão flutuante (o template força fill: none) */
+.floating-contact__icon svg[fill='currentColor'] { fill: currentColor; width: 52%; height: 52%; }
