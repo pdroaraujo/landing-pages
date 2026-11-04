@@ -4,7 +4,9 @@ import { WindIcon } from '@solar-icons/react/bold/wind';
 import { ShieldCheckIcon } from '@solar-icons/react/bold/shield-check';
 import { WaterdropIcon } from '@solar-icons/react/bold/waterdrop';
 import Image from 'next/image';
+import { CatalogSection } from './catalog-section';
 import { FaqSection } from './faq-section';
+import { HistorySection } from './history-section';
 import { ScrollRevealSection } from './scroll-reveal-section';
 import {
     contactIsWhatsapp,
@@ -35,8 +37,8 @@ const services = [
     {
         title: 'Impermeabilização',
         copy: 'Mantas asfálticas, membranas líquidas, selantes, grautes, aditivos, argamassas especiais e isolantes térmicos e acústicos.',
-        image: photos.impermeabilizacao,
-        alt: 'Aplicação de manta asfáltica em laje',
+        image: photos.impermeabilizacaoReal,
+        alt: 'Aplicação de manta asfáltica',
         position: 'center 50%',
         cta: 'Orçar impermeabilização',
         icon: ShieldCheckIcon,
@@ -44,8 +46,8 @@ const services = [
     {
         title: 'Gás e PCI',
         copy: 'Multicamadas, termofusão, reguladores e ferramentas para gás. Para incêndio: Amanco Fire, ranhurado, galvanizado e aço carbono.',
-        image: photos.gasPci,
-        alt: 'Tubulação de gás e sprinklers de combate a incêndio',
+        image: photos.pciReal,
+        alt: 'Tubulação vermelha de combate a incêndio com sprinklers',
         position: 'center 50%',
         cta: 'Orçar gás e PCI',
         icon: FireIcon,
@@ -53,8 +55,8 @@ const services = [
     {
         title: 'AVAC e acabamentos',
         copy: 'Aquecimento, ventilação e ar-condicionado, além de louças, metais, revestimentos e soluções de acessibilidade.',
-        image: photos.avacAcabamentos,
-        alt: 'Banheiro com louças, metais e barras de acessibilidade',
+        image: photos.avacReal,
+        alt: 'Duto e difusor de ar-condicionado',
         position: 'center 50%',
         cta: 'Orçar AVAC e acabamentos',
         icon: WindIcon,
@@ -158,6 +160,8 @@ export function SiteSections() {
                 </div>
             </section>
 
+            <HistorySection />
+
             <ScrollRevealSection id="servicos" className="popular-services">
                 <header className="popular-services__heading">
                     <p className="section-label"><span aria-hidden="true">/</span>Linhas de produto</p>
@@ -209,6 +213,8 @@ export function SiteSections() {
                     </a>
                 </div>
             </ScrollRevealSection>
+
+            <CatalogSection />
 
             <ScrollRevealSection
                 id="aplicacoes"
@@ -416,7 +422,8 @@ export function SiteSections() {
 
                         <div className="footer-main__utility" data-scroll-reveal data-reveal="up" data-reveal-delay="1">
                             <nav className="footer-nav" aria-label="Navegação do rodapé">
-                                <a href="#servicos">Linhas</a>
+                                <a href="#historia">Nossa história</a>
+                                <a href="#catalogo">Catálogo</a>
                                 <a href="#aplicacoes">Quem atendemos</a>
                                 <a href="#duvidas">Dúvidas</a>
                                 <a href={site.instagram} {...externalLink}>Instagram</a>

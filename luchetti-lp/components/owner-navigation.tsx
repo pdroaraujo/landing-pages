@@ -6,7 +6,8 @@ import { ctaLinkProps, site } from '@/lib/site-config';
 
 const navigationItems = [
     { href: '#destaque', label: 'A Luchetti' },
-    { href: '#servicos', label: 'Linhas' },
+    { href: '#historia', label: 'História' },
+    { href: '#catalogo', label: 'Catálogo' },
     { href: '#aplicacoes', label: 'Quem atendemos' },
     { href: '#duvidas', label: 'Dúvidas' },
 ];
