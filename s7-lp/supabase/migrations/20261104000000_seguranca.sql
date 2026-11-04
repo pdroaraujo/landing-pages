@@ -41,3 +41,17 @@ exception when duplicate_object then null; end $$;
 create index if not exists s7card_stores_created_by_idx on public.s7card_stores (created_by);
 create index if not exists s7card_tags_created_by_idx   on public.s7card_tags (created_by);
 create index if not exists s7card_taps_tag_time_idx     on public.s7card_taps (tag_id, tapped_at desc);
+
+-- ---------- 5. Destino da placa NFC só com protocolo seguro ----------
+-- A página pública /r/:code redireciona pro destino. Um vendedor podia salvar
+-- `javascript:...` e rodar código no domínio do site. Wi-Fi e vCard guardam
+-- payload (não URL) e ficam de fora. NOT VALID = vale para inserts/updates
+-- novos sem travar se já existir alguma placa antiga fora do padrão.
+do $$ begin
+  alter table public.s7card_tags add constraint s7card_tags_destination_safe
+    check (link_type in ('wifi', 'vcard') or destination ~* '^(https?|tel|mailto|sms):')
+    not valid;
+exception when duplicate_object then null; end $$;
+-- placas antigas fora do padrão (corrigir à mão se aparecer alguma):
+--   select id, code, link_type, destination from public.s7card_tags
+--   where link_type not in ('wifi','vcard') and destination !~* '^(https?|tel|mailto|sms):';

@@ -121,7 +121,7 @@ export default function S7CardGrafica() {
             </span>
           </div>
           <p className={`mt-4 text-4xl font-bold tracking-tighter ${m.saldo < 0 ? 'text-[#ff5a5a]' : ''}`}>{loading ? '—' : num(m.saldo)}</p>
-          <p className="mt-1 text-xs text-white/40">{m.saldo < 0 ? 'saldo negativo: confira e faça um ajuste' : 'tags em poder da gráfica'}</p>
+          <p className="mt-1 text-xs text-white/50">{m.saldo < 0 ? 'saldo negativo: confira e faça um ajuste' : 'tags em poder da gráfica'}</p>
         </Card>
         {[
           { label: 'Enviadas', value: num(m.enviadas), sub: m.gasto ? `${brl(m.gasto)} em tags` : 'total entregue à gráfica' },
@@ -131,7 +131,7 @@ export default function S7CardGrafica() {
           <Card key={s.label} className="p-6">
             <span className="text-[11px] font-bold uppercase tracking-widest text-white/45">{s.label}</span>
             <p className="mt-4 text-3xl font-bold tracking-tighter">{loading ? '—' : s.value}</p>
-            <p className="mt-1 text-xs text-white/40">{s.sub}</p>
+            <p className="mt-1 text-xs text-white/50">{s.sub}</p>
           </Card>
         ))}
       </div>
@@ -139,7 +139,7 @@ export default function S7CardGrafica() {
       <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
         <section>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-[11px] font-bold uppercase tracking-widest text-white/40">Histórico</h2>
+            <h2 className="text-[11px] font-bold uppercase tracking-widest text-white/50">Histórico</h2>
             {graficas.length > 1 && (
               <div className="w-56">
                 <Select
@@ -159,9 +159,9 @@ export default function S7CardGrafica() {
           )}
 
           {loading ? (
-            <p className="text-sm text-white/40">Carregando…</p>
+            <p className="text-sm text-white/50">Carregando…</p>
           ) : visible.length === 0 ? (
-            <p className="border-y border-white/10 py-6 text-sm text-white/35">
+            <p className="border-y border-white/10 py-6 text-sm text-white/50">
               Nenhuma movimentação ainda. Registre o primeiro envio de tags pra gráfica ao lado.
             </p>
           ) : (
@@ -171,7 +171,7 @@ export default function S7CardGrafica() {
                 const eff = effect(mv);
                 return (
                   <li key={mv.id} className="flex items-center gap-4 py-3">
-                    <span className={`w-14 shrink-0 text-right text-lg font-bold tracking-tight ${eff > 0 ? 'text-sky-400' : eff < 0 ? 'text-white/70' : 'text-white/40'}`}>
+                    <span className={`w-14 shrink-0 text-right text-lg font-bold tracking-tight ${eff > 0 ? 'text-sky-400' : eff < 0 ? 'text-white/70' : 'text-white/50'}`}>
                       {eff > 0 ? '+' : ''}
                       {num(eff)}
                     </span>
@@ -183,14 +183,14 @@ export default function S7CardGrafica() {
                         </span>
                       </div>
                       {(mv.notes || mv.unit_cost) && (
-                        <p className="mt-1 truncate text-xs text-white/40">
+                        <p className="mt-1 truncate text-xs text-white/50">
                           {mv.unit_cost ? `${brl(Number(mv.unit_cost))}/un · ` : ''}
                           {mv.notes}
                         </p>
                       )}
                     </div>
                     {s7Full && (
-                      <button onClick={() => remove(mv.id)} className="rounded-lg p-2 text-white/30 hover:bg-[#fe0000]/20 hover:text-[#ff5a5a]" title="Apagar registro">
+                      <button onClick={() => remove(mv.id)} className="rounded-lg p-2 text-white/50 hover:bg-[#fe0000]/20 hover:text-[#ff5a5a]" title="Apagar registro">
                         <Trash2 size={14} />
                       </button>
                     )}
@@ -214,7 +214,7 @@ export default function S7CardGrafica() {
                       type="button"
                       onClick={() => setForm({ ...form, kind: k })}
                       className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-xs font-bold transition-colors ${
-                        form.kind === k ? 'border-[#fe0000] bg-[#fe0000]/15 text-white' : 'border-white/10 text-white/55 hover:text-white'
+                        form.kind === k ? 'border-[#fe0000] bg-[#e00000]/15 text-white' : 'border-white/10 text-white/55 hover:text-white'
                       }`}
                     >
                       <Icon size={14} /> {KIND[k].label}
@@ -222,7 +222,7 @@ export default function S7CardGrafica() {
                   );
                 })}
               </div>
-              <p className="-mt-1 text-xs text-white/40">{info.hint}</p>
+              <p className="-mt-1 text-xs text-white/50">{info.hint}</p>
 
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Quantidade">
@@ -273,7 +273,7 @@ export default function S7CardGrafica() {
               <Field label="Observação">
                 <input value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className={inputClass} placeholder="Ex: lote da Royal Face" />
               </Field>
-              {err && <p className="text-xs text-[#ff5a5a]">{err}</p>}
+              {err && <p role="alert" className="text-xs text-[#ff5a5a]">{err}</p>}
               <Btn type="submit" disabled={saving}>
                 {saving ? 'Salvando...' : 'Registrar'}
               </Btn>
@@ -290,7 +290,7 @@ export default function S7CardGrafica() {
             <h3 className="flex items-center gap-2 font-bold tracking-tight">
               <Layers size={16} className="text-[#fe0000]" /> Cadastrar as {afterPickup} placas retiradas no estoque?
             </h3>
-            <button onClick={() => setAfterPickup(null)} className="text-xs text-white/40 hover:text-white">
+            <button onClick={() => setAfterPickup(null)} className="text-xs text-white/50 hover:text-white">
               Agora não
             </button>
           </div>

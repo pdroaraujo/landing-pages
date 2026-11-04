@@ -4,6 +4,7 @@ import { LINK_TYPES, linkTypeInfo, type LinkType } from '../../lib/s7card';
 import { buildReviewLink, extractPlaceId, isReviewLink, PLACE_ID_FINDER_URL } from '../../lib/googleReview';
 import { Btn, Field, inputClass } from './ui';
 import Select from './Select';
+import { tagDestinationError } from '../../lib/safeUrl';
 
 const randomCode = () => Math.random().toString(36).slice(2, 8);
 
@@ -57,6 +58,11 @@ export default function S7CardTagForm({
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const destErr = tagDestinationError(linkType, destination.trim() || info.placeholder);
+    if (destErr) {
+      setErr(destErr);
+      return;
+    }
     setSaving(true);
     setErr(null);
     const { error } = await supabase.from('s7card_tags').insert({
@@ -107,7 +113,7 @@ export default function S7CardTagForm({
           <input value={label} onChange={(e) => setLabel(e.target.value)} className={inputClass} placeholder="Ex: balcão, mesa 4" />
         </Field>
       </div>
-      <p className="-mt-2 text-xs text-white/35">{info.hint}</p>
+      <p className="-mt-2 text-xs text-white/50">{info.hint}</p>
       {isGoogleReview ? (
         <Field label="Link de avaliação (Google Meu Negócio) ou Place ID">
           <input
@@ -171,7 +177,7 @@ export default function S7CardTagForm({
           <input readOnly value={`${window.location.origin}/r/${code}`} className={`${inputClass} text-white/50`} />
         </Field>
       </div>
-      {err && <p className="text-xs text-[#ff5a5a]">{err}</p>}
+      {err && <p role="alert" className="text-xs text-[#ff5a5a]">{err}</p>}
       <Btn type="submit" disabled={saving} className="self-start">
         {saving ? 'Salvando...' : 'Criar placa'}
       </Btn>

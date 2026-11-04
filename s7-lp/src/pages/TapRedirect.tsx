@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { safeHref, TAP_PROTOCOLS } from '../lib/safeUrl';
 
 type State = { phase: 'loading' } | { phase: 'redirecting' } | { phase: 'vcard'; destination: string } | { phase: 'wifi' } | { phase: 'error'; message: string };
 
@@ -32,8 +33,13 @@ export default function TapRedirect() {
           a.click();
           return;
         }
+        const safe = safeHref(destination, TAP_PROTOCOLS);
+        if (!safe) {
+          setState({ phase: 'error', message: 'O link desta placa não é válido. Avise o estabelecimento.' });
+          return;
+        }
         setState({ phase: 'redirecting' });
-        window.location.replace(destination);
+        window.location.replace(safe);
       })
       .catch(() => setState({ phase: 'error', message: 'Falha ao carregar. Tente novamente.' }));
   }, [code]);

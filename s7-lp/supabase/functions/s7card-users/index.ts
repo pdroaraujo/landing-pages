@@ -42,8 +42,8 @@ Deno.serve(async (req) => {
   const user = body.email?.trim().toLowerCase().split('@')[0];
   const email = user ? `${user}@agencias7.com.br` : '';
   const full_name = body.full_name?.trim();
-  if (!email || !body.password || body.password.length < 6 || !full_name) {
-    return json({ error: 'Preencha nome, e-mail e uma senha de pelo menos 6 caracteres.' }, 400);
+  if (!email || !body.password || body.password.length < 8 || !full_name) {
+    return json({ error: 'Preencha nome, e-mail e uma senha de pelo menos 8 caracteres.' }, 400);
   }
   if (body.action === 'cliente' && !body.store_id) return json({ error: 'Escolha a loja do cliente.' }, 400);
 

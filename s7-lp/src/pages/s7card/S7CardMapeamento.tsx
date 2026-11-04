@@ -298,7 +298,7 @@ export default function S7CardMapeamento() {
                   type="button"
                   onClick={() => setNewStatus(st)}
                   className={`rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest ${
-                    newStatus === st ? 'bg-[#fe0000] text-white' : 'text-white/45 hover:text-white'
+                    newStatus === st ? 'bg-[#e00000] text-white' : 'text-white/45 hover:text-white'
                   }`}
                 >
                   {STATUS_LABEL[st]}
@@ -366,7 +366,7 @@ export default function S7CardMapeamento() {
 
           <p className="mb-2 mt-5 text-xs font-bold uppercase tracking-widest text-white/50">1. Peça pro Claude gerar a lista</p>
           <div className="relative">
-            <textarea
+            <textarea aria-label="Prompt para gerar a lista"
               readOnly
               value={buildGenericImportPrompt(ramo, city || 'sua cidade', uf || undefined)}
               rows={6}
@@ -381,7 +381,7 @@ export default function S7CardMapeamento() {
           </div>
 
           <p className="mb-2 mt-5 text-xs font-bold uppercase tracking-widest text-white/50">2. Suba o arquivo (.csv ou .xlsx)</p>
-          <input
+          <input aria-label="Arquivo da lista (.csv ou .xlsx)"
             ref={fileRef}
             type="file"
             accept=".csv,.xlsx,.xls,text/csv"
@@ -389,7 +389,7 @@ export default function S7CardMapeamento() {
             className="block w-full text-xs text-white/60 file:mr-3 file:rounded-lg file:border-0 file:bg-[#fe0000] file:px-4 file:py-2 file:text-xs file:font-bold file:uppercase file:text-white"
           />
           {parsedCount !== null && <p className="mt-2 text-xs text-white/50">{parsedCount} empresas lidas de "{file?.name}".</p>}
-          {importMsg && <p className="mt-2 text-xs text-emerald-400">{importMsg}</p>}
+          {importMsg && <p role="status" className="mt-2 text-xs text-emerald-400">{importMsg}</p>}
 
           <Btn onClick={runImport} disabled={!file || importing} className="mt-4">
             <Upload size={14} /> {importing ? 'Importando...' : 'Importar pro mapeamento'}
@@ -403,7 +403,7 @@ export default function S7CardMapeamento() {
             key={t}
             onClick={() => setTab(t)}
             className={`rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest border ${
-              tab === t ? 'bg-[#fe0000] text-white border-[#fe0000]' : 'border-white/10 text-white/45 hover:text-white'
+              tab === t ? 'bg-[#e00000] text-white border-[#fe0000]' : 'border-white/10 text-white/45 hover:text-white'
             }`}
           >
             {t === 'todas' ? `Todas (${totalTodas})` : `${STATUS_LABEL[t]} (${counts[t]})`}
@@ -412,7 +412,7 @@ export default function S7CardMapeamento() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-white/40">Carregando…</p>
+        <p className="text-sm text-white/50">Carregando…</p>
       ) : (
         <div className="grid gap-3">
           {/* --- lojas vendidas --- */}
@@ -428,7 +428,7 @@ export default function S7CardMapeamento() {
                         <span className="font-bold">{s.name}</span>
                         <Badge tone="green">Vendido</Badge>
                       </div>
-                      <p className="mt-1 text-xs text-white/40">
+                      <p className="mt-1 text-xs text-white/50">
                         {[s.category, s.city, s.uf].filter(Boolean).join(' · ')} · vendida em {fullDate(s.sold_at)} · {brl(s.sold_value)}
                       </p>
                       <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-white/50">
@@ -461,7 +461,7 @@ export default function S7CardMapeamento() {
                       >
                         <Ban size={13} /> Descartar
                       </button>
-                      <button onClick={() => removeStore(s.id, s.name)} className="rounded-lg bg-white/5 p-2.5 text-white/40 hover:bg-[#fe0000]/20 hover:text-[#ff5a5a]" title="Apagar loja">
+                      <button onClick={() => removeStore(s.id, s.name)} className="rounded-lg bg-white/5 p-2.5 text-white/50 hover:bg-[#fe0000]/20 hover:text-[#ff5a5a]" title="Apagar loja">
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -481,7 +481,7 @@ export default function S7CardMapeamento() {
                       <span className="font-bold">{p.name}</span>
                       <Badge tone={STATUS_TONE[p.status]}>{STATUS_LABEL[p.status]}</Badge>
                     </div>
-                    <p className="mt-1 text-xs text-white/40">
+                    <p className="mt-1 text-xs text-white/50">
                       {[p.category, p.city, p.uf].filter(Boolean).join(' · ')}
                       {p.phone ? ` · ${p.phone}` : ''}
                     </p>
@@ -533,7 +533,7 @@ export default function S7CardMapeamento() {
 
           {((tab !== 'vendido' && prospects.filter((p) => p.status !== 'vendido' && (tab === 'todas' || tab === p.status)).length === 0) ||
             (tab === 'vendido' && stores.length === 0)) && (
-            <Card className="p-10 text-center text-sm text-white/40">Nada por aqui ainda.</Card>
+            <Card className="p-10 text-center text-sm text-white/50">Nada por aqui ainda.</Card>
           )}
         </div>
       )}

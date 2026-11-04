@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { safeHref } from '../../lib/safeUrl';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Globe, AtSign, Link2, PhoneOff, Phone, Star, Check, X, Users, Sparkles } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -123,7 +124,7 @@ export default function ListaDetalhe() {
 
   return (
     <div>
-      <Link to="/admin/listas" className="mb-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white">
+      <Link to="/admin/listas" className="mb-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white">
         <ArrowLeft size={14} /> Listas
       </Link>
       <PageHeader
@@ -152,7 +153,7 @@ export default function ListaDetalhe() {
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest ${
-              tab === t.key ? 'bg-[#fe0000] text-white' : 'text-white/45'
+              tab === t.key ? 'bg-[#e00000] text-white' : 'text-white/45'
             }`}
           >
             {t.label}
@@ -161,7 +162,7 @@ export default function ListaDetalhe() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-white/40">Carregando…</p>
+        <p className="text-sm text-white/50">Carregando…</p>
       ) : (
         <div className="grid gap-3">
           {visible.map((it) => {
@@ -200,7 +201,7 @@ export default function ListaDetalhe() {
                         </a>
                       )}
                       {b.website && (
-                        <a href={b.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-xs text-sky-400">
+                        <a href={safeHref(b.website)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-xs text-sky-400">
                           <Globe size={12} /> abrir site
                         </a>
                       )}
@@ -229,7 +230,7 @@ export default function ListaDetalhe() {
                     ) : (
                       <button
                         onClick={() => patch(it.id, { qualified: null, assigned_to: null })}
-                        className="text-[11px] font-bold uppercase tracking-widest text-white/35 hover:text-white"
+                        className="text-[11px] font-bold uppercase tracking-widest text-white/50 hover:text-white"
                       >
                         {it.qualified ? 'aprovada' : 'rejeitada'} · desfazer
                       </button>
@@ -262,7 +263,7 @@ export default function ListaDetalhe() {
               </Card>
             );
           })}
-          {!visible.length && <p className="text-sm text-white/35">Nada nesta aba.</p>}
+          {!visible.length && <p className="text-sm text-white/50">Nada nesta aba.</p>}
         </div>
       )}
     </div>

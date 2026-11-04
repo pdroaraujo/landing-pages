@@ -42,7 +42,7 @@ export default function ChangePassword() {
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-white font-sans flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <Link to={backTo} className="mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white">
+        <Link to={backTo} className="mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white">
           <ArrowLeft size={14} /> Voltar
         </Link>
         <Card className="p-7">
@@ -52,13 +52,13 @@ export default function ChangePassword() {
           />
           <form onSubmit={submit} className="flex flex-col gap-4">
             <Field label="Nova senha">
-              <input type="password" required minLength={8} value={pwd} onChange={(e) => setPwd(e.target.value)} className={inputClass} />
+              <input type="password" autoComplete="new-password" required minLength={8} value={pwd} onChange={(e) => setPwd(e.target.value)} className={inputClass} />
             </Field>
             <Field label="Confirmar nova senha">
-              <input type="password" required minLength={8} value={confirm} onChange={(e) => setConfirm(e.target.value)} className={inputClass} />
+              <input type="password" autoComplete="new-password" required minLength={8} value={confirm} onChange={(e) => setConfirm(e.target.value)} className={inputClass} />
             </Field>
-            {err && <p className="text-xs text-[#ff5a5a]">{err}</p>}
-            {ok && <p className="text-xs text-emerald-400">Senha atualizada.</p>}
+            {err && <p role="alert" className="text-xs text-[#ff5a5a]">{err}</p>}
+            {ok && <p role="status" className="text-xs text-emerald-400">Senha atualizada.</p>}
             <Btn type="submit" disabled={saving} className="mt-1">
               <KeyRound size={14} /> {saving ? 'Salvando...' : 'Salvar nova senha'}
             </Btn>

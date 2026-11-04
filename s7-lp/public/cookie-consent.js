@@ -23,7 +23,7 @@
     banner.innerHTML =
       '<span style="flex:1;min-width:240px;">Usamos cookies para melhorar sua experiência e para fins de análise. Ao continuar navegando, você concorda com nossa <a href="' + PRIVACY_URL + '" style="color:#fff;text-decoration:underline;">Política de Privacidade</a>.</span>' +
       '<span style="display:flex;gap:8px;">' +
-      '<button id="cookie-consent-accept" style="background:#fe0000;color:#fff;border:none;padding:8px 16px;border-radius:999px;font-weight:700;text-transform:uppercase;font-size:12px;letter-spacing:.05em;cursor:pointer;">Aceitar</button>' +
+      '<button id="cookie-consent-accept" style="background:#e00000;color:#fff;border:none;padding:8px 16px;border-radius:999px;font-weight:700;text-transform:uppercase;font-size:12px;letter-spacing:.05em;cursor:pointer;">Aceitar</button>' +
       '<button id="cookie-consent-decline" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);padding:8px 16px;border-radius:999px;font-weight:700;text-transform:uppercase;font-size:12px;letter-spacing:.05em;cursor:pointer;">Recusar</button>' +
       '</span>';
     document.body.appendChild(banner);

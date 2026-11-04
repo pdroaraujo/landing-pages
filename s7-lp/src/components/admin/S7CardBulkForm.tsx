@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { LINK_TYPES, linkTypeInfo, type LinkType } from '../../lib/s7card';
 import { Btn, Field, inputClass } from './ui';
 import Select from './Select';
+import { tagDestinationError } from '../../lib/safeUrl';
 
 const randomCode = () => Math.random().toString(36).slice(2, 8);
 
@@ -20,6 +21,11 @@ export default function S7CardBulkForm({ onCreated, initialQuantity }: { onCreat
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const destErr = tagDestinationError(linkType, destination.trim() || info.placeholder);
+    if (destErr) {
+      setErr(destErr);
+      return;
+    }
     setSaving(true);
     setErr(null);
     setDone(null);
@@ -42,7 +48,7 @@ export default function S7CardBulkForm({ onCreated, initialQuantity }: { onCreat
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
-      <p className="text-xs text-white/40">
+      <p className="text-xs text-white/50">
         Gera N placas em estoque de uma vez (sem loja ainda) — útil quando você imprime/programa um lote antes de
         sair vendendo. Depois é só atribuir cada uma a uma loja em "Placas".
       </p>
@@ -64,7 +70,7 @@ export default function S7CardBulkForm({ onCreated, initialQuantity }: { onCreat
       <Field label="Destino padrão (dá pra editar depois, placa por placa)">
         <input value={destination} onChange={(e) => setDestination(e.target.value)} className={inputClass} placeholder={info.placeholder} />
       </Field>
-      {err && <p className="text-xs text-[#ff5a5a]">{err}</p>}
+      {err && <p role="alert" className="text-xs text-[#ff5a5a]">{err}</p>}
       {done !== null && <p className="text-xs text-emerald-400">{done} placas criadas em estoque.</p>}
       <label className="flex items-center gap-2 text-xs text-white/60">
         <input type="checkbox" checked={revenda} onChange={(e) => setRevenda(e.target.checked)} className="accent-[#fe0000]" />

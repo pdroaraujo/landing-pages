@@ -197,7 +197,7 @@ export default function S7CardDashboard() {
                     role="tab"
                     aria-selected={barsMode === k}
                     onClick={() => setBarsMode(k)}
-                    className={`rounded-full px-3 py-1 capitalize ${barsMode === k ? 'bg-[#fe0000] text-white' : 'text-white/55'}`}
+                    className={`rounded-full px-3 py-1 capitalize ${barsMode === k ? 'bg-[#e00000] text-white' : 'text-white/55'}`}
                   >
                     {k}
                   </button>

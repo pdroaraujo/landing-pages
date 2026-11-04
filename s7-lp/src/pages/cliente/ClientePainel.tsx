@@ -101,13 +101,13 @@ export default function ClientePainel() {
             <img src="/logo-256.webp" alt="S7" width="500" height="500" className="h-10 w-auto" />
             <span className="text-[11px] font-bold uppercase tracking-widest text-[#fe0000]">S7 Card · Minhas métricas</span>
           </div>
-          <div className="flex items-center gap-5">
-            <span className="hidden text-sm font-bold sm:inline">{profile?.full_name}</span>
-            <NavLink to="/conta/senha" className="text-white/50 hover:text-white" title="Trocar senha">
-              <KeyRound size={16} />
+          <div className="flex items-center gap-2">
+            <span className="mr-3 hidden text-sm font-bold sm:inline">{profile?.full_name}</span>
+            <NavLink to="/conta/senha" className="grid h-11 w-11 place-items-center rounded-full text-white/50 hover:text-white" title="Trocar senha" aria-label="Trocar senha">
+              <KeyRound size={16} aria-hidden />
             </NavLink>
-            <button onClick={doSignOut} className="text-white/50 hover:text-[#fe0000]" title="Sair">
-              <LogOut size={16} />
+            <button onClick={doSignOut} className="grid h-11 w-11 place-items-center rounded-full text-white/50 hover:text-[#fe0000]" title="Sair" aria-label="Sair">
+              <LogOut size={16} aria-hidden />
             </button>
           </div>
         </div>
@@ -115,7 +115,7 @@ export default function ClientePainel() {
 
       <main className="relative z-10 mx-auto max-w-[1200px] px-5 py-10 md:px-10">
         {loading ? (
-          <p className="text-sm text-white/40">Carregando…</p>
+          <p className="text-sm text-white/50">Carregando…</p>
         ) : !client || !access ? (
           <Card className="p-10 text-center text-sm text-white/50">Seu acesso ainda não foi vinculado a uma loja. Fale com a S7.</Card>
         ) : (
@@ -126,7 +126,7 @@ export default function ClientePainel() {
                 <p className="mt-2 text-sm text-white/50">Quantas pessoas encostaram o celular nas suas placas S7 Card.</p>
               </div>
               <div className="flex items-center gap-3">
-                <CalendarClock size={16} className="text-white/40" />
+                <CalendarClock size={16} className="text-white/50" />
                 {access.kind === 'teste' && (
                   <Badge tone="amber">
                     Teste grátis · {daysLeft} dia{daysLeft === 1 ? '' : 's'} restante{daysLeft === 1 ? '' : 's'}
@@ -149,17 +149,17 @@ export default function ClientePainel() {
                 </p>
                 <p className="mt-6 text-4xl font-bold tracking-tighter">
                   {brl(client.monthly_price || PRICE)}
-                  <span className="text-base font-medium text-white/40">/mês</span>
+                  <span className="text-base font-medium text-white/50">/mês</span>
                 </p>
                 <a
                   href={PAY_URL}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#fe0000] px-8 py-4 text-xs font-bold uppercase tracking-widest text-white hover:bg-[#d40000]"
+                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#e00000] px-8 py-4 text-xs font-bold uppercase tracking-widest text-white hover:bg-[#d40000]"
                 >
                   <MessageCircle size={15} /> Assinar agora
                 </a>
-                <p className="mt-4 text-[11px] text-white/30">Assim que o pagamento for confirmado, o painel libera de novo.</p>
+                <p className="mt-4 text-[11px] text-white/50">Assim que o pagamento for confirmado, o painel libera de novo.</p>
               </Card>
             ) : (
               <>

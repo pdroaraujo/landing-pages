@@ -1,7 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useDialog } from '../lib/useDialog';
 
 // Animações em CSS puro + IntersectionObserver (sem framer-motion): a landing
 // fica bem mais leve e fluida no celular. Cada bloco anima uma vez só, ao entrar na tela.
+
+// WhatsApp: mensagem pré-preenchida curta e contextual por botão (o atendimento
+// sabe de onde o lead veio) + evento de conversão no dataLayer, pronto pra
+// GTM/GA4/Meta quando forem instalados (sem script de terceiro hoje).
+const WA_NUMBER = '5513936283974';
+const WA_MSG = {
+  header: 'Olá! Vim pelo site da Agência S7 e quero falar sobre um projeto.',
+  hero: 'Olá! Vim pelo site da Agência S7 e quero um orçamento de site, SEO ou Google Meu Negócio.',
+  final: 'Olá! Vim pelo site e quero começar um projeto com a Agência S7.',
+} as const;
+const waHref = (where: keyof typeof WA_MSG) => `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(WA_MSG[where])}`;
+const trackWhatsApp = (where: keyof typeof WA_MSG) => {
+  const w = window as unknown as { dataLayer?: Record<string, unknown>[] };
+  (w.dataLayer = w.dataLayer || []).push({ event: 'whatsapp_click', cta_location: where });
+};
+
 function useInView<T extends Element>(ref: React.RefObject<T | null>, { once = true, margin = '0px 0px -80px 0px' } = {}) {
   const [inView, setInView] = useState(false);
   useEffect(() => {
@@ -99,6 +116,7 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
 
 export default function Landing() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useDialog<HTMLDivElement>(isMenuOpen, () => setIsMenuOpen(false));
   const [isScrolled, setIsScrolled] = useState(false);
   const [view, setView] = useState<'home' | 'portfolio'>('home');
 
@@ -147,17 +165,19 @@ export default function Landing() {
 
           <div className="flex items-center gap-2 md:gap-4 z-50">
             {/* Botão Fale Conosco (Animação Esquerda -> Direita SEM SETA) */}
-            <a href="https://wa.me/5513936283974?text=Ol%C3%A1%2C%20desejo%20falar%20com%20um%20especialista!" className="hidden sm:flex group relative overflow-hidden border border-white/20 rounded-full px-6 py-3 text-xs md:text-sm font-bold uppercase tracking-widest text-white items-center justify-center">
+            <a href={waHref('header')} onClick={() => trackWhatsApp('header')} className="hidden sm:flex group relative overflow-hidden border border-white/20 rounded-full px-6 py-3 text-xs md:text-sm font-bold uppercase tracking-widest text-white items-center justify-center">
               <div className="absolute inset-0 bg-[#fe0000] transform -translate-x-[105%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0"></div>
-              <span className="relative z-10 transition-colors">Fale Conosco</span>
+              <span className="relative z-10 transition-colors">Pedir orçamento</span>
             </a>
 
             {/* Menu Toggle */}
             <button
               className="w-10 h-10 md:w-12 md:h-12 border border-white/20 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors"
               onClick={() => setIsMenuOpen(true)}
+              aria-label="Abrir menu"
+              aria-expanded={isMenuOpen}
             >
-              <Menu size={20} />
+              <Menu size={20} aria-hidden />
             </button>
           </div>
         </div>
@@ -165,7 +185,7 @@ export default function Landing() {
 
       {/* FULLSCREEN MENU NAKULA STYLE */}
       {isMenuOpen && (
-          <div className="s7-fade fixed inset-0 z-[60] bg-[#0c0c0c] flex flex-col justify-between">
+          <div ref={menuRef} role="dialog" aria-modal="true" aria-label="Menu" className="s7-fade fixed inset-0 z-[60] bg-[#0c0c0c] flex flex-col justify-between">
             {/* Menu Header */}
             <div className="flex justify-between items-center px-6 md:px-12 py-8 border-b border-white/5">
               <a href="#" onClick={() => setIsMenuOpen(false)}>
@@ -178,8 +198,9 @@ export default function Landing() {
                 <button
                   className="w-12 h-12 border border-white/20 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
+                  aria-label="Fechar menu"
                 >
-                  <X size={20} />
+                  <X size={20} aria-hidden />
                 </button>
               </div>
             </div>
@@ -222,6 +243,12 @@ export default function Landing() {
           >
             A ÚNICA <br className="md:hidden" /> AGÊNCIA <br /> QUE VOCÊ <br className="md:hidden" /> PRECISA.
           </h1>
+          <p
+            style={{ animationDelay: '250ms' }}
+            className="s7-fade mt-8 max-w-2xl text-lg md:text-xl text-white/70 leading-relaxed"
+          >
+            Criação de sites, SEO e Google Meu Negócio para empresas que querem ser encontradas no Google e receber mais contatos de clientes.
+          </p>
 
           <div className="mt-16 md:mt-24 grid md:grid-cols-2 gap-12 items-end">
             <div
@@ -237,7 +264,7 @@ export default function Landing() {
               style={{ animationDelay: '500ms' }}
               className="s7-fade flex justify-start md:justify-end"
             >
-              <a href="https://wa.me/5513936283974?text=Ol%C3%A1%2C%20desejo%20falar%20com%20um%20especialista!" className="group relative overflow-hidden border border-white/20 rounded-full px-6 py-4 sm:px-8 sm:py-4 text-sm sm:text-base md:text-base font-bold uppercase tracking-widest text-white flex items-center justify-between sm:justify-center gap-3 w-full sm:w-auto">
+              <a href={waHref('hero')} onClick={() => trackWhatsApp('hero')} className="group relative overflow-hidden border border-white/20 rounded-full px-6 py-4 sm:px-8 sm:py-4 text-sm sm:text-base md:text-base font-bold uppercase tracking-widest text-white flex items-center justify-between sm:justify-center gap-3 w-full sm:w-auto">
                 <div className="absolute inset-0 bg-[#fe0000] transform -translate-x-[105%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0"></div>
                 <span className="relative z-10 transition-colors">Falar com especialista</span>
                 <ArrowRight size={18} className="relative z-10 transition-colors duration-500 ease-out" />
@@ -272,7 +299,7 @@ export default function Landing() {
             <a href="https://phcontainer.com.br" target="_blank" rel="noopener noreferrer" className="group block cursor-pointer">
               <FadeIn delay={0.2}>
                 <div className="w-full aspect-video bg-[#111] mb-8 overflow-hidden relative border border-white/10">
-                  <img src="/phcontainer-site.webp" alt="Site da PH Container feito pela Agência S7" width="1200" height="597" loading="lazy" decoding="async" className="w-full h-full object-cover opacity-80 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700" />
+                  <img src="/phcontainer-site.webp" srcSet="/phcontainer-site-640.webp 640w, /phcontainer-site.webp 1200w" sizes="(min-width: 1024px) 50vw, 100vw" alt="Site da PH Container feito pela Agência S7" width="1200" height="597" loading="lazy" decoding="async" className="w-full h-full object-cover opacity-80 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700" />
                 </div>
               </FadeIn>
 
@@ -281,7 +308,7 @@ export default function Landing() {
                   <h3 className="text-3xl font-bold tracking-tight uppercase group-hover:text-[#fe0000] transition-colors">PH CONTAINER</h3>
                   <p className="text-sm text-white/50 tracking-wide uppercase mt-2">Web Design, Google&nbsp; Meu&nbsp; Negócio & SEO</p>
                 </div>
-                <ArrowUpRight className="text-white/30 group-hover:text-[#fe0000] transition-colors" size={32} />
+                <ArrowUpRight className="text-white/50 group-hover:text-[#fe0000] transition-colors" size={32} />
               </FadeIn>
             </a>
 
@@ -398,12 +425,12 @@ export default function Landing() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 border-t border-l border-white/10">
             {[
-              { num: "1", title: "Conteúdo / Pesquisa", items: ["Prospecção", "Estrutura de copy", "UX/UI research"] },
-              { num: "2", title: "Criação / UI Design", items: ["Sketch", "Wireframe", "Protótipo", "Validação"] },
-              { num: "3", title: "Dev / Otimização", items: ["Setup Inicial", "DEV Otimizado"] },
-              { num: "4", title: "Comercial / Proposta", items: ["Setup jurídico", "Setup financeiro"] },
-              { num: "5", title: "Briefing / Alinhamento", items: ["Reunião de briefing", "Alinhamento de projeto"] },
-              { num: "6", title: "Entrega", items: ["DEP", "Relatório Técnico", "Style Guide"] }
+              { num: "1", title: "Briefing / Alinhamento", items: ["Reunião de briefing", "Alinhamento de projeto"] },
+              { num: "2", title: "Comercial / Proposta", items: ["Proposta e escopo", "Contrato e pagamento"] },
+              { num: "3", title: "Conteúdo / Pesquisa", items: ["Pesquisa do seu mercado", "Estrutura dos textos", "Pesquisa de UX/UI"] },
+              { num: "4", title: "Criação / UI Design", items: ["Rascunho", "Wireframe", "Protótipo", "Sua aprovação"] },
+              { num: "5", title: "Dev / Otimização", items: ["Desenvolvimento", "Otimização de velocidade e SEO"] },
+              { num: "6", title: "Entrega", items: ["Publicação do site", "Relatório técnico", "Guia de estilo"] }
             ].map((step, idx) => (
               <FadeIn key={idx} delay={idx * 0.1} className="p-8 md:p-10 border-b border-r border-white/10 hover:bg-white/[0.02] transition-colors">
                 <h3 className="text-xl font-bold tracking-widest text-white/60 uppercase mb-8">
@@ -452,7 +479,7 @@ export default function Landing() {
             </h2>
 
             <div className="flex justify-center items-center mt-16">
-              <a href="https://wa.me/5513936283974?text=Ol%C3%A1%2C%20desejo%20falar%20com%20um%20especialista!" className="group relative overflow-hidden border border-white/20 rounded-full px-12 py-5 text-sm font-bold uppercase tracking-widest text-white flex items-center justify-center gap-3">
+              <a href={waHref('final')} onClick={() => trackWhatsApp('final')} className="group relative overflow-hidden border border-white/20 rounded-full px-12 py-5 text-sm font-bold uppercase tracking-widest text-white flex items-center justify-center gap-3">
                 <div className="absolute inset-0 bg-[#fe0000] transform -translate-x-[105%] group-hover:translate-x-0 transition-transform duration-500 ease-out z-0"></div>
                 <span className="relative z-10 transition-colors">Falar com um Especialista</span>
               </a>

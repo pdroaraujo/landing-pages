@@ -22,6 +22,20 @@ function host(u: string) {
 }
 
 /** Classificação instantânea pela URL — sem requisição de rede. */
+/** bloqueia esquemas não-web e destinos internos (loopback, rede privada, metadata de cloud) */
+export function isPublicHttpUrl(u: string): boolean {
+  let url: URL;
+  try { url = new URL(u); } catch { return false; }
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return false;
+  if (url.port && !['80', '443'].includes(url.port)) return false;
+  const h = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
+  if (h === 'localhost' || h.endsWith('.localhost') || h.endsWith('.internal') || h.endsWith('.local')) return false;
+  if (/^(127\.|10\.|0\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(h)) return false;
+  if (h.includes(':')) return false; // IPv6 literal
+  if (/^\d+$/.test(h)) return false; // IP em decimal
+  return true;
+}
+
 export function classifyUrl(website: string | null): Analysis {
   if (!website) {
     return { status: 'none', finalUrl: null, score: 10, verdict: 'Sem site — lead quente para criação.', checks: {} };
@@ -39,6 +53,10 @@ export async function classifyWebsite(website: string | null, useAI = true): Pro
   if (quick.status !== 'own') return quick;
   const site = quick.finalUrl as string;
 
+  // SSRF: a URL veio de planilha importada — só http(s) para host público
+  if (!isPublicHttpUrl(site))
+    return { status: 'unknown', finalUrl: site, score: 6, verdict: 'Endereço do site inválido — verificar manualmente.', checks: { online: false } };
+
   // tenta buscar o site
   let html = '';
   let finalUrl = site;
@@ -47,10 +65,17 @@ export async function classifyWebsite(website: string | null, useAI = true): Pro
     const ctrl = new AbortController();
     const to = setTimeout(() => ctrl.abort(), 9000);
     const t0 = Date.now();
-    const res = await fetch(site, { redirect: 'follow', signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 AgenciaS7Bot' } });
+    // segue até 5 redirecionamentos manualmente, revalidando cada destino
+    let res = await fetch(site, { redirect: 'manual', signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 AgenciaS7Bot' } });
+    for (let hop = 0; hop < 5 && res.status >= 300 && res.status < 400; hop++) {
+      const next = new URL(res.headers.get('location') ?? '', finalUrl).href;
+      if (!isPublicHttpUrl(next)) throw new Error('redirect bloqueado');
+      await res.body?.cancel();
+      finalUrl = next;
+      res = await fetch(next, { redirect: 'manual', signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 AgenciaS7Bot' } });
+    }
     elapsed = Date.now() - t0;
     clearTimeout(to);
-    finalUrl = res.url || site;
     html = (await res.text()).slice(0, 60000);
   } catch {
     return { status: 'unknown', finalUrl: site, score: 6, verdict: 'Site não respondeu — verificar manualmente (pode estar fora do ar).', checks: { online: false } };

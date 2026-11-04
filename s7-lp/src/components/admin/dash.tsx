@@ -14,7 +14,7 @@ export function Delta({ value, light }: { value: number; light?: boolean }) {
   return (
     <span
       className={`inline-flex items-center gap-0.5 rounded-full border px-2 py-0.5 text-[10px] font-bold ${
-        light ? 'border-white/30 bg-white/15 text-white' : up ? 'border-[#fe0000]/40 bg-[#fe0000]/10 text-[#ff6b6b]' : 'border-white/15 bg-white/5 text-white/60'
+        light ? 'border-white/30 bg-white/15 text-white' : up ? 'border-[#fe0000]/40 bg-[#e00000]/10 text-[#ff6b6b]' : 'border-white/15 bg-white/5 text-white/60'
       }`}
       title="Comparado ao período anterior do mesmo tamanho"
     >
@@ -35,7 +35,7 @@ export function PeriodPills({ value, onChange }: { value: PeriodKey; onChange: (
           aria-selected={value === p.key}
           onClick={() => onChange(p.key)}
           className={`rounded-full px-3 py-1.5 text-[11px] font-medium transition-colors ${
-            value === p.key ? 'bg-[#fe0000] text-white shadow-[0_0_18px_rgba(254,0,0,0.45)]' : 'text-white/55 hover:text-white'
+            value === p.key ? 'bg-[#e00000] text-white shadow-[0_0_18px_rgba(254,0,0,0.45)]' : 'text-white/55 hover:text-white'
           }`}
         >
           {p.label}
@@ -124,7 +124,7 @@ function XLabels({ data }: { data: Pt[] }) {
   // no celular mostra só alguns rótulos pra não embolar
   const every = data.length > 14 ? Math.ceil(data.length / 7) : 1;
   return (
-    <div className="mt-3 flex justify-between pr-[9.6%] text-[10px] text-white/40">
+    <div className="mt-3 flex justify-between pr-[9.6%] text-[10px] text-white/50">
       {data.map((d, i) => (
         <span key={i} className={i === data.length - 1 ? 'font-bold text-white' : i % every ? 'invisible' : ''}>
           {d.label}
@@ -181,7 +181,7 @@ export function WalletCard({ label, value, delta, foot }: { label: string; value
           <p className="text-2xl font-bold tracking-tight sm:text-3xl">{value}</p>
           {delta !== undefined && <Delta value={delta} />}
         </div>
-        {foot && <p className="mt-1 text-[10px] text-white/40">{foot}</p>}
+        {foot && <p className="mt-1 text-[10px] text-white/50">{foot}</p>}
       </div>
     </div>
   );
@@ -191,7 +191,7 @@ export function WalletCard({ label, value, delta, foot }: { label: string; value
 export function RecentRow({ title, sub, value }: { title: string; sub: string; value: string }) {
   return (
     <li className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/25 p-3">
-      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#fe0000] text-[11px] font-bold text-white shadow-[0_0_14px_rgba(254,0,0,0.5)]">
+      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#e00000] text-[11px] font-bold text-white shadow-[0_0_14px_rgba(254,0,0,0.5)]">
         {initials(title)}
       </span>
       <span className="min-w-0 flex-1">

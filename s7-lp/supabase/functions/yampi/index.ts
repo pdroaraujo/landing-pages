@@ -83,7 +83,19 @@ Deno.serve(async (req) => {
   }
 
   if (body.action === 'checkout') {
-    const items = (body.items ?? []).filter((i) => i.sku_id && i.quantity > 0);
+    // endpoint público: valida tipo/limites antes de criar link na Yampi
+    // (sem isso dá pra gerar links de pagamento ilimitados ou com quantidades absurdas)
+    if (!Array.isArray(body.items) || body.items.length > 30) return json({ error: 'Carrinho inválido.' }, 400);
+    const bySku = new Map<number, number>();
+    for (const i of body.items) {
+      const sku = Number(i?.sku_id);
+      const qty = Number(i?.quantity);
+      if (!Number.isInteger(sku) || sku <= 0 || !Number.isInteger(qty) || qty < 1 || qty > 20) {
+        return json({ error: 'Item do carrinho inválido.' }, 400);
+      }
+      bySku.set(sku, Math.min(20, (bySku.get(sku) ?? 0) + qty));
+    }
+    const items = [...bySku].map(([sku_id, quantity]) => ({ sku_id, quantity }));
     if (!items.length) return json({ error: 'Carrinho vazio.' }, 400);
     const r = await yampi('/checkout/payment-link', {
       method: 'POST',
@@ -94,7 +106,8 @@ Deno.serve(async (req) => {
       }),
     });
     const link = r.body?.link_url ?? r.body?.data?.link_url;
-    if (!r.ok || !link) return json({ error: `Não consegui abrir o checkout (Yampi ${r.status}).` }, 502);
+    // resposta de terceiro também é entrada não confiável: só devolve link https
+    if (!r.ok || typeof link !== 'string' || !link.startsWith('https://')) return json({ error: `Não consegui abrir o checkout (Yampi ${r.status}).` }, 502);
     return json({ url: link });
   }
 

@@ -137,7 +137,7 @@ export default function Vendas() {
       />
 
       {msg && (
-        <p className="mb-4 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-xs text-white/70">{msg}</p>
+        <p role="status" className="mb-4 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-xs text-white/70">{msg}</p>
       )}
 
       <div className="grid gap-5 lg:grid-cols-[340px_1fr]">
@@ -190,7 +190,7 @@ export default function Vendas() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10 text-left text-[11px] uppercase tracking-widest text-white/40">
+                <tr className="border-b border-white/10 text-left text-[11px] uppercase tracking-widest text-white/50">
                   <th className="px-5 py-3 font-medium">Cliente</th>
                   <th className="px-5 py-3 font-medium">Produto</th>
                   <th className="px-5 py-3 font-medium">Valor</th>
@@ -202,7 +202,7 @@ export default function Vendas() {
               <tbody>
                 {sales.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-5 py-10 text-center text-xs text-white/35">
+                    <td colSpan={6} className="px-5 py-10 text-center text-xs text-white/50">
                       Nenhuma venda registrada.
                     </td>
                   </tr>
@@ -218,7 +218,7 @@ export default function Vendas() {
                     <td className="px-5 py-3 text-white/50">{s.seller ?? '—'}</td>
                     <td className="px-5 py-3 text-white/50">{fullDate(s.sold_at)}</td>
                     <td className="px-5 py-3 text-right">
-                      <button onClick={() => del(s.id)} className="text-white/30 hover:text-[#fe0000]">
+                      <button onClick={() => del(s.id)} className="text-white/50 hover:text-[#fe0000]">
                         <Trash2 size={14} />
                       </button>
                     </td>
@@ -230,7 +230,7 @@ export default function Vendas() {
         </Card>
       </div>
 
-      <p className="mt-4 text-xs text-white/30">
+      <p className="mt-4 text-xs text-white/50">
         CSV esperado: colunas <code>cliente, produto, valor, recorrente, mensal, data</code> (separador , ou ;).
       </p>
     </div>

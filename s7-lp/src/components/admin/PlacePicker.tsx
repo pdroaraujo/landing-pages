@@ -72,7 +72,7 @@ export default function PlacePicker({
             searchable
           />
         ) : (
-          <input
+          <input aria-label="Cidade"
             value={value.city}
             onChange={(e) => onChange({ ...value, city: e.target.value })}
             disabled={disabled}

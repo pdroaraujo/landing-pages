@@ -116,7 +116,7 @@ export default function S7CardLojaDetalhe() {
     load();
   };
 
-  if (loading || !store) return <p className="text-sm text-white/40">Carregando…</p>;
+  if (loading || !store) return <p className="text-sm text-white/50">Carregando…</p>;
 
   const totalTaps = tags.reduce((a, t) => a + (taps[t.id] ?? 0), 0);
   const delta =
@@ -124,7 +124,7 @@ export default function S7CardLojaDetalhe() {
 
   return (
     <div>
-      <Link to="/s7card/mapeamento" className="mb-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white">
+      <Link to="/s7card/mapeamento" className="mb-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white">
         <ArrowLeft size={14} /> Mapeamento
       </Link>
       <PageHeader
@@ -141,7 +141,7 @@ export default function S7CardLojaDetalhe() {
             </span>
           </div>
           {tags.length === 0 ? (
-            <Card className="p-8 text-center text-sm text-white/35">Nenhuma placa vinculada ainda.</Card>
+            <Card className="p-8 text-center text-sm text-white/50">Nenhuma placa vinculada ainda.</Card>
           ) : (
             <div className="grid gap-3">
               {tags.map((t) => {
@@ -157,7 +157,7 @@ export default function S7CardLojaDetalhe() {
                           {t.quantity > 1 && <Badge tone="default">{t.quantity} placas</Badge>}
                           {t.sold_value > 0 && <Badge tone="default">{brl(t.sold_value)}</Badge>}
                         </div>
-                        <p className="mt-1 truncate max-w-md text-xs text-white/40">{t.destination}</p>
+                        <p className="mt-1 truncate max-w-md text-xs text-white/50">{t.destination}</p>
                       </div>
                       <div className="flex items-center gap-4">
                         <span className="inline-flex items-center gap-1 text-xs text-white/50">
@@ -191,7 +191,7 @@ export default function S7CardLojaDetalhe() {
               <Star size={16} className="text-[#fe0000]" /> Avaliações no Google
             </h3>
             {store.reviews_baseline === null ? (
-              <p className="mb-3 text-xs text-white/40">Nenhuma contagem registrada ainda.</p>
+              <p className="mb-3 text-xs text-white/50">Nenhuma contagem registrada ainda.</p>
             ) : (
               <p className="mb-3 text-sm text-white/70">
                 {store.reviews_baseline} na instalação ({fullDate(store.reviews_baseline_at!)}) → {store.reviews_current ?? '?'} agora
@@ -202,7 +202,7 @@ export default function S7CardLojaDetalhe() {
               </p>
             )}
             <div className="flex gap-2">
-              <input
+              <input aria-label="Nº de avaliações hoje"
                 type="number"
                 value={reviewsInput}
                 onChange={(e) => setReviewsInput(e.target.value)}
@@ -220,7 +220,7 @@ export default function S7CardLojaDetalhe() {
               <h3 className="font-bold tracking-tight mb-1 flex items-center gap-2">
                 <UserRound size={16} className="text-[#fe0000]" /> Painel do cliente
               </h3>
-              <p className="mb-4 text-xs text-white/40">O dono da loja vê as métricas das placas. 30 dias grátis, depois R$ 10/mês.</p>
+              <p className="mb-4 text-xs text-white/50">O dono da loja vê as métricas das placas. 30 dias grátis, depois R$ 10/mês.</p>
               {client ? (
                 (() => {
                   const a = clientAccess(client);
@@ -244,10 +244,10 @@ export default function S7CardLojaDetalhe() {
                 })()
               ) : (
                 <form onSubmit={createClient} className="flex flex-col gap-3">
-                  <input required placeholder="Nome do cliente" value={clientForm.full_name} onChange={(e) => setClientForm({ ...clientForm, full_name: e.target.value })} className={inputClass} />
+                  <input aria-label="Nome do cliente" required placeholder="Nome do cliente" value={clientForm.full_name} onChange={(e) => setClientForm({ ...clientForm, full_name: e.target.value })} className={inputClass} />
                   <AgencyEmailInput value={clientForm.email} onChange={(email) => setClientForm({ ...clientForm, email })} />
-                  <input required minLength={6} placeholder="Senha inicial (mín. 6)" value={clientForm.password} onChange={(e) => setClientForm({ ...clientForm, password: e.target.value })} className={inputClass} />
-                  {clientMsg && <p className={`text-xs ${clientMsg.ok ? 'text-emerald-400' : 'text-[#ff5a5a]'}`}>{clientMsg.text}</p>}
+                  <input aria-label="Senha inicial" required minLength={8} placeholder="Senha inicial (mín. 8)" value={clientForm.password} onChange={(e) => setClientForm({ ...clientForm, password: e.target.value })} className={inputClass} />
+                  {clientMsg && <p role="status" className={`text-xs ${clientMsg.ok ? 'text-emerald-400' : 'text-[#ff5a5a]'}`}>{clientMsg.text}</p>}
                   <Btn type="submit" disabled={savingClient} className="self-start">
                     {savingClient ? 'Criando...' : 'Criar acesso do cliente'}
                   </Btn>

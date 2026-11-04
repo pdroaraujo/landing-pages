@@ -3,6 +3,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { LogOut, Menu, X, KeyRound, ArrowLeftRight, RefreshCw, type LucideIcon } from 'lucide-react';
 import { useAuth } from '../../lib/auth';
 import { initials } from '../../lib/dashData';
+import { useDialog } from '../../lib/useDialog';
 
 export type NavItem = { to: string; label: string; icon: LucideIcon; end?: boolean };
 
@@ -23,6 +24,7 @@ export default function PanelShell({
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const menuRef = useDialog<HTMLDivElement>(open, () => setOpen(false));
   const name = profile?.full_name ?? '—';
 
   const doSignOut = async () => {
@@ -100,6 +102,7 @@ export default function PanelShell({
             <button
               onClick={() => setOpen(true)}
               aria-label="Abrir menu"
+              aria-expanded={open}
               className="grid h-11 w-11 place-items-center rounded-full border border-white/20 lg:hidden"
             >
               <Menu size={18} aria-hidden />
@@ -110,7 +113,7 @@ export default function PanelShell({
 
       {/* menu celular */}
       {open && (
-        <div role="dialog" aria-modal="true" aria-label="Menu" className="fixed inset-0 z-50 flex flex-col bg-[linear-gradient(180deg,#d40000,#7a0000)] p-6 lg:hidden">
+        <div ref={menuRef} role="dialog" aria-modal="true" aria-label="Menu" className="fixed inset-0 z-50 flex flex-col bg-[linear-gradient(180deg,#d40000,#7a0000)] p-6 lg:hidden">
           <div className="mb-8 flex items-center justify-between">
             <img src="/logo-256.webp" alt="S7" width="500" height="500" className="h-10 w-auto brightness-0 invert" />
             <button onClick={() => setOpen(false)} aria-label="Fechar menu" className="grid h-11 w-11 place-items-center rounded-full border border-white/40">

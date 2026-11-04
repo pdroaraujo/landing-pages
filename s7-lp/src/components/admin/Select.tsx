@@ -99,8 +99,8 @@ export default function Select({
           open ? 'border-[#fe0000]/60' : 'border-white/10 hover:border-white/25'
         }`}
       >
-        <span className={`truncate ${current ? 'text-white' : 'text-white/35'}`}>{current?.label ?? placeholder}</span>
-        <ChevronDown size={15} className={`shrink-0 text-white/40 transition-transform ${open ? 'rotate-180' : ''}`} />
+        <span className={`truncate ${current ? 'text-white' : 'text-white/50'}`}>{current?.label ?? placeholder}</span>
+        <ChevronDown size={15} className={`shrink-0 text-white/50 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {open &&
@@ -113,18 +113,18 @@ export default function Select({
           >
             {withSearch && (
               <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2.5">
-                <Search size={14} className="text-white/35" />
-                <input
+                <Search size={14} className="text-white/50" />
+                <input aria-label="Buscar"
                   autoFocus
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   placeholder="Buscar..."
-                  className="w-full bg-transparent text-base sm:text-sm text-white outline-none placeholder-white/30"
+                  className="w-full bg-transparent text-base sm:text-sm text-white outline-none placeholder-white/45"
                 />
               </div>
             )}
             <ul className="overflow-y-auto p-1.5" style={{ maxHeight: LIST_MAX - (withSearch ? 48 : 0) }}>
-              {filtered.length === 0 && <li className="px-3 py-3 text-xs text-white/35">Nada encontrado.</li>}
+              {filtered.length === 0 && <li className="px-3 py-3 text-xs text-white/50">Nada encontrado.</li>}
               {filtered.map((o) => {
                 const active = o.value === value;
                 return (
@@ -136,12 +136,12 @@ export default function Select({
                         setOpen(false);
                       }}
                       className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
-                        active ? 'bg-[#fe0000] text-white' : 'text-white/75 hover:bg-white/[0.06] hover:text-white'
+                        active ? 'bg-[#e00000] text-white' : 'text-white/75 hover:bg-white/[0.06] hover:text-white'
                       }`}
                     >
                       <span className="truncate">
                         {o.label}
-                        {o.hint && <span className={`ml-2 text-xs ${active ? 'text-white/70' : 'text-white/35'}`}>{o.hint}</span>}
+                        {o.hint && <span className={`ml-2 text-xs ${active ? 'text-white/70' : 'text-white/50'}`}>{o.hint}</span>}
                       </span>
                       {active && <Check size={14} className="shrink-0" />}
                     </button>

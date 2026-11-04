@@ -102,7 +102,7 @@ const SlotReel = forwardRef<SlotReelHandle, Props>(function SlotReel(
               transform: `translateY(${k * itemHeight + offset + itemHeight}px)`,
             }}
             className={`flex items-center justify-center px-3 text-center font-bold tracking-tighter transition-colors ${
-              active ? 'text-[#fe0000] text-xl md:text-2xl' : 'text-white/35 text-lg md:text-xl'
+              active ? 'text-[#fe0000] text-xl md:text-2xl' : 'text-white/50 text-lg md:text-xl'
             }`}
           >
             {label}

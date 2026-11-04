@@ -35,6 +35,14 @@ Deno.serve(async (req) => {
 
   if (!tag) return json({ error: 'Placa não encontrada.' }, 404);
 
+  // destino só com protocolo inerte (o painel aceita texto livre; um
+  // `javascript:` aqui viraria código no domínio do site)
+  if (!['wifi', 'vcard'].includes(tag.link_type)) {
+    let ok = false;
+    try { ok = ['http:', 'https:', 'tel:', 'mailto:', 'sms:'].includes(new URL(tag.destination.trim()).protocol); } catch { ok = false; }
+    if (!ok) return json({ error: 'Destino da placa inválido.' }, 422);
+  }
+
   // Não conta de novo o mesmo aparelho na mesma placa em 30s (recarregar a
   // página / duplo toque não infla as métricas que o cliente vê no painel).
   const ua = req.headers.get('user-agent')?.slice(0, 300) ?? null;

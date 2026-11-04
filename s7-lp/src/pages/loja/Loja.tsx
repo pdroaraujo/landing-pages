@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ShoppingBag, X, Plus, Minus, Nfc, ArrowRight, ArrowUpRight, Truck, ShieldCheck, Zap, Loader2 } from 'lucide-react';
 import { brl } from '../../lib/format';
+import { useDialog } from '../../lib/useDialog';
 
 // Loja da S7 — página separada (ainda não linkada no site). Produtos e checkout
 // vêm da Yampi via Edge Function "yampi" (as chaves ficam só no servidor).
@@ -60,6 +61,7 @@ export default function Loja() {
   const [demo, setDemo] = useState(false);
   const [cart, setCart] = useState<CartItem[]>(readCart);
   const [open, setOpen] = useState(false);
+  const cartRef = useDialog<HTMLElement>(open, () => setOpen(false));
   const [checkingOut, setCheckingOut] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -223,7 +225,7 @@ export default function Loja() {
           </div>
 
           {!products ? (
-            <div className="grid place-items-center py-24 text-white/40">
+            <div className="grid place-items-center py-24 text-white/50">
               <Loader2 className="animate-spin" />
             </div>
           ) : (
@@ -254,13 +256,13 @@ export default function Loja() {
                       <p className="mt-2 flex-1 text-sm text-white/50">{p.description.replace(/<[^>]+>/g, '').slice(0, 140)}</p>
                       <div className="mt-6 flex items-center justify-between gap-3">
                         <div>
-                          {sku?.price_old && <p className="text-xs text-white/35 line-through">{brl(sku.price_old)}</p>}
+                          {sku?.price_old && <p className="text-xs text-white/50 line-through">{brl(sku.price_old)}</p>}
                           <p className="text-xl font-bold tracking-tight">{demo ? 'Sob consulta' : brl(sku?.price ?? 0)}</p>
                         </div>
                         <button
                           onClick={() => sku && add(p, sku)}
                           disabled={!sku?.in_stock}
-                          className="inline-flex items-center gap-2 rounded-full bg-[#fe0000] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-[#d40000] disabled:opacity-40"
+                          className="inline-flex items-center gap-2 rounded-full bg-[#e00000] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-[#d40000] disabled:opacity-40"
                         >
                           <Plus size={14} /> {sku?.in_stock ? 'Adicionar' : 'Esgotado'}
                         </button>
@@ -319,23 +321,23 @@ export default function Loja() {
       {/* CARRINHO */}
       {open && (
         <div className="fixed inset-0 z-[60] flex justify-end bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)}>
-          <aside className="flex h-full w-full max-w-md flex-col border-l border-white/10 bg-[#0c0c0c] p-6" onClick={(e) => e.stopPropagation()}>
+          <aside ref={cartRef} role="dialog" aria-modal="true" aria-label="Carrinho" className="flex h-full w-full max-w-md flex-col border-l border-white/10 bg-[#0c0c0c] p-6" onClick={(e) => e.stopPropagation()}>
             <div className="mb-8 flex items-center justify-between">
               <h2 className="text-2xl font-bold uppercase tracking-tighter">Carrinho</h2>
-              <button onClick={() => setOpen(false)} className="grid h-10 w-10 place-items-center rounded-full border border-white/20" aria-label="Fechar">
+              <button onClick={() => setOpen(false)} className="grid h-10 w-10 place-items-center rounded-full border border-white/20" aria-label="Fechar carrinho">
                 <X size={18} />
               </button>
             </div>
 
             {cart.length === 0 ? (
-              <p className="text-sm text-white/40">Seu carrinho está vazio.</p>
+              <p className="text-sm text-white/50">Seu carrinho está vazio.</p>
             ) : (
               <ul className="flex-1 divide-y divide-white/10 overflow-y-auto border-y border-white/10">
                 {cart.map((i) => (
                   <li key={i.sku_id} className="flex items-center justify-between gap-3 py-4">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-bold">{i.product}</p>
-                      <p className="text-xs text-white/40">
+                      <p className="text-xs text-white/50">
                         {i.sku}
                         {!demo && ` · ${brl(i.price)}`}
                       </p>
@@ -361,12 +363,12 @@ export default function Loja() {
                   <span className="text-xl font-bold">{brl(total)}</span>
                 </div>
               )}
-              <p className="mb-5 text-xs text-white/35">Frete e forma de pagamento são escolhidos no checkout seguro da Yampi.</p>
-              {err && <p className="mb-4 text-xs text-[#ff5a5a]">{err}</p>}
+              <p className="mb-5 text-xs text-white/50">Frete e forma de pagamento são escolhidos no checkout seguro da Yampi.</p>
+              {err && <p role="alert" className="mb-4 text-xs text-[#ff5a5a]">{err}</p>}
               <button
                 onClick={checkout}
                 disabled={!cart.length || checkingOut}
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#fe0000] py-4 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-[#d40000] disabled:opacity-40"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#e00000] py-4 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-[#d40000] disabled:opacity-40"
               >
                 {checkingOut ? <Loader2 size={15} className="animate-spin" /> : <ArrowRight size={15} />}
                 {checkingOut ? 'Abrindo checkout...' : 'Finalizar compra'}

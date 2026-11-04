@@ -58,7 +58,7 @@ export default function S7CardEquipe() {
       <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
         <div className="flex flex-col gap-10">
           <section>
-            <h2 className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/40">
+            <h2 className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/50">
               <ShieldCheck size={13} /> Equipe
             </h2>
             <ul className="divide-y divide-white/10 border-y border-white/10">
@@ -68,16 +68,16 @@ export default function S7CardEquipe() {
                   <Badge tone={m.role === 'vendedor' ? 'default' : 'red'}>{ROLE_LABEL[m.role] ?? m.role}</Badge>
                 </li>
               ))}
-              {!members.length && <li className="py-4 text-xs text-white/35">Carregando…</li>}
+              {!members.length && <li className="py-4 text-xs text-white/50">Carregando…</li>}
             </ul>
           </section>
 
           <section>
-            <h2 className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/40">
+            <h2 className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/50">
               <BadgeDollarSign size={13} /> Clientes com painel de métricas
             </h2>
             {clients.length === 0 ? (
-              <p className="border-y border-white/10 py-5 text-xs text-white/35">
+              <p className="border-y border-white/10 py-5 text-xs text-white/50">
                 Nenhum cliente com acesso ainda. Crie o login do cliente na página da loja dele (Mapeamento → Vendido → Ver loja).
               </p>
             ) : (
@@ -109,7 +109,7 @@ export default function S7CardEquipe() {
           <h3 className="mb-1 flex items-center gap-2 font-bold tracking-tight">
             <UserPlus size={16} className="text-[#fe0000]" /> Novo vendedor
           </h3>
-          <p className="mb-5 text-xs text-white/40">
+          <p className="mb-5 text-xs text-white/50">
             Cadastra lojas e placas que vendeu e vê só o próprio faturamento. Não vê faturamento geral, recorrência nem a equipe.
           </p>
           <form onSubmit={createSeller} className="flex flex-col gap-4">
@@ -122,14 +122,14 @@ export default function S7CardEquipe() {
             <Field label="Senha inicial">
               <input
                 required
-                minLength={6}
+                minLength={8}
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 className={inputClass}
-                placeholder="Mín. 6 caracteres — ele troca depois"
+                placeholder="Mín. 8 caracteres — ele troca depois"
               />
             </Field>
-            {msg && <p className={`text-xs ${msg.ok ? 'text-emerald-400' : 'text-[#ff5a5a]'}`}>{msg.text}</p>}
+            {msg && <p role="status" className={`text-xs ${msg.ok ? 'text-emerald-400' : 'text-[#ff5a5a]'}`}>{msg.text}</p>}
             <Btn type="submit" disabled={saving}>
               {saving ? 'Criando...' : 'Criar acesso'}
             </Btn>

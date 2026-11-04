@@ -71,7 +71,7 @@ export function TypeChips({
       )}
       {custom ? (
         <span className="flex items-center gap-2">
-          <input
+          <input aria-label="Nome do nicho personalizado"
             autoFocus
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
@@ -84,7 +84,7 @@ export function TypeChips({
             placeholder="Ex: Studio de Tatuagem"
             className="rounded-full border border-white/20 bg-white/[0.04] px-3.5 py-2 text-xs text-white outline-none focus:border-[#fe0000]"
           />
-          <button type="button" onClick={confirm} className="rounded-full bg-[#fe0000] px-3.5 py-2 text-xs font-bold text-white">
+          <button type="button" onClick={confirm} className="rounded-full bg-[#e00000] px-3.5 py-2 text-xs font-bold text-white">
             OK
           </button>
         </span>
@@ -134,7 +134,7 @@ export default function NichePicker({
               </span>
               <span className="min-w-0">
                 <span className="block truncate text-sm font-bold">{n.label}</span>
-                <span className="block text-[11px] text-white/40">{n.types.length ? `${n.types.length} tipos` : 'Digite o seu'}</span>
+                <span className="block text-[11px] text-white/50">{n.types.length ? `${n.types.length} tipos` : 'Digite o seu'}</span>
               </span>
             </button>
           );
@@ -147,13 +147,13 @@ export default function NichePicker({
   return (
     <div>
       <div className="mb-3 flex items-center gap-2">
-        <span className="inline-flex items-center gap-2 rounded-full bg-[#fe0000] px-4 py-2 text-sm font-bold text-white">
+        <span className="inline-flex items-center gap-2 rounded-full bg-[#e00000] px-4 py-2 text-sm font-bold text-white">
           <Icon size={15} /> {niche.label}
           <button type="button" disabled={disabled} onClick={() => onChange(null, '')} aria-label="Trocar categoria">
             <X size={14} />
           </button>
         </span>
-        <ChevronRight size={14} className="text-white/30" />
+        <ChevronRight size={14} className="text-white/50" />
         <span className="text-sm text-white/50">{type ? type : 'Qual tipo?'}</span>
       </div>
       <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">

@@ -207,7 +207,7 @@ export default function Roleta() {
                 onClick={() => switchVia(v.key)}
                 disabled={busy}
                 className={`rounded-full px-6 py-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${
-                  via === v.key ? 'bg-[#fe0000] text-white' : 'text-white/45 hover:text-white'
+                  via === v.key ? 'bg-[#e00000] text-white' : 'text-white/45 hover:text-white'
                 }`}
               >
                 {v.label}
@@ -219,7 +219,7 @@ export default function Roleta() {
         {via === 'escolher' && (
           <div className="flex flex-col gap-6">
             <div>
-              <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-white/40">1. Categoria e tipo</p>
+              <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-white/50">1. Categoria e tipo</p>
               <NichePicker
                 nicheSlug={pickSlug}
                 type={pickType}
@@ -231,7 +231,7 @@ export default function Roleta() {
               />
             </div>
             <div>
-              <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-white/40">2. Localização</p>
+              <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-white/50">2. Localização</p>
               <PlacePicker value={pickPlace} onChange={setPickPlace} disabled={busy} />
             </div>
             <Btn onClick={confirmPick} disabled={!pickSlug || !pickPlace.city || busy} className="self-start">
@@ -250,7 +250,7 @@ export default function Roleta() {
                 onClick={() => setScope(s)}
                 disabled={busy}
                 className={`rounded-full px-5 py-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${
-                  scope === s ? 'bg-[#fe0000] text-white' : 'text-white/45 hover:text-white'
+                  scope === s ? 'bg-[#e00000] text-white' : 'text-white/45 hover:text-white'
                 }`}
               >
                 {s === 'brasil' ? 'Brasil' : 'Mundo'}
@@ -269,7 +269,7 @@ export default function Roleta() {
                 onClick={() => setSortMode(m.key)}
                 disabled={busy}
                 className={`rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${
-                  sortMode === m.key ? 'bg-[#fe0000] text-white' : 'text-white/45 hover:text-white'
+                  sortMode === m.key ? 'bg-[#e00000] text-white' : 'text-white/45 hover:text-white'
                 }`}
               >
                 {m.label}
@@ -294,7 +294,7 @@ export default function Roleta() {
 
         {sortMode === 'so_cidade' && (
           <div className="mb-6">
-            <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-white/40">Nicho fixo (categoria e tipo)</p>
+            <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-white/50">Nicho fixo (categoria e tipo)</p>
             <NichePicker
               nicheSlug={manualNicheSlug}
               type={manualType}
@@ -309,7 +309,7 @@ export default function Roleta() {
 
         {sortMode === 'so_nicho' && (
           <div className="mb-6">
-            <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-white/40">Localização fixa</p>
+            <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-white/50">Localização fixa</p>
             <PlacePicker value={fixedPlace} onChange={setFixedPlace} disabled={busy} />
           </div>
         )}
@@ -317,19 +317,19 @@ export default function Roleta() {
         <div className={sortMode === 'ambos' ? 'grid grid-cols-2 gap-4' : 'mx-auto max-w-xs'}>
           {sortMode !== 'so_cidade' && (
             <div>
-              <p className="mb-2 text-center text-[11px] font-bold uppercase tracking-widest text-white/40">Nicho</p>
+              <p className="mb-2 text-center text-[11px] font-bold uppercase tracking-widest text-white/50">Nicho</p>
               <SlotReel ref={nicheReel} items={nicheLabels} />
             </div>
           )}
           {sortMode !== 'so_nicho' && (
             <div>
-              <p className="mb-2 text-center text-[11px] font-bold uppercase tracking-widest text-white/40">
+              <p className="mb-2 text-center text-[11px] font-bold uppercase tracking-widest text-white/50">
                 {scope === 'brasil' ? 'Cidade' : 'Cidade · País'}
               </p>
               {ready ? (
                 <SlotReel ref={cityReel} items={cityLabels} />
               ) : (
-                <div className="grid h-[216px] place-items-center rounded-2xl border border-white/10 bg-white/[0.03] text-xs text-white/40">
+                <div className="grid h-[216px] place-items-center rounded-2xl border border-white/10 bg-white/[0.03] text-xs text-white/50">
                   carregando cidades…
                 </div>
               )}
@@ -341,13 +341,13 @@ export default function Roleta() {
           <button
             onClick={spin}
             disabled={busy || !ready}
-            className="group relative flex items-center gap-3 overflow-hidden rounded-full bg-[#fe0000] px-12 py-5 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-60"
+            className="group relative flex items-center gap-3 overflow-hidden rounded-full bg-[#e00000] px-12 py-5 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-60"
           >
             {phase === 'spinning' ? <Loader2 size={18} className="animate-spin" /> : <Dices size={18} />}
             {phase === 'spinning' ? 'Girando...' : phase === 'idle' ? 'Girar a Roleta' : 'Girar de novo'}
           </button>
           {scope === 'brasil' && sortMode !== 'so_nicho' && (
-            <p className="text-[11px] text-white/30">
+            <p className="text-[11px] text-white/50">
               {cityPoolSize.toLocaleString('pt-BR')} cidade{cityPoolSize === 1 ? '' : 's'}{ufFilter ? ` em ${ufFilter}` : ''}
             </p>
           )}
@@ -364,7 +364,7 @@ export default function Roleta() {
             </p>
             {via === 'roleta' && phase === 'ready' && drawn.niche.slug !== 'outros' && (
               <div className="mt-4 text-left">
-                <p className="mb-2 text-center text-[11px] font-bold uppercase tracking-widest text-white/40">
+                <p className="mb-2 text-center text-[11px] font-bold uppercase tracking-widest text-white/50">
                   Refinar o tipo (opcional)
                 </p>
                 <div className="flex justify-center">
@@ -381,7 +381,7 @@ export default function Roleta() {
               1. Peça pro Claude gerar a lista
             </p>
             <div className="relative">
-              <textarea
+              <textarea aria-label="Prompt para gerar a lista"
                 readOnly
                 value={buildImportPrompt(drawn.niche, drawn.city, drawn.uf, drawn.country, drawn.type)}
                 rows={6}
@@ -398,14 +398,14 @@ export default function Roleta() {
             <p className="mb-2 mt-5 text-xs font-bold uppercase tracking-widest text-white/50">
               2. Suba o arquivo que ele te devolver (.csv ou .xlsx)
             </p>
-            <input
+            <input aria-label="Arquivo da lista (.csv ou .xlsx)"
               ref={fileRef}
               type="file"
               accept=".csv,.xlsx,.xls,text/csv"
               onChange={(e) => e.target.files?.[0] && pickFile(e.target.files[0])}
               className="block w-full text-xs text-white/60 file:mr-3 file:rounded-lg file:border-0 file:bg-[#fe0000] file:px-4 file:py-2 file:text-xs file:font-bold file:uppercase file:text-white"
             />
-            {parseErr && <p className="mt-2 text-xs text-[#ff5a5a]">{parseErr}</p>}
+            {parseErr && <p role="alert" className="mt-2 text-xs text-[#ff5a5a]">{parseErr}</p>}
             {parsed && (
               <p className="mt-2 text-xs text-emerald-400">
                 {parsed.length} empresas lidas de "{file?.name}" — confira e prospecte.

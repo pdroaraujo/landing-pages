@@ -54,10 +54,10 @@ export default function Listas() {
       />
 
       {loading ? (
-        <p className="text-sm text-white/40">Carregando…</p>
+        <p className="text-sm text-white/50">Carregando…</p>
       ) : rows.length === 0 ? (
-        <Card className="p-10 text-center text-sm text-white/40">
-          <ListChecks className="mx-auto mb-3 text-white/20" size={28} />
+        <Card className="p-10 text-center text-sm text-white/50">
+          <ListChecks className="mx-auto mb-3 text-white/50" size={28} />
           Nenhuma lista ainda. Gere uma em{' '}
           <Link to="/admin/prospeccao" className="text-[#fe0000]">Prospecção</Link>.
         </Card>
@@ -76,7 +76,7 @@ export default function Listas() {
                       <Badge tone="red">{r.mode}</Badge>
                       {r.pending_qual > 0 && <Badge tone="amber">{r.pending_qual} a qualificar</Badge>}
                     </div>
-                    <p className="mt-1 text-xs text-white/40">
+                    <p className="mt-1 text-xs text-white/50">
                       {fullDate(r.date)} · {r.total} empresas · {r.approved} aprovadas · {r.rejected} rejeitadas
                       {r.approved > 0 && ` · ${r.done}/${r.approved} contatadas`}
                     </p>
@@ -89,12 +89,12 @@ export default function Listas() {
                   </div>
                   <button
                     onClick={(e) => remove(e, r.id, r.name)}
-                    className="rounded-lg bg-white/5 p-2.5 text-white/40 hover:bg-[#fe0000]/20 hover:text-[#ff5a5a]"
+                    className="rounded-lg bg-white/5 p-2.5 text-white/50 hover:bg-[#fe0000]/20 hover:text-[#ff5a5a]"
                     title="Apagar lista"
                   >
                     <Trash2 size={15} />
                   </button>
-                  <ChevronRight className="text-white/30" size={18} />
+                  <ChevronRight className="text-white/50" size={18} />
                 </Card>
               </Link>
             );

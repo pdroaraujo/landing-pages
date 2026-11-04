@@ -9,6 +9,7 @@ import { Card, PageHeader, Badge, Btn, Field, inputClass } from '../../component
 import Select from '../../components/admin/Select';
 import S7CardTagForm from '../../components/admin/S7CardTagForm';
 import S7CardBulkForm from '../../components/admin/S7CardBulkForm';
+import { tagDestinationError } from '../../lib/safeUrl';
 
 type Tab = 'todas' | 'em_estoque' | 'instalada' | 'revenda' | 'defeito';
 
@@ -103,7 +104,12 @@ export default function S7CardPlacas() {
 
   const saveEdit = async (tagId: string) => {
     if (!editForm) return;
-    await supabase
+    const destErr = tagDestinationError(editForm.link_type, editForm.destination);
+    if (destErr) {
+      alert(destErr);
+      return;
+    }
+    const { error: saveErr } = await supabase
       .from('s7card_tags')
       .update({
         link_type: editForm.link_type,
@@ -113,6 +119,10 @@ export default function S7CardPlacas() {
         quantity: Math.max(1, Number(editForm.quantity) || 1),
       })
       .eq('id', tagId);
+    if (saveErr) {
+      alert(`Não foi possível salvar a placa: ${saveErr.message}`);
+      return;
+    }
     setEditing(null);
     load();
   };
@@ -174,7 +184,7 @@ export default function S7CardPlacas() {
       {mode === 'nova' && (
         <Card className="p-6 mb-6">
           <h3 className="font-bold tracking-tight mb-1">Nova placa</h3>
-          <p className="mb-4 text-xs text-white/40">Entra no estoque. Pra já criar dentro de uma loja, use a página da loja.</p>
+          <p className="mb-4 text-xs text-white/50">Entra no estoque. Pra já criar dentro de uma loja, use a página da loja.</p>
           <S7CardTagForm
             onCreated={() => {
               load();
@@ -205,7 +215,7 @@ export default function S7CardPlacas() {
               setSelected(new Set());
             }}
             className={`rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest ${
-              tab === t ? 'bg-[#fe0000] text-white' : 'text-white/45'
+              tab === t ? 'bg-[#e00000] text-white' : 'text-white/45'
             }`}
           >
             {t === 'todas' ? 'Todas' : STATUS_LABEL[t]}
@@ -214,9 +224,9 @@ export default function S7CardPlacas() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-white/40">Carregando…</p>
+        <p className="text-sm text-white/50">Carregando…</p>
       ) : visible.length === 0 ? (
-        <Card className="p-10 text-center text-sm text-white/40">Nenhuma placa nessa categoria.</Card>
+        <Card className="p-10 text-center text-sm text-white/50">Nenhuma placa nessa categoria.</Card>
       ) : (
         <div className="grid gap-3">
           <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-3">
@@ -226,7 +236,7 @@ export default function S7CardPlacas() {
             </label>
             {selected.size > 0 && (
               <>
-                <span className="text-xs text-white/40">
+                <span className="text-xs text-white/50">
                   {selected.size} selecionada{selected.size > 1 ? 's' : ''}
                 </span>
                 <div className="ml-auto flex flex-wrap gap-2">
@@ -242,7 +252,7 @@ export default function S7CardPlacas() {
                   >
                     <Trash2 size={13} /> Apagar selecionadas
                   </button>
-                  <button onClick={() => setSelected(new Set())} className="px-2 text-xs text-white/40 hover:text-white">
+                  <button onClick={() => setSelected(new Set())} className="px-2 text-xs text-white/50 hover:text-white">
                     Limpar
                   </button>
                 </div>
@@ -272,14 +282,14 @@ export default function S7CardPlacas() {
                       </Badge>
                       <Badge tone="blue">{info.label}</Badge>
                     </div>
-                    <p className="mt-1 truncate max-w-md text-xs text-white/40">{t.destination}</p>
+                    <p className="mt-1 truncate max-w-md text-xs text-white/50">{t.destination}</p>
                     <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-white/50">
                       {t.store ? (
                         <Link to={`/s7card/lojas/${t.store.id}`} className="inline-flex items-center gap-1 text-white/80 hover:text-white">
                           <Store size={12} /> {t.store.name}
                         </Link>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-white/35">
+                        <span className="inline-flex items-center gap-1 text-white/50">
                           <Store size={12} /> {t.status === 'revenda' ? 'Separada pra revenda' : 'Ainda não está em nenhuma loja'}
                         </span>
                       )}
@@ -332,10 +342,10 @@ export default function S7CardPlacas() {
                       {storeOptions.length ? (
                         <Select value="" onChange={(v) => linkToStore(t.id, v)} options={storeOptions} placeholder="Escolha a loja" searchable />
                       ) : (
-                        <p className="text-xs text-white/35">Nenhuma loja cadastrada ainda (cadastre em Mapeamento).</p>
+                        <p className="text-xs text-white/50">Nenhuma loja cadastrada ainda (cadastre em Mapeamento).</p>
                       )}
                     </div>
-                    <button onClick={() => setLinking(null)} className="text-white/40 hover:text-white" aria-label="Cancelar">
+                    <button onClick={() => setLinking(null)} className="text-white/50 hover:text-white" aria-label="Cancelar">
                       <X size={16} />
                     </button>
                   </div>
