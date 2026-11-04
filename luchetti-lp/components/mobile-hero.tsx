@@ -22,7 +22,7 @@ export function MobileHero({ contactUrl }: { contactUrl: string }) {
 
             <div className="mobile-hero__scene">
                 <div className="mobile-hero__image">
-                    <Image src={photos.hero} alt="Vendedor atendendo cliente no balcão de loja de materiais hidráulicos" fill sizes="(max-width: 700px) 90vw, 1px" />
+                    <Image src={photos.hero} alt="Vendedor atendendo cliente no balcão de loja de materiais hidráulicos" fill priority sizes="(max-width: 700px) 90vw, 1px" />
                 </div>
                 <div className="mobile-hero__tag mobile-hero__tag--care" aria-hidden="true">Tubos e conexões<span /></div>
                 <div className="mobile-hero__proof">

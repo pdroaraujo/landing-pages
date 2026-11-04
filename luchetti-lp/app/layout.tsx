@@ -59,7 +59,7 @@ const localBusiness = {
     telephone: `+55 ${site.phone}`,
     foundingDate: String(site.since),
     image: `${site.url}/fotos/footer-panorama.jpg`,
-    sameAs: [site.instagram],
+    sameAs: [site.instagram, site.facebook, site.linkedin, site.youtube],
     areaServed: site.region,
     address: {
         '@type': 'PostalAddress',
@@ -80,6 +80,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     // eslint-disable-next-line react/no-danger
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusiness) }}
                 />
+                <a className="skip-link" href="#inicio">
+                    Pular para o conteúdo
+                </a>
                 <SmoothScrollProvider>{children}</SmoothScrollProvider>
             </body>
         </html>

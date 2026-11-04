@@ -26,3 +26,15 @@
 
 /* Ícone do WhatsApp no botão flutuante (o template força fill: none) */
 .floating-contact__icon svg[fill='currentColor'] { fill: currentColor; width: 52%; height: 52%; }
+
+/* Skip link: aparece só ao receber foco pelo teclado */
+.skip-link {
+    position: fixed; top: 12px; left: 12px; z-index: 1000;
+    padding: .75rem 1.1rem; border-radius: 10px;
+    background: var(--luchetti-green-deep); color: #fff; font-weight: 600;
+    transform: translateY(-160%); transition: transform .2s ease;
+}
+.skip-link:focus-visible { transform: none; outline: 3px solid #89dd99; outline-offset: 2px; }
+
+/* Área de toque mínima (WCAG 2.5.8) nos links do rodapé */
+.footer-nav a { display: inline-flex; align-items: center; min-height: 28px; }

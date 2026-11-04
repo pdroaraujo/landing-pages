@@ -118,7 +118,7 @@
     margin: 0 0.17em 0.03em;
     border: 1px solid rgba(103, 200, 124, 0.34);
     border-radius: 999px;
-    background: url('/hero-atmosphere-v3.png') center 57% / 210% auto no-repeat;
+    background: url('/hero-atmosphere-v3.webp') center 57% / 210% auto no-repeat;
     box-shadow: inset 0 0 1.2rem rgba(103, 200, 124, 0.38), 0 0.5rem 1.5rem rgba(4, 114, 47, 0.12);
     vertical-align: baseline;
 }
@@ -197,7 +197,7 @@
 }
 
 .feature-score__rail > span:last-child {
-    background: url('/hero-atmosphere-v3.png') 68% center / auto 160% no-repeat;
+    background: url('/hero-atmosphere-v3.webp') 68% center / auto 160% no-repeat;
 }
 
 .feature-score__quality {
@@ -1294,7 +1294,7 @@
     isolation: isolate;
     overflow: hidden;
     padding: clamp(1.25rem, 2vw, 2rem) 3.5rem clamp(11.25rem, 13vw, 13.25rem);
-    background: #001712 url('/projects-atmosphere-v1.png') center / cover no-repeat;
+    background: #001712 url('/projects-atmosphere-v1.webp') center / cover no-repeat;
     color: #fff;
 }
 .completed-projects__wash {
@@ -1510,7 +1510,7 @@
     overflow: hidden;
     border: 1px solid #b8e6f51a;
     border-radius: 2rem;
-    background: #001712 url('/process-atmosphere-v2.png') center / cover no-repeat;
+    background: #001712 url('/process-atmosphere-v2.webp') center / cover no-repeat;
     box-shadow: 0 24px 55px #04102c18;
     color: #fff;
 }

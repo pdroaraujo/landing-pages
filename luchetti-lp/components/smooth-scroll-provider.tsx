@@ -2,7 +2,7 @@
 
 import { ReactLenis } from 'lenis/react';
 import type { LenisOptions } from 'lenis';
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
 const lenisOptions: LenisOptions = {
     smoothWheel: true,
@@ -16,6 +16,18 @@ const lenisOptions: LenisOptions = {
 };
 
 export function SmoothScrollProvider({ children }: { children: ReactNode }) {
+    // Respeita "reduzir movimento" do sistema: sem rolagem suave artificial.
+    const [reduceMotion, setReduceMotion] = useState(false);
+    useEffect(() => {
+        const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const update = () => setReduceMotion(query.matches);
+        update();
+        query.addEventListener('change', update);
+        return () => query.removeEventListener('change', update);
+    }, []);
+
+    if (reduceMotion) return <>{children}</>;
+
     return (
         <ReactLenis root options={lenisOptions}>
             {children}

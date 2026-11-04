@@ -26,6 +26,10 @@ const faqItems = [
             `São cerca de ${site.products} itens em hidráulica, impermeabilização e linha técnica, gás, PCI (combate a incêndio), AVAC e acabamentos.`,
     },
     {
+        question: 'Como peço um orçamento?',
+        answer: `Mande a lista de materiais ou o projeto pelo WhatsApp ${site.phone} ou para ${site.email}. Um representante responde com a cotação e tira as dúvidas técnicas.`,
+    },
+    {
         question: 'Onde fica a loja?',
         answer:
             `Na ${site.address.street}, ${site.address.district}, em ${site.address.city}/${site.address.state}. Atendemos ${site.region}.`,

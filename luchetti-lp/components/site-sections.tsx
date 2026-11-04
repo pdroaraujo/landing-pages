@@ -24,7 +24,7 @@ const contactUrl = ctaUrl;
 const services = [
     {
         title: 'Hidráulica',
-        copy: 'Tubos, conexões, válvulas, registros, bombas, drenagem, PEAD e reservatórios para toda a obra.',
+        copy: 'Tubos, conexões, válvulas, registros, bombas, drenagem, PEAD, cisternas, fossas e biodigestores.',
         image: photos.hidraulica,
         alt: 'Estoque de tubos e conexões de PVC',
         position: 'center 40%',
@@ -33,7 +33,7 @@ const services = [
     },
     {
         title: 'Impermeabilização',
-        copy: 'Mantas asfálticas, membranas líquidas, selantes, grautes, aditivos e argamassas especiais.',
+        copy: 'Mantas asfálticas, membranas líquidas, selantes, grautes, aditivos, argamassas especiais e isolantes térmicos e acústicos.',
         image: photos.impermeabilizacao,
         alt: 'Aplicação de manta asfáltica em laje',
         position: 'center 50%',
@@ -42,7 +42,7 @@ const services = [
     },
     {
         title: 'Gás e PCI',
-        copy: 'Multicamadas, termofusão, reguladores e válvulas, além de linhas para combate a incêndio.',
+        copy: 'Multicamadas, termofusão, reguladores e ferramentas para gás. Para incêndio: Amanco Fire, ranhurado, galvanizado e aço carbono.',
         image: photos.gasPci,
         alt: 'Tubulação de gás e sprinklers de combate a incêndio',
         position: 'center 50%',
@@ -51,7 +51,7 @@ const services = [
     },
     {
         title: 'AVAC e acabamentos',
-        copy: 'Aquecimento, ventilação e ar-condicionado, louças, metais e soluções de acessibilidade.',
+        copy: 'Aquecimento, ventilação e ar-condicionado, além de louças, metais, revestimentos e soluções de acessibilidade.',
         image: photos.avacAcabamentos,
         alt: 'Banheiro com louças, metais e barras de acessibilidade',
         position: 'center 50%',
@@ -122,7 +122,7 @@ export function SiteSections() {
                                 </div>
                             </div>
 
-                            <div className="feature-score__services" aria-label="Linhas de produto: hidráulica, impermeabilização, gás e PCI, AVAC e acabamentos">
+                            <div className="feature-score__services" role="group" aria-label="Linhas de produto: hidráulica, impermeabilização, gás e PCI, AVAC e acabamentos">
                                 <span><WaterdropIcon aria-hidden="true" /></span>
                                 <span><ShieldCheckIcon aria-hidden="true" /></span>
                                 <span><FireIcon aria-hidden="true" /></span>
@@ -136,7 +136,7 @@ export function SiteSections() {
                         <div className="feature-showcase__project" data-scroll-reveal data-reveal="right" data-reveal-delay="2">
                             <p>
                                 Distribuidora técnica nascida em {site.city}, hoje na 5ª geração da família.
-                                Quase 100 anos fornecendo a tubulação, a impermeabilização e os acabamentos
+                                São {yearsInBusiness} anos fornecendo a tubulação, a impermeabilização e os acabamentos
                                 certos, com entrega rápida e quem entende de obra do outro lado do balcão.
                             </p>
                             <figure>
@@ -407,7 +407,7 @@ export function SiteSections() {
                                 <span className="footer-contact__copy">
                                     <small>{contactIsWhatsapp ? 'WhatsApp e telefone' : 'Fale com a Luchetti'}</small>
                                     <strong>{site.phone}</strong>
-                                    <span>{contactIsWhatsapp ? 'Toque para chamar no WhatsApp.' : 'Toque para ligar e pedir seu orçamento.'}</span>
+                                    <span>{contactIsWhatsapp ? 'Chame no WhatsApp e receba seu orçamento.' : 'Toque para ligar e pedir seu orçamento.'}</span>
                                 </span>
                                 <span className="footer-contact__arrow" aria-hidden="true"><ArrowRightUpIcon /></span>
                             </a>
@@ -421,6 +421,7 @@ export function SiteSections() {
                                 <a href={site.instagram} {...externalLink}>Instagram</a>
                                 <a href={site.facebook} {...externalLink}>Facebook</a>
                                 <a href={site.linkedin} {...externalLink}>LinkedIn</a>
+                                <a href={site.youtube} {...externalLink}>YouTube</a>
                                 <a href={`mailto:${site.email}`}>{site.email}</a>
                             </nav>
 
