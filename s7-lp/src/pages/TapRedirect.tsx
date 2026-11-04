@@ -41,7 +41,7 @@ export default function TapRedirect() {
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-white font-sans flex items-center justify-center px-6 text-center">
       <div>
-        <img src="/logo.png" alt="S7" className="mx-auto mb-8 h-16 w-16 object-contain" />
+        <img src="/logo-256.webp" alt="S7" width="256" height="256" className="mx-auto mb-8 h-16 w-16 object-contain" />
         {(state.phase === 'loading' || state.phase === 'redirecting') && (
           <p className="text-sm text-white/50">Abrindo…</p>
         )}

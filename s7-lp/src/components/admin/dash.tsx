@@ -169,7 +169,7 @@ export function WalletCard({ label, value, delta, foot }: { label: string; value
       <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(135deg,#1d1d1f,#0b0b0c_60%,#1a0e0e)] p-5 shadow-2xl shadow-black/50">
         <div aria-hidden className="absolute right-0 top-0 h-full w-1/2 bg-[linear-gradient(115deg,transparent_45%,rgba(255,255,255,0.05)_50%,transparent_55%)]" />
         <div className="flex items-start justify-between">
-          <img src="/logo.png" alt="" width="500" height="500" className="h-8 w-auto opacity-90" />
+          <img src="/logo-256.webp" alt="" width="500" height="500" className="h-8 w-auto opacity-90" />
           <span aria-hidden className="grid h-8 w-11 grid-cols-3 gap-px overflow-hidden rounded-md bg-[linear-gradient(135deg,#f2f2f2,#bdbdbd)] p-1">
             {Array.from({ length: 6 }).map((_, i) => (
               <span key={i} className="rounded-[2px] bg-black/10" />

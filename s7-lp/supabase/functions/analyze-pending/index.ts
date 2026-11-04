@@ -29,6 +29,9 @@ Deno.serve(async (req) => {
   });
   const { data: u } = await asUser.auth.getUser();
   if (!u?.user) return json({ error: 'não autenticado' }, 401);
+  // só quem tem o workspace da agência (Enzo/clientes do S7 Card não)
+  const { data: canAgency } = await asUser.rpc('has_workspace', { ws: 'agencia' });
+  if (canAgency !== true) return json({ error: 'sem acesso à prospecção da agência' }, 403);
 
   let listId: string;
   try {

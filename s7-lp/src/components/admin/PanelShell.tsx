@@ -53,7 +53,7 @@ export default function PanelShell({
     <div className="min-h-screen bg-[#0a0707] font-sans text-[#f4f4f5] selection:bg-[#fe0000] selection:text-white">
       {/* trilho (PC) */}
       <aside className="fixed inset-y-3 left-3 z-30 hidden w-[76px] flex-col items-center rounded-[26px] bg-[linear-gradient(180deg,#ff2a2a,#d40000_55%,#a80000)] py-5 shadow-[0_20px_50px_-15px_rgba(254,0,0,0.55)] lg:flex">
-        <img src="/logo.png" alt="S7" width="500" height="500" className="mb-6 h-10 w-auto brightness-0 invert" />
+        <img src="/logo-256.webp" alt="S7" width="500" height="500" className="mb-6 h-10 w-auto brightness-0 invert" />
         <nav aria-label="Menu principal" className="flex flex-col items-center gap-2">
           {nav.map(railLink)}
         </nav>
@@ -77,7 +77,7 @@ export default function PanelShell({
       <header className="sticky top-0 z-20 border-b border-white/5 bg-[#0a0707]/85 backdrop-blur-md lg:ml-[92px] lg:border-none lg:bg-transparent lg:backdrop-blur-none">
         <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-3 px-4 py-3 md:px-8 lg:pt-5">
           <div className="flex items-center gap-3 lg:hidden">
-            <img src="/logo.png" alt="S7" width="500" height="500" className="h-9 w-auto" />
+            <img src="/logo-256.webp" alt="S7" width="500" height="500" className="h-9 w-auto" />
           </div>
           <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-xs text-white/50 lg:flex">
             <span className="h-1.5 w-1.5 rounded-full bg-[#fe0000] shadow-[0_0_8px_#fe0000]" /> {roleLabel}
@@ -112,7 +112,7 @@ export default function PanelShell({
       {open && (
         <div role="dialog" aria-modal="true" aria-label="Menu" className="fixed inset-0 z-50 flex flex-col bg-[linear-gradient(180deg,#d40000,#7a0000)] p-6 lg:hidden">
           <div className="mb-8 flex items-center justify-between">
-            <img src="/logo.png" alt="S7" width="500" height="500" className="h-10 w-auto brightness-0 invert" />
+            <img src="/logo-256.webp" alt="S7" width="500" height="500" className="h-10 w-auto brightness-0 invert" />
             <button onClick={() => setOpen(false)} aria-label="Fechar menu" className="grid h-11 w-11 place-items-center rounded-full border border-white/40">
               <X size={18} aria-hidden />
             </button>

@@ -41,3 +41,16 @@
 @media (prefers-reduced-motion: reduce) {
   .s7-fade, .s7-rise, .s7-slide-in { animation: none; }
 }
+
+/* foco visível pra quem navega pelo teclado (o mouse não vê o anel) */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid #fe0000;
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after { transition-duration: .01ms !important; }
+}
+/* link "pular para o conteúdo": só aparece ao receber foco pelo Tab */
+.skip-link { position: absolute; left: -9999px; top: 0; z-index: 100; }
+.skip-link:focus { left: 1rem; top: 1rem; background: #fe0000; color: #fff; padding: .75rem 1rem; border-radius: .75rem; font-weight: 700; }

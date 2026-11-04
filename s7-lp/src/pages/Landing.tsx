@@ -133,6 +133,8 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-[#f4f4f5] font-sans selection:bg-[#fe0000] selection:text-white relative overflow-x-hidden">
 
+      <a href="#conteudo" className="skip-link">Pular para o conteúdo</a>
+
       {/* BACKGROUND DA HERO SECTION (Glow Vermelho Escuro) */}
       <Glow />
 
@@ -140,7 +142,7 @@ export default function Landing() {
       <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-[#0f0f0f]/90 backdrop-blur-md py-4' : 'bg-transparent py-6'}`}>
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex justify-between items-center">
           <a href="#" className="flex items-center gap-2 z-50 relative">
-            <img src="/logo.png" alt="S7" width="500" height="500" className="h-20 md:h-28 w-auto drop-shadow-xl" />
+            <img src="/logo-256.webp" alt="S7" width="500" height="500" className="h-20 md:h-28 w-auto drop-shadow-xl" />
           </a>
 
           <div className="flex items-center gap-2 md:gap-4 z-50">
@@ -167,7 +169,7 @@ export default function Landing() {
             {/* Menu Header */}
             <div className="flex justify-between items-center px-6 md:px-12 py-8 border-b border-white/5">
               <a href="#" onClick={() => setIsMenuOpen(false)}>
-                <img src="/logo.png" alt="S7" width="500" height="500" className="h-16 md:h-20 w-auto opacity-50 hover:opacity-100 transition-opacity" />
+                <img src="/logo-256.webp" alt="S7" width="500" height="500" className="h-16 md:h-20 w-auto opacity-50 hover:opacity-100 transition-opacity" />
               </a>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 text-white/50 text-xs tracking-widest font-medium uppercase">
@@ -211,7 +213,7 @@ export default function Landing() {
           </div>
       )}
 
-      <main className="pt-32 md:pt-48 relative z-10">
+      <main id="conteudo" tabIndex={-1} className="pt-32 md:pt-48 relative z-10 outline-none">
 
         {/* HERO SECTION */}
         <section className="max-w-[1400px] mx-auto px-6 md:px-12 mb-32 md:mb-48 relative">
@@ -270,7 +272,7 @@ export default function Landing() {
             <a href="https://phcontainer.com.br" target="_blank" rel="noopener noreferrer" className="group block cursor-pointer">
               <FadeIn delay={0.2}>
                 <div className="w-full aspect-video bg-[#111] mb-8 overflow-hidden relative border border-white/10">
-                  <img src="/phcontainer-site.jpg" alt="PH Container" width="1858" height="925" loading="lazy" decoding="async" className="w-full h-full object-cover opacity-80 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700" />
+                  <img src="/phcontainer-site.webp" alt="Site da PH Container feito pela Agência S7" width="1200" height="597" loading="lazy" decoding="async" className="w-full h-full object-cover opacity-80 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700" />
                 </div>
               </FadeIn>
 

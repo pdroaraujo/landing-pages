@@ -58,6 +58,9 @@ Deno.serve(async (req) => {
   const { data: userData } = await asUser.auth.getUser();
   if (!userData?.user) return json({ error: 'não autenticado' }, 401);
   const uid = userData.user.id;
+  // só quem tem o workspace da agência (Enzo/clientes do S7 Card não)
+  const { data: canAgency } = await asUser.rpc('has_workspace', { ws: 'agencia' });
+  if (canAgency !== true) return json({ error: 'sem acesso à prospecção da agência' }, 403);
 
   const db = createClient(SB_URL, SERVICE);
 
@@ -78,6 +81,13 @@ Deno.serve(async (req) => {
     body = await req.json();
   } catch {
     return json({ error: 'json inválido' }, 400);
+  }
+
+  if (!['buscar', 'scanner', 'roleta'].includes(body?.mode) || typeof body.city !== 'string' || !body.city.trim() || typeof body.niche !== 'string') {
+    return json({ error: 'Informe modo, nicho e cidade.' }, 400);
+  }
+  if (body.businesses !== undefined && (!Array.isArray(body.businesses) || body.businesses.length > 5000)) {
+    return json({ error: 'Arquivo inválido ou grande demais (máx. 5000 empresas por importação).' }, 400);
   }
 
   const maxResults = Math.min(Math.max(body.maxResults ?? 100, 10), 500);

@@ -138,7 +138,7 @@ export default function Loja() {
       <header className="fixed left-0 top-0 z-50 w-full bg-[#0f0f0f]/85 py-4 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 md:px-12">
           <a href="/" className="flex items-center gap-3">
-            <img src="/logo.png" alt="S7" width="500" height="500" className="h-14 w-auto md:h-16" />
+            <img src="/logo-256.webp" alt="S7" width="500" height="500" className="h-14 w-auto md:h-16" />
             <span className="hidden text-[11px] font-bold uppercase tracking-widest text-white/50 sm:inline">Loja</span>
           </a>
           <div className="flex items-center gap-3">

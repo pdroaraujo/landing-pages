@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
   } catch {
     return json({ error: 'json inválido' }, 400);
   }
-  if (!code || typeof code !== 'string') return json({ error: 'code obrigatório' }, 400);
+  if (!code || typeof code !== 'string' || code.length > 120) return json({ error: 'code inválido' }, 400);
 
   const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
 
@@ -35,10 +35,14 @@ Deno.serve(async (req) => {
 
   if (!tag) return json({ error: 'Placa não encontrada.' }, 404);
 
-  await db.from('s7card_taps').insert({
-    tag_id: tag.id,
-    user_agent: req.headers.get('user-agent')?.slice(0, 300) ?? null,
-  });
+  // Não conta de novo o mesmo aparelho na mesma placa em 30s (recarregar a
+  // página / duplo toque não infla as métricas que o cliente vê no painel).
+  const ua = req.headers.get('user-agent')?.slice(0, 300) ?? null;
+  const since = new Date(Date.now() - 30_000).toISOString();
+  let recent = db.from('s7card_taps').select('id', { count: 'exact', head: true }).eq('tag_id', tag.id).gte('tapped_at', since);
+  recent = ua ? recent.eq('user_agent', ua) : recent.is('user_agent', null);
+  const { count } = await recent;
+  if (!count) await db.from('s7card_taps').insert({ tag_id: tag.id, user_agent: ua });
 
   return json({ destination: tag.destination, link_type: tag.link_type });
 });

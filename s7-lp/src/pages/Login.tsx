@@ -37,7 +37,7 @@ export default function Login() {
       <div aria-hidden className="pointer-events-none absolute top-[-10%] left-1/2 -translate-x-1/2 w-[900px] h-[700px]" style={{ background: 'radial-gradient(closest-side, rgba(254,0,0,0.32), rgba(254,0,0,0.1) 55%, transparent)' }} />
       <div className="relative z-10 w-full max-w-sm">
         <Link to="/" className="block mb-10 text-center">
-          <img src="/logo.png" alt="Agência S7" className="h-20 w-auto mx-auto" />
+          <img src="/logo-256.webp" alt="Agência S7" width="256" height="256" className="h-20 w-auto mx-auto" />
         </Link>
         <h1 className="text-2xl font-bold tracking-tighter uppercase text-center mb-1">Painel S7</h1>
         <p className="text-white/40 text-xs uppercase tracking-widest text-center mb-8">Acesso restrito</p>

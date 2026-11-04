@@ -98,7 +98,7 @@ export default function ClientePainel() {
       <header className="relative z-10 border-b border-white/10 bg-[#0c0c0c]/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 md:px-10">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="S7" width="500" height="500" className="h-10 w-auto" />
+            <img src="/logo-256.webp" alt="S7" width="500" height="500" className="h-10 w-auto" />
             <span className="text-[11px] font-bold uppercase tracking-widest text-[#fe0000]">S7 Card · Minhas métricas</span>
           </div>
           <div className="flex items-center gap-5">
