@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { MousePointerClick, Star, Nfc, CalendarClock, LogOut, KeyRound, Lock, MessageCircle } from 'lucide-react';
+import { MousePointerClick, Star, CalendarClock, LogOut, KeyRound, Lock, MessageCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
 import { clientAccess, linkTypeInfo, type S7CardClient, type S7CardStore, type S7CardTag } from '../../lib/s7card';
 import { brl, fullDate, num } from '../../lib/format';
 import { Card, Badge } from '../../components/admin/ui';
-import AreaChart from '../../components/admin/AreaChart';
+import { Panel, RedPanel, GlowLine, Bars, WalletCard, RecentRow, Delta, PeriodPills } from '../../components/admin/dash';
+import { series, monthlyBars, type PeriodKey } from '../../lib/dashData';
 
 const PRICE = 10;
 // link de pagamento da mensalidade (ex: link da Yampi/Pix) — se não tiver, cai no WhatsApp da S7
@@ -28,6 +29,7 @@ export default function ClientePainel() {
   const [tags, setTags] = useState<S7CardTag[]>([]);
   const [taps, setTaps] = useState<Tap[]>([]);
   const [loading, setLoading] = useState(true);
+  const [period, setPeriod] = useState<PeriodKey>('1m');
 
   useEffect(() => {
     (async () => {
@@ -76,6 +78,8 @@ export default function ClientePainel() {
     });
     return { total: taps.length, thisMonth, evo, perTag };
   }, [taps]);
+  const tapSeries = useMemo(() => series(taps, (x) => x.tapped_at, () => 1, period), [taps, period]);
+  const tapBars = useMemo(() => monthlyBars(taps, (x) => x.tapped_at, () => 1), [taps]);
 
   const doSignOut = async () => {
     await signOut();
@@ -159,58 +163,77 @@ export default function ClientePainel() {
               </Card>
             ) : (
               <>
-                <div className="mb-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                  {[
-                    { label: 'Toques este mês', value: num(m.thisMonth), sub: 'pessoas que encostaram o celular', icon: MousePointerClick },
-                    { label: 'Toques no total', value: num(m.total), sub: 'desde a instalação', icon: MousePointerClick },
-                    {
-                      label: 'Avaliações no Google',
-                      value: store?.reviews_current ?? store?.reviews_baseline ?? '—',
-                      sub:
-                        delta !== null
-                          ? `${delta >= 0 ? '+' : ''}${delta} desde a instalação (${store?.reviews_baseline})`
-                          : 'atualizado pela S7',
-                      icon: Star,
-                    },
-                    { label: 'Placas ativas', value: num(tags.reduce((a, t) => a + (t.quantity || 1), 0)), sub: 'na sua loja', icon: Nfc },
-                  ].map((s) => (
-                    <Card key={s.label} className="p-6">
-                      <div className="flex items-start justify-between">
-                        <span className="text-[11px] font-bold uppercase tracking-widest text-white/45">{s.label}</span>
-                        <span className="grid h-9 w-9 place-items-center rounded-full bg-[#fe0000]/15 text-[#fe0000]">
-                          <s.icon size={16} />
-                        </span>
+                <div className="grid gap-5 xl:grid-cols-[1fr_400px]">
+                  <Panel className="p-5 md:p-7">
+                    <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                      <div>
+                        <p className="flex items-center gap-2 text-sm font-bold">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#fe0000]" /> Toques no período
+                        </p>
+                        <div className="mt-2 flex flex-wrap items-center gap-3">
+                          <p className="text-4xl font-bold tracking-tighter md:text-5xl">{num(tapSeries.total)}</p>
+                          <Delta value={tapSeries.delta} />
+                        </div>
+                        <p className="mt-1 text-xs text-white/45">pessoas que encostaram o celular nas suas placas</p>
                       </div>
-                      <p className="mt-4 text-3xl font-bold tracking-tighter">{s.value}</p>
-                      <p className="mt-1 text-xs text-white/40">{s.sub}</p>
-                    </Card>
-                  ))}
-                </div>
+                      <PeriodPills value={period} onChange={setPeriod} />
+                    </div>
+                    <div className="mt-6">
+                      <GlowLine data={tapSeries.points} money={false} />
+                    </div>
+                    <div className="mt-5 flex flex-wrap gap-2 text-[11px]">
+                      <span className="rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-white/60">
+                        Este mês <b className="ml-1 text-white">{num(m.thisMonth)}</b>
+                      </span>
+                      <span className="rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-white/60">
+                        Desde a instalação <b className="ml-1 text-white">{num(m.total)}</b>
+                      </span>
+                      <span className="rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-white/60">
+                        Placas ativas <b className="ml-1 text-white">{num(tags.reduce((a, t) => a + (t.quantity || 1), 0))}</b>
+                      </span>
+                    </div>
+                  </Panel>
 
-                <section className="grid gap-10 lg:grid-cols-[1fr_340px]">
-                  <div>
-                    <h2 className="mb-5 text-[11px] font-bold uppercase tracking-widest text-white/40">Toques nos últimos 30 dias</h2>
-                    <AreaChart data={m.evo} />
-                  </div>
-                  <div>
-                    <h2 className="mb-4 text-[11px] font-bold uppercase tracking-widest text-white/40">Por placa</h2>
-                    <ul className="divide-y divide-white/10 border-y border-white/10">
-                      {tags.map((t) => (
-                        <li key={t.id} className="flex items-center justify-between gap-3 py-3">
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-bold">{t.label || linkTypeInfo(t.link_type).label}</p>
-                            <p className="text-[11px] text-white/35">
-                              {linkTypeInfo(t.link_type).label}
-                              {t.quantity > 1 ? ` · ${t.quantity} placas` : ''}
-                            </p>
-                          </div>
-                          <span className="text-sm font-bold">{m.perTag[t.id] ?? 0}</span>
-                        </li>
-                      ))}
-                      {!tags.length && <li className="py-4 text-xs text-white/35">Nenhuma placa instalada ainda.</li>}
-                    </ul>
-                  </div>
-                </section>
+                  <RedPanel className="p-5 md:p-6 xl:row-span-2">
+                    <h2 className="mb-6 flex items-center gap-2 text-xl font-bold">
+                      <Star size={18} aria-hidden /> Avaliações no Google
+                    </h2>
+                    <WalletCard
+                      label="Avaliações hoje"
+                      value={String(store?.reviews_current ?? store?.reviews_baseline ?? '—')}
+                      foot={
+                        delta !== null
+                          ? `${delta >= 0 ? '+' : ''}${delta} desde a instalação (eram ${store?.reviews_baseline})`
+                          : 'A S7 atualiza esse número todo mês'
+                      }
+                    />
+                    <div className="mb-3 mt-7 flex items-center justify-between">
+                      <h3 className="text-lg font-bold">Toques por placa</h3>
+                    </div>
+                    {tags.length === 0 ? (
+                      <p className="rounded-2xl border border-white/20 bg-black/20 p-5 text-center text-xs text-white/80">Nenhuma placa instalada ainda.</p>
+                    ) : (
+                      <ul className="flex flex-col gap-2.5">
+                        {tags.map((t) => (
+                          <RecentRow
+                            key={t.id}
+                            title={t.label || linkTypeInfo(t.link_type).label}
+                            sub={`${linkTypeInfo(t.link_type).label}${t.quantity > 1 ? ` · ${t.quantity} placas` : ''}`}
+                            value={num(m.perTag[t.id] ?? 0)}
+                          />
+                        ))}
+                      </ul>
+                    )}
+                  </RedPanel>
+
+                  <Panel className="p-6">
+                    <h2 className="flex items-center gap-2 text-lg font-bold">
+                      <MousePointerClick size={16} className="text-[#fe0000]" aria-hidden /> Toques por mês
+                    </h2>
+                    <p className="mb-4 mt-1 text-2xl font-bold tracking-tight">{num(tapBars.reduce((a, b) => a + b.value, 0))}</p>
+                    <Bars data={tapBars} money={false} />
+                  </Panel>
+                </div>
               </>
             )}
           </>

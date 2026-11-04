@@ -1,194 +1,213 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { DollarSign, TrendingUp, ShoppingCart, Nfc, MousePointerClick, Plus, RefreshCw } from 'lucide-react';
+import { Plus, MapPinned, Nfc, MousePointerClick } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
-import { brl, num } from '../../lib/format';
-import { Card, PageHeader, Btn } from '../../components/admin/ui';
-import AreaChart from '../../components/admin/AreaChart';
+import { brl, num, shortDate } from '../../lib/format';
+import { DashHeader } from '../../components/admin/PanelShell';
+import {
+  Panel, RedPanel, GlowLine, Bars, WalletCard, RecentRow, AvatarStack, Delta, PeriodPills,
+} from '../../components/admin/dash';
+import { series, monthlyBars, type PeriodKey } from '../../lib/dashData';
 
-type Tap = { tapped_at: string; tag: { store_id: string | null; store: { name: string } | null } | null };
-type StoreRow = { status: string; sold_value: number };
-type TagRow = { status: string; sold_value: number; quantity: number };
+type StoreRow = { id: string; name: string; city: string | null; status: string; sold_value: number; sold_at: string };
+type TagRow = { status: string; sold_value: number; quantity: number; installed_at: string | null; created_at: string };
 type ClientRow = { paid_until: string | null; trial_ends_at: string; monthly_price: number };
+type TapRow = { tapped_at: string };
+/** uma venda = loja vendida ou placa com valor (o faturamento soma os dois) */
+type SaleRow = { date: string; value: number };
 
 export default function S7CardDashboard() {
-  const { s7Full } = useAuth();
+  const { s7Full, profile } = useAuth();
   const [stores, setStores] = useState<StoreRow[]>([]);
   const [tags, setTags] = useState<TagRow[]>([]);
   const [clients, setClients] = useState<ClientRow[]>([]);
-  const [taps, setTaps] = useState<Tap[]>([]);
+  const [taps, setTaps] = useState<TapRow[]>([]);
+  const [queue, setQueue] = useState<{ names: string[]; total: number }>({ names: [], total: 0 });
   const [loading, setLoading] = useState(true);
-
-  const load = async () => {
-    setLoading(true);
-    const since = new Date(Date.now() - 60 * 864e5).toISOString();
-    // a RLS já filtra: vendedor só recebe as lojas/placas/toques dele
-    const [{ data: s }, { data: t }, { data: c }, { data: tp }] = await Promise.all([
-      supabase.from('s7card_stores').select('status, sold_value'),
-      supabase.from('s7card_tags').select('status, sold_value, quantity'),
-      s7Full ? supabase.from('s7card_clients').select('paid_until, trial_ends_at, monthly_price') : Promise.resolve({ data: [] }),
-      supabase
-        .from('s7card_taps')
-        .select('tapped_at, tag:s7card_tags(store_id, store:s7card_stores(name))')
-        .gte('tapped_at', since)
-        .order('tapped_at', { ascending: true }),
-    ]);
-    setStores((s as StoreRow[]) ?? []);
-    setTags((t as TagRow[]) ?? []);
-    setClients((c as ClientRow[]) ?? []);
-    setTaps((tp as unknown as Tap[]) ?? []);
-    setLoading(false);
-  };
+  const [period, setPeriod] = useState<PeriodKey>('6m');
+  const [barsMode, setBarsMode] = useState<'toques' | 'vendas'>('toques');
 
   useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    (async () => {
+      const since = new Date(Date.now() - 366 * 864e5).toISOString();
+      // a RLS já filtra: vendedor só recebe as lojas/placas/toques dele
+      const [{ data: s }, { data: t }, { data: c }, { data: tp }, { data: q, count }] = await Promise.all([
+        supabase.from('s7card_stores').select('id, name, city, status, sold_value, sold_at').order('sold_at', { ascending: false }),
+        supabase.from('s7card_tags').select('status, sold_value, quantity, installed_at, created_at'),
+        s7Full ? supabase.from('s7card_clients').select('paid_until, trial_ends_at, monthly_price') : Promise.resolve({ data: [] }),
+        supabase.from('s7card_taps').select('tapped_at').gte('tapped_at', since),
+        supabase.from('s7card_prospects').select('name', { count: 'exact' }).eq('status', 'a_prospectar').limit(3),
+      ]);
+      setStores((s as StoreRow[]) ?? []);
+      setTags((t as TagRow[]) ?? []);
+      setClients((c as ClientRow[]) ?? []);
+      setTaps((tp as TapRow[]) ?? []);
+      const names = ((q as { name: string }[]) ?? []).map((r) => r.name);
+      setQueue({ names, total: count ?? names.length });
+      setLoading(false);
+    })();
   }, [s7Full]);
 
-  const m = useMemo(() => {
-    const today = new Date().toISOString().slice(0, 10);
-    const saleValues = [...stores.map((x) => Number(x.sold_value || 0)), ...tags.map((x) => Number(x.sold_value || 0))].filter((v) => v > 0);
-    const faturamento = saleValues.reduce((a, v) => a + v, 0);
-    const vendas = saleValues.length;
-    const pagantes = clients.filter((c) => c.paid_until && c.paid_until >= today);
-    const emTeste = clients.filter((c) => !(c.paid_until && c.paid_until >= today) && c.trial_ends_at >= today).length;
-    const recorrencia = pagantes.reduce((a, c) => a + Number(c.monthly_price || 0), 0);
+  const sales: SaleRow[] = useMemo(
+    () => [
+      ...stores.filter((x) => Number(x.sold_value) > 0).map((x) => ({ date: x.sold_at, value: Number(x.sold_value) })),
+      ...tags.filter((x) => Number(x.sold_value) > 0).map((x) => ({ date: x.installed_at ?? x.created_at, value: Number(x.sold_value) })),
+    ],
+    [stores, tags],
+  );
 
-    const placas = (status: string) => tags.filter((x) => x.status === status).reduce((a, x) => a + (x.quantity || 1), 0);
+  const s = useMemo(() => series(sales, (x) => x.date, (x) => x.value, period), [sales, period]);
+  const bars = useMemo(
+    () => (barsMode === 'toques' ? monthlyBars(taps, (x) => x.tapped_at, () => 1) : monthlyBars(sales, (x) => x.date, (x) => x.value)),
+    [barsMode, taps, sales],
+  );
 
-    const now = new Date();
-    const thisMonth = taps.filter((x) => {
-      const d = new Date(x.tapped_at);
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    });
-    const days = Array.from({ length: 14 }, (_, i) => {
-      const d = new Date();
-      d.setDate(d.getDate() - (13 - i));
-      return d;
-    });
-    const evo = days.map((d) => ({
-      label: d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
-      value: taps.filter((x) => new Date(x.tapped_at).toDateString() === d.toDateString()).length,
-    }));
-    const byStore = new Map<string, number>();
-    thisMonth.forEach((x) => {
-      const name = x.tag?.store?.name ?? 'Placa sem loja';
-      byStore.set(name, (byStore.get(name) ?? 0) + 1);
-    });
-    const ranking = [...byStore.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6);
-
-    return {
-      faturamento,
-      vendas,
-      ticket: vendas ? faturamento / vendas : 0,
-      recorrencia,
-      pagantes: pagantes.length,
-      emTeste,
-      lojasAtivas: stores.filter((x) => x.status === 'ativa').length,
-      lojasTotal: stores.length,
-      instaladas: placas('instalada'),
-      estoque: placas('em_estoque'),
-      toquesMes: thisMonth.length,
-      evo,
-      ranking,
-    };
-  }, [stores, tags, clients, taps]);
-
-  const kpis = s7Full
-    ? [
-        { label: 'Faturamento total', value: brl(m.faturamento), sub: 'valor acumulado', icon: DollarSign },
-        { label: 'Recorrência mensal', value: brl(m.recorrencia), sub: `${m.pagantes} contratos assinados`, icon: TrendingUp },
-        { label: 'Ticket médio', value: brl(m.ticket), sub: `${m.vendas} vendas realizadas`, icon: ShoppingCart },
-        { label: 'Total de vendas', value: num(m.vendas), sub: 'vendas realizadas', icon: ShoppingCart },
-      ]
-    : [
-        { label: 'Meu faturamento', value: brl(m.faturamento), sub: 'só as suas vendas', icon: DollarSign },
-        { label: 'Ticket médio', value: brl(m.ticket), sub: `${m.vendas} vendas realizadas`, icon: ShoppingCart },
-        { label: 'Minhas vendas', value: num(m.vendas), sub: 'vendas realizadas', icon: ShoppingCart },
-        { label: 'Placas instaladas', value: num(m.instaladas), sub: 'nas suas lojas', icon: Nfc },
-      ];
-
-  const operacao = [
-    { label: 'Lojas ativas', value: num(m.lojasAtivas), sub: `de ${m.lojasTotal} cadastradas` },
-    { label: 'Placas instaladas', value: num(m.instaladas), sub: 'em lojas' },
-    { label: 'Em estoque', value: num(m.estoque), sub: 'prontas pra vender' },
-    { label: 'Toques no mês', value: num(m.toquesMes), sub: 'todas as placas' },
-    ...(s7Full ? [{ label: 'Clientes em teste', value: num(m.emTeste), sub: '30 dias grátis' }] : []),
-  ];
+  const today = new Date().toISOString().slice(0, 10);
+  const pagantes = clients.filter((c) => c.paid_until && c.paid_until >= today);
+  const mrr = pagantes.reduce((a, c) => a + Number(c.monthly_price || 0), 0);
+  const emTeste = clients.filter((c) => !(c.paid_until && c.paid_until >= today) && c.trial_ends_at >= today).length;
+  const totalAll = sales.reduce((a, x) => a + x.value, 0);
+  const placas = (st: string) => tags.filter((x) => x.status === st).reduce((a, x) => a + (x.quantity || 1), 0);
+  const toquesMes = taps.filter((x) => x.tapped_at.slice(0, 7) === today.slice(0, 7)).length;
 
   return (
     <div>
-      <PageHeader
-        title="Dashboard"
-        subtitle={s7Full ? 'S7 Card — vendas, recorrência e desempenho das placas.' : 'Suas vendas de placas e o desempenho das suas lojas.'}
+      <DashHeader
+        title={<>Olá, {profile?.full_name?.split(' ')[0] ?? 'equipe'}</>}
         actions={
-          <>
-            <Btn variant="outline" onClick={load}>
-              <RefreshCw size={14} /> Atualizar
-            </Btn>
-            <Link to="/s7card/mapeamento">
-              <Btn>
-                <Plus size={14} /> Nova loja
-              </Btn>
-            </Link>
-          </>
+          <Link
+            to="/s7card/mapeamento"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#fe0000] px-5 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-[#d40000]"
+          >
+            <Plus size={14} aria-hidden /> Nova loja
+          </Link>
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-10">
-        {kpis.map((s) => (
-          <Card key={s.label} className="p-6">
-            <div className="flex items-start justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-white/45">{s.label}</span>
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-[#fe0000]/15 text-[#fe0000]">
-                <s.icon size={16} />
+      <div className="grid gap-5 xl:grid-cols-[1fr_440px]">
+        <Panel className="p-5 md:p-7">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
+              <p className="flex items-center gap-2 text-sm font-bold">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#fe0000]" /> {s7Full ? 'Faturamento no período' : 'Minhas vendas no período'}
+              </p>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <p className="text-4xl font-bold tracking-tighter md:text-5xl">{loading ? '—' : brl(s.total)}</p>
+                {!loading && <Delta value={s.delta} />}
+              </div>
+            </div>
+            <PeriodPills value={period} onChange={setPeriod} />
+          </div>
+          <div className="mt-6">
+            <GlowLine data={s.points} />
+          </div>
+          <div className="mt-5 flex flex-wrap gap-2 text-[11px]">
+            {[
+              ['Lojas ativas', num(stores.filter((x) => x.status === 'ativa').length)],
+              ['Placas instaladas', num(placas('instalada'))],
+              ['Em estoque', num(placas('em_estoque'))],
+              ['Toques no mês', num(toquesMes)],
+              ...(s7Full ? [['Clientes em teste', num(emTeste)]] : []),
+            ].map(([k, v]) => (
+              <span key={k} className="rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-white/60">
+                {k} <b className="ml-1 text-white">{v}</b>
               </span>
-            </div>
-            <p className="mt-4 text-3xl font-bold tracking-tighter">{loading ? '—' : s.value}</p>
-            <p className="mt-1 text-xs text-white/40">{s.sub}</p>
-          </Card>
-        ))}
-      </div>
+            ))}
+          </div>
+        </Panel>
 
-      {/* operação: uma faixa corrida, sem blocos */}
-      <section className="mb-10">
-        <h2 className="mb-4 text-[11px] font-bold uppercase tracking-widest text-white/40">Operação</h2>
-        <div className="flex flex-wrap border-y border-white/10">
-          {operacao.map((o, i) => (
-            <div key={o.label} className={`min-w-[150px] flex-1 px-5 py-5 ${i > 0 ? 'border-l border-white/10' : ''}`}>
-              <p className="text-2xl font-bold tracking-tighter">{loading ? '—' : o.value}</p>
-              <p className="mt-1 text-xs font-bold text-white/70">{o.label}</p>
-              <p className="text-[11px] text-white/35">{o.sub}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="grid gap-10 lg:grid-cols-[1fr_320px]">
-        <div>
-          <h2 className="mb-5 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/40">
-            <MousePointerClick size={13} className="text-[#fe0000]" /> Toques nos últimos 14 dias
-          </h2>
-          <AreaChart data={m.evo} />
-        </div>
-        <div>
-          <h2 className="mb-4 text-[11px] font-bold uppercase tracking-widest text-white/40">Lojas com mais toques no mês</h2>
-          {m.ranking.length === 0 ? (
-            <p className="border-t border-white/10 py-6 text-xs text-white/35">Nenhum toque registrado ainda.</p>
+        <RedPanel className="p-5 md:p-6 xl:row-span-2">
+          <div className="mb-6 flex items-center justify-between gap-3">
+            <h2 className="text-xl font-bold">{s7Full ? 'Carteira S7 Card' : 'Minha carteira'}</h2>
+            <Link
+              to="/s7card/placas"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/40 bg-white/15 px-4 py-2 text-xs font-bold hover:bg-white/25"
+            >
+              <Plus size={14} aria-hidden /> Nova placa
+            </Link>
+          </div>
+          <WalletCard
+            label={s7Full ? 'Faturamento acumulado' : 'Meu faturamento'}
+            value={loading ? '—' : brl(totalAll)}
+            delta={s.delta}
+            foot={s7Full ? `Recorrência ${brl(mrr)}/mês · ${pagantes.length} assinantes` : `${sales.length} vendas`}
+          />
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <Link to="/s7card/mapeamento" className="flex items-center justify-center gap-2 rounded-2xl bg-black/25 py-3.5 text-sm font-bold hover:bg-black/35">
+              <MapPinned size={15} aria-hidden /> Mapeamento
+            </Link>
+            <Link to="/s7card/placas" className="flex items-center justify-center gap-2 rounded-2xl bg-white/90 py-3.5 text-sm font-bold text-[#c40000] hover:bg-white">
+              <Nfc size={15} aria-hidden /> Placas
+            </Link>
+          </div>
+          <div className="mb-3 mt-7 flex items-center justify-between">
+            <h3 className="text-lg font-bold">Lojas recentes</h3>
+            <Link to="/s7card/mapeamento" className="text-sm text-white/80 hover:text-white">
+              Ver todas
+            </Link>
+          </div>
+          {stores.length === 0 ? (
+            <p className="rounded-2xl border border-white/20 bg-black/20 p-5 text-center text-xs text-white/80">Nenhuma loja vendida ainda.</p>
           ) : (
-            <ol className="divide-y divide-white/10 border-y border-white/10">
-              {m.ranking.map(([name, count], i) => (
-                <li key={name} className="flex items-center gap-3 py-3">
-                  <span className="w-5 text-xs font-bold text-white/30">{i + 1}</span>
-                  <span className="flex-1 truncate text-sm">{name}</span>
-                  <span className="text-sm font-bold">{count}</span>
-                </li>
+            <ul className="flex flex-col gap-2.5">
+              {stores.slice(0, 4).map((x) => (
+                <Link key={x.id} to={`/s7card/lojas/${x.id}`} className="block">
+                  <RecentRow title={x.name} sub={`${x.city ? x.city + ' · ' : ''}${shortDate(x.sold_at)}`} value={brl(x.sold_value)} />
+                </Link>
               ))}
-            </ol>
+            </ul>
           )}
+        </RedPanel>
+
+        <div className="grid gap-5 md:grid-cols-[1fr_1.2fr]">
+          <RedPanel className="flex flex-col p-6">
+            <h2 className="text-xl font-bold leading-tight md:text-2xl">Sua próxima placa começa agora.</h2>
+            <p className="mt-2 text-sm text-white/85">
+              {queue.total} {queue.total === 1 ? 'estabelecimento esperando' : 'estabelecimentos esperando'} sua visita.
+            </p>
+            <div className="mt-5">
+              <AvatarStack names={queue.names} extra={Math.max(0, queue.total - queue.names.length)} />
+            </div>
+            <div className="mt-auto pt-6">
+              <Link
+                to="/s7card/mapeamento"
+                className="flex items-center justify-center gap-2 rounded-full bg-white py-3.5 text-sm font-bold text-[#c40000] shadow-lg hover:bg-white/90"
+              >
+                <MapPinned size={16} aria-hidden /> Abrir mapeamento
+              </Link>
+            </div>
+          </RedPanel>
+
+          <Panel className="p-6">
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <h2 className="flex items-center gap-2 text-lg font-bold">
+                  {barsMode === 'toques' && <MousePointerClick size={16} className="text-[#fe0000]" aria-hidden />}
+                  {barsMode === 'toques' ? 'Toques por mês' : 'Vendas por mês'}
+                </h2>
+                <p className="mt-1 text-2xl font-bold tracking-tight">
+                  {barsMode === 'toques' ? num(bars.reduce((a, b) => a + b.value, 0)) : brl(bars.reduce((a, b) => a + b.value, 0))}
+                </p>
+              </div>
+              <div role="tablist" aria-label="O que mostrar" className="inline-flex rounded-full border border-white/10 bg-black/40 p-1 text-[11px]">
+                {(['toques', 'vendas'] as const).map((k) => (
+                  <button
+                    key={k}
+                    role="tab"
+                    aria-selected={barsMode === k}
+                    onClick={() => setBarsMode(k)}
+                    className={`rounded-full px-3 py-1 capitalize ${barsMode === k ? 'bg-[#fe0000] text-white' : 'text-white/55'}`}
+                  >
+                    {k}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Bars data={bars} money={barsMode === 'vendas'} />
+          </Panel>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

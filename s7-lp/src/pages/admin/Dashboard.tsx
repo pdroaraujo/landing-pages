@@ -1,254 +1,174 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  DollarSign,
-  TrendingUp,
-  ShoppingCart,
-  RefreshCw,
-  Upload,
-  Users,
-  FileText,
-  FilePlus2,
-} from 'lucide-react';
+import { Plus, ArrowUpRight, Radar, ListChecks } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../lib/auth';
 import type { Sale } from '../../lib/types';
-import { brl, num, shortDate } from '../../lib/format';
-import { Card, PageHeader, Btn } from '../../components/admin/ui';
-import AreaChart from '../../components/admin/AreaChart';
+import { brl, shortDate } from '../../lib/format';
+import { DashHeader } from '../../components/admin/PanelShell';
+import {
+  Panel, RedPanel, GlowLine, Bars, WalletCard, RecentRow, AvatarStack, Delta, PeriodPills,
+} from '../../components/admin/dash';
+import { series, monthlyBars, type PeriodKey } from '../../lib/dashData';
 
-type Period = 'hoje' | '7d' | '30d' | 'mes' | 'ano' | 'todo';
-
-const PERIODS: { key: Period; label: string }[] = [
-  { key: 'hoje', label: 'Hoje' },
-  { key: '7d', label: '7 dias' },
-  { key: '30d', label: '30 dias' },
-  { key: 'mes', label: 'Este mês' },
-  { key: 'ano', label: 'Este ano' },
-  { key: 'todo', label: 'Todo período' },
-];
-
-function startOf(period: Period): Date | null {
-  const now = new Date();
-  switch (period) {
-    case 'hoje':
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    case '7d':
-      return new Date(now.getTime() - 7 * 864e5);
-    case '30d':
-      return new Date(now.getTime() - 30 * 864e5);
-    case 'mes':
-      return new Date(now.getFullYear(), now.getMonth(), 1);
-    case 'ano':
-      return new Date(now.getFullYear(), 0, 1);
-    case 'todo':
-      return null;
-  }
-}
+const saleDate = (s: Sale) => s.sold_at;
+const saleValue = (s: Sale) => Number(s.value || 0);
 
 export default function Dashboard() {
+  const { profile } = useAuth();
   const [sales, setSales] = useState<Sale[]>([]);
+  const [queue, setQueue] = useState<{ names: string[]; total: number }>({ names: [], total: 0 });
   const [loading, setLoading] = useState(true);
-  const [period, setPeriod] = useState<Period>('todo');
-
-  const load = async () => {
-    setLoading(true);
-    const { data } = await supabase.from('sales').select('*').order('sold_at', { ascending: true });
-    setSales((data as Sale[]) ?? []);
-    setLoading(false);
-  };
+  const [period, setPeriod] = useState<PeriodKey>('6m');
+  const [barsRange, setBarsRange] = useState(6);
 
   useEffect(() => {
-    load();
+    (async () => {
+      const [{ data }, { data: q, count }] = await Promise.all([
+        supabase.from('sales').select('*').order('sold_at', { ascending: false }),
+        supabase
+          .from('list_items')
+          .select('business:businesses(name)', { count: 'exact' })
+          .eq('qualified', true)
+          .eq('call_status', 'pending')
+          .limit(3),
+      ]);
+      setSales((data as Sale[]) ?? []);
+      const names = ((q as unknown as { business: { name: string } | null }[]) ?? []).map((r) => r.business?.name ?? '?');
+      setQueue({ names, total: count ?? names.length });
+      setLoading(false);
+    })();
   }, []);
 
-  const filtered = useMemo(() => {
-    const from = startOf(period);
-    return from ? sales.filter((s) => new Date(s.sold_at) >= from) : sales;
-  }, [sales, period]);
-
-  const m = useMemo(() => {
-    const faturamento = filtered.reduce((a, s) => a + Number(s.value || 0), 0);
-    const recorrencia = filtered
-      .filter((s) => s.recurring)
-      .reduce((a, s) => a + Number(s.monthly_value || 0), 0);
-    const contratos = filtered.filter((s) => s.contract_signed).length;
-    const totalVendas = filtered.length;
-    const ticket = totalVendas ? faturamento / totalVendas : 0;
-
-    // evolução mensal (12 meses do ano corrente)
-    const year = new Date().getFullYear();
-    const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
-    const evo = months.map((label, i) => ({
-      label,
-      value: filtered
-        .filter((s) => {
-          const d = new Date(s.sold_at);
-          return d.getFullYear() === year && d.getMonth() === i;
-        })
-        .reduce((a, s) => a + Number(s.value || 0), 0),
-    }));
-
-    const byProduct = new Map<string, { total: number; count: number }>();
-    filtered.forEach((s) => {
-      const p = byProduct.get(s.product) ?? { total: 0, count: 0 };
-      p.total += Number(s.value || 0);
-      p.count += 1;
-      byProduct.set(s.product, p);
-    });
-    const top = [...byProduct.entries()]
-      .map(([product, v]) => ({ product, ...v }))
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 5);
-
-    const latest = [...filtered].sort((a, b) => +new Date(b.sold_at) - +new Date(a.sold_at)).slice(0, 6);
-
-    return { faturamento, recorrencia, contratos, totalVendas, ticket, evo, top, latest };
-  }, [filtered]);
-
-  const stats = [
-    { label: 'Faturamento total', value: brl(m.faturamento), sub: 'valor acumulado', icon: DollarSign },
-    { label: 'Recorrência mensal', value: brl(m.recorrencia), sub: `${m.contratos} contratos assinados`, icon: TrendingUp },
-    { label: 'Ticket médio', value: brl(m.ticket), sub: `${m.totalVendas} vendas realizadas`, icon: ShoppingCart },
-    { label: 'Total de vendas', value: num(m.totalVendas), sub: 'vendas realizadas', icon: ShoppingCart },
-  ];
-
-  const actions = [
-    { to: '/admin/prospeccao', title: 'Encontrar Clientes', sub: 'Buscar novos leads', icon: Users },
-    { to: '/admin/prospeccao/roleta', title: 'Roleta', sub: 'Sortear nicho e cidade', icon: RefreshCw },
-    { to: '/admin/vendas', title: 'Registrar Venda', sub: 'Nova venda ou import', icon: FilePlus2 },
-    { to: '/admin/listas', title: 'Listas', sub: 'Filas de ligação do dia', icon: FileText },
-  ];
+  const s = useMemo(() => series(sales, saleDate, saleValue, period), [sales, period]);
+  const bars = useMemo(() => monthlyBars(sales, saleDate, saleValue, barsRange), [sales, barsRange]);
+  const barsTotal = bars.reduce((a, b) => a + b.value, 0);
+  const inPeriod = {
+    count: s.rows.length,
+    ticket: s.rows.length ? s.total / s.rows.length : 0,
+    mrr: s.rows.filter((x) => x.recurring).reduce((a, x) => a + Number(x.monthly_value || 0), 0),
+  };
+  const totalAll = sales.reduce((a, x) => a + saleValue(x), 0);
 
   return (
     <div>
-      <PageHeader
-        title="Dashboard"
-        subtitle={
-          <>
-            Central de controle para acompanhar <span className="text-[#fe0000]">vendas</span>,{' '}
-            <span className="text-[#fe0000]">recorrência</span> e{' '}
-            <span className="text-[#fe0000]">desempenho</span>.
-          </>
-        }
-        actions={
-          <>
-            <Btn variant="outline" onClick={() => (window.location.href = '/admin/vendas')}>
-              <Upload size={14} /> Importar
-            </Btn>
-            <Btn variant="solid" onClick={load}>
-              <RefreshCw size={14} /> Atualizar
-            </Btn>
-          </>
-        }
-      />
+      <DashHeader title={<>Olá, {profile?.full_name?.split(' ')[0] ?? 'equipe'}</>} />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-6">
-        {stats.map((s) => (
-          <Card key={s.label} className="p-6">
-            <div className="flex items-start justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-white/45">{s.label}</span>
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-[#fe0000]/15 text-[#fe0000]">
-                <s.icon size={16} />
-              </span>
-            </div>
-            <p className="mt-4 text-3xl font-bold tracking-tighter">{loading ? '—' : s.value}</p>
-            <p className="mt-1 text-xs text-white/40">{s.sub}</p>
-          </Card>
-        ))}
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-3 mb-6">
-        <Card className="p-6 lg:col-span-2">
-          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="grid gap-5 xl:grid-cols-[1fr_440px]">
+        {/* faturamento no período */}
+        <Panel className="p-5 md:p-7">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <h3 className="flex items-center gap-2 font-bold tracking-tight">
-                <TrendingUp size={16} className="text-[#fe0000]" /> Evolução do Faturamento
-              </h3>
-              <p className="text-xs text-white/40 mt-1">Período: {brl(m.faturamento)}</p>
+              <p className="flex items-center gap-2 text-sm font-bold">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#fe0000]" /> Faturamento no período
+              </p>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <p className="text-4xl font-bold tracking-tighter md:text-5xl">{loading ? '—' : brl(s.total)}</p>
+                {!loading && <Delta value={s.delta} />}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-1">
-              {PERIODS.map((p) => (
-                <button
-                  key={p.key}
-                  onClick={() => setPeriod(p.key)}
-                  className={`rounded-full px-3 py-1.5 text-[11px] font-medium transition-colors ${
-                    period === p.key ? 'bg-[#fe0000] text-white' : 'text-white/45 hover:text-white'
-                  }`}
-                >
-                  {p.label}
-                </button>
-              ))}
-            </div>
+            <PeriodPills value={period} onChange={setPeriod} />
           </div>
-          <AreaChart data={m.evo} />
-        </Card>
+          <div className="mt-6">
+            <GlowLine data={s.points} />
+          </div>
+          <div className="mt-5 flex flex-wrap gap-2 text-[11px]">
+            <span className="rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-white/60">
+              Ticket médio <b className="ml-1 text-white">{brl(inPeriod.ticket)}</b>
+            </span>
+            <span className="rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-white/60">
+              Vendas <b className="ml-1 text-white">{inPeriod.count}</b>
+            </span>
+            <span className="rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-white/60">
+              Recorrência <b className="ml-1 text-white">{brl(inPeriod.mrr)}/mês</b>
+            </span>
+          </div>
+        </Panel>
 
-        <Card className="p-6">
-          <h3 className="font-bold tracking-tight mb-5">Ações Rápidas</h3>
-          <div className="flex flex-col gap-3">
-            {actions.map((a) => (
+        {/* carteira */}
+        <RedPanel className="p-5 md:p-6 xl:row-span-2">
+          <div className="mb-6 flex items-center justify-between gap-3">
+            <h2 className="text-xl font-bold">Minha carteira</h2>
+            <Link
+              to="/admin/vendas"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/40 bg-white/15 px-4 py-2 text-xs font-bold hover:bg-white/25"
+            >
+              <Plus size={14} aria-hidden /> Nova venda
+            </Link>
+          </div>
+          <WalletCard
+            label="Faturamento acumulado"
+            value={loading ? '—' : brl(totalAll)}
+            delta={s.delta}
+            foot={`${sales.length} vendas registradas`}
+          />
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <Link to="/admin/prospeccao/roleta" className="flex items-center justify-center gap-2 rounded-2xl bg-black/25 py-3.5 text-sm font-bold hover:bg-black/35">
+              <Radar size={15} aria-hidden /> Prospectar
+            </Link>
+            <Link to="/admin/vendas" className="flex items-center justify-center gap-2 rounded-2xl bg-white/90 py-3.5 text-sm font-bold text-[#c40000] hover:bg-white">
+              <ArrowUpRight size={15} aria-hidden /> Venda
+            </Link>
+          </div>
+          <div className="mb-3 mt-7 flex items-center justify-between">
+            <h3 className="text-lg font-bold">Vendas recentes</h3>
+            <Link to="/admin/vendas" className="text-sm text-white/80 hover:text-white">
+              Ver todas
+            </Link>
+          </div>
+          {sales.length === 0 ? (
+            <p className="rounded-2xl border border-white/20 bg-black/20 p-5 text-center text-xs text-white/80">Nenhuma venda registrada ainda.</p>
+          ) : (
+            <ul className="flex flex-col gap-2.5">
+              {sales.slice(0, 4).map((x) => (
+                <RecentRow key={x.id} title={x.client_name} sub={`${x.product} · ${shortDate(x.sold_at)}`} value={brl(x.value)} />
+              ))}
+            </ul>
+          )}
+        </RedPanel>
+
+        <div className="grid gap-5 md:grid-cols-[1fr_1.2fr]">
+          {/* chamada pra ação */}
+          <RedPanel className="flex flex-col p-6">
+            <h2 className="text-xl font-bold leading-tight md:text-2xl">Sua próxima venda começa agora.</h2>
+            <p className="mt-2 text-sm text-white/85">
+              {queue.total} {queue.total === 1 ? 'empresa aprovada esperando' : 'empresas aprovadas esperando'} sua ligação.
+            </p>
+            <div className="mt-5">
+              <AvatarStack names={queue.names} extra={Math.max(0, queue.total - queue.names.length)} />
+            </div>
+            <div className="mt-auto pt-6">
               <Link
-                key={a.to}
-                to={a.to}
-                className="group flex items-center gap-4 rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3 hover:border-[#fe0000]/40 transition-colors"
+                to="/admin/listas"
+                className="flex items-center justify-center gap-2 rounded-full bg-white py-3.5 text-sm font-bold text-[#c40000] shadow-lg hover:bg-white/90"
               >
-                <span className="grid h-10 w-10 place-items-center rounded-full bg-[#fe0000]/15 text-[#fe0000]">
-                  <a.icon size={16} />
-                </span>
-                <span>
-                  <span className="block text-sm font-bold">{a.title}</span>
-                  <span className="block text-xs text-white/40">{a.sub}</span>
-                </span>
+                <ListChecks size={16} aria-hidden /> Abrir listas
               </Link>
-            ))}
-          </div>
-        </Card>
-      </div>
+            </div>
+          </RedPanel>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="p-6">
-          <h3 className="font-bold tracking-tight mb-5">Top 5 Produtos</h3>
-          {m.top.length === 0 ? (
-            <Empty>Nenhuma venda registrada ainda.</Empty>
-          ) : (
-            <ul className="flex flex-col gap-3">
-              {m.top.map((t, i) => (
-                <li key={t.product} className="flex items-center gap-3">
-                  <span className="text-xs font-bold text-white/30 w-4">{i + 1}</span>
-                  <span className="flex-1 text-sm">{t.product}</span>
-                  <span className="text-xs text-white/40">{t.count}x</span>
-                  <span className="text-sm font-bold">{brl(t.total)}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
-
-        <Card className="p-6">
-          <h3 className="font-bold tracking-tight mb-5">Últimas Vendas</h3>
-          {m.latest.length === 0 ? (
-            <Empty>Nenhuma venda registrada ainda.</Empty>
-          ) : (
-            <ul className="flex flex-col divide-y divide-white/5">
-              {m.latest.map((s) => (
-                <li key={s.id} className="flex items-center justify-between py-2.5">
-                  <span>
-                    <span className="block text-sm font-medium">{s.client_name}</span>
-                    <span className="block text-xs text-white/40">
-                      {s.product} · {shortDate(s.sold_at)}
-                    </span>
-                  </span>
-                  <span className="text-sm font-bold">{brl(s.value)}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
+          {/* barras por mês */}
+          <Panel className="p-6">
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-bold">Faturamento por mês</h2>
+                <p className="mt-1 text-2xl font-bold tracking-tight">{brl(barsTotal)}</p>
+              </div>
+              <select
+                value={barsRange}
+                onChange={(e) => setBarsRange(Number(e.target.value))}
+                aria-label="Quantidade de meses"
+                className="rounded-full border border-white/10 bg-black/40 px-3 py-1.5 text-xs text-white"
+              >
+                <option value={3}>3 meses</option>
+                <option value={6}>6 meses</option>
+                <option value={12}>12 meses</option>
+              </select>
+            </div>
+            <Bars data={bars} />
+          </Panel>
+        </div>
       </div>
     </div>
   );
-}
-
-function Empty({ children }: { children: React.ReactNode }) {
-  return <p className="rounded-xl border border-dashed border-white/10 px-4 py-8 text-center text-xs text-white/35">{children}</p>;
 }
