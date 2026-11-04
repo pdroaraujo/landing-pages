@@ -42,7 +42,7 @@ export function OwnerNavigation({ contactUrl }: { contactUrl: string }) {
             <div className="owner-nav__top">
                 <a href="#topo" className="owner-nav__brand" aria-label={`${site.name} — início`} onClick={closeMenu}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/logo-luchetti-verde.svg" alt={site.fullName} width={247} height={97} />
+                    <img src="/logo-luchetti-verde.webp" alt={site.fullName} width={245} height={95} />
                 </a>
                 <a
                     href={contactUrl}

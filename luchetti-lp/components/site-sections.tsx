@@ -390,7 +390,7 @@ export function SiteSections() {
                             <div className="footer-brand">
                                 <a href="#topo" aria-label={`${site.name} — voltar ao início`} className="footer-brand__name footer-brand__logo">
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src="/logo-luchetti-branco.svg" alt={site.fullName} width={247} height={97} />
+                                    <img src="/logo-luchetti-branco.webp" alt={site.fullName} width={245} height={95} />
                                 </a>
                                 <p>
                                     Distribuidor técnico Amanco Wavin<br />

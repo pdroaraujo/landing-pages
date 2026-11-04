@@ -33,7 +33,13 @@ export const metadata: Metadata = {
         description,
         images: [{ url: '/fotos/footer-panorama.jpg', width: 1983, height: 793, alt: site.fullName }],
     },
-    icons: { icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }] },
+    icons: {
+        icon: [
+            { url: '/favicon.svg', type: 'image/svg+xml' },
+            { url: '/icon-512.png', type: 'image/png', sizes: '512x512' },
+        ],
+        apple: [{ url: '/apple-touch-icon.png', sizes: '180x180' }],
+    },
     manifest: '/manifest.webmanifest',
     robots: { index: true, follow: true },
     formatDetection: { email: false, address: false, telephone: false },
