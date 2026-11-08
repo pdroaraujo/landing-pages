@@ -1,4 +1,4 @@
-/* Nossa história + Nossa essência + Catálogo completo.
+/* Nossa história + Nossa essência.
    Conteúdo do site institucional adaptado à identidade nova (tokens do sections.css). */
 
 /* ───────────── Nossa história ───────────── */
@@ -145,141 +145,19 @@
     line-height: 1.65;
 }
 
-/* ───────────── Catálogo completo ───────────── */
-.catalog {
-    position: relative;
-    padding: clamp(1rem, 3vh, 2rem) 2rem clamp(6rem, 12vh, 8rem);
-    background: #e0f4e3;
-}
-.catalog__inner {
-    width: min(100%, 82rem);
-    margin-inline: auto;
-}
-.catalog__heading {
-    display: grid;
-    justify-items: center;
-    margin-bottom: clamp(2.2rem, 4.5vh, 3.2rem);
-    text-align: center;
-}
-.catalog__heading h2 {
-    max-width: 43rem;
-    margin-top: 1.2rem;
-    color: #01342b;
-    font-family: 'Poppins', sans-serif;
-    font-size: clamp(2rem, 2.8vw, 3.1rem);
-    font-weight: 400;
-    letter-spacing: -0.052em;
-    line-height: 1;
-}
-.catalog__heading > p:last-child {
-    max-width: 40rem;
-    margin-top: 1rem;
-    color: #3f5f52;
-    font-size: 0.98rem;
-    line-height: 1.65;
-}
-.catalog__grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(0.9rem, 1.4vw, 1.3rem);
-}
-.catalog-line {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: clamp(1.5rem, 2vw, 2rem);
-    border: 1px solid rgba(1, 52, 43, 0.07);
-    border-radius: 1.6rem;
-    background: #fff;
-    box-shadow: 0 18px 28px rgba(1, 52, 43, 0.06);
-}
-.catalog-line header { display: grid; gap: 0.2rem; padding-right: 2.5rem; }
-.catalog-line__index {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.6rem;
-    color: #4f7d5d;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.85rem;
-}
-.catalog-line h3 {
-    color: #01342b;
-    font-family: 'Poppins', sans-serif;
-    font-size: clamp(1.3rem, 1.5vw, 1.55rem);
-    font-weight: 500;
-    letter-spacing: -0.035em;
-    line-height: 1.1;
-}
-.catalog-line header small {
-    color: #04722f;
-    font-size: 0.8rem;
-}
-.catalog-line__intro {
-    color: #4b6559;
-    font-size: 0.9rem;
-    line-height: 1.6;
-}
-.catalog-line__group h4 {
-    margin-bottom: 0.55rem;
-    color: #275b3b;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-.catalog-line ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-.catalog-line li {
-    padding: 0.35rem 0.75rem;
-    border: 1px solid rgba(4, 114, 47, 0.16);
-    border-radius: 999px;
-    background: #f4fff9;
-    color: #01342b;
-    font-size: 0.8rem;
-    line-height: 1.3;
-}
-.catalog-line__cta {
-    display: inline-flex;
-    width: fit-content;
-    min-height: 28px;
-    align-items: center;
-    gap: 0.4rem;
-    margin-top: auto;
-    padding-top: 0.6rem;
-    color: #04722f;
-    font-size: 0.88rem;
-    font-weight: 600;
-    text-decoration: none;
-}
-.catalog-line__cta svg { width: 1rem; height: 1rem; transition: transform 220ms ease; }
-.catalog-line__cta:hover svg,
-.catalog-line__cta:focus-visible svg { transform: translate(2px, -2px); }
-.catalog-line__cta:focus-visible { outline: 3px solid #04722f; outline-offset: 4px; border-radius: 4px; }
-
 /* ───────────── Responsivo ───────────── */
 @media (max-width: 1100px) {
     .history__timeline { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 2rem; }
-    .catalog__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 760px) {
     .history { padding: 4rem 1.25rem; }
     .history__heading { grid-template-columns: 1fr; align-items: start; }
     .history__essence-grid { grid-template-columns: 1fr; }
-    .catalog { padding-inline: 1rem; }
-    .catalog__grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
     .history__timeline { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.85rem; row-gap: 1.6rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-    .history-moment__media img,
-    .catalog-line__cta svg { transition: none; }
+    .history-moment__media img { transition: none; }
     .history-moment:hover .history-moment__media img { transform: none; }
 }

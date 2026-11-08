@@ -38,3 +38,43 @@
 
 /* Área de toque mínima (WCAG 2.5.8) nos links do rodapé */
 .footer-nav a { display: inline-flex; align-items: center; min-height: 28px; }
+
+/* Botão de orçamento da home: lista as linhas e leva à página de cada uma */
+/* A lista abre dentro da própria barra: não fica sob o menu fixo nem é cortada pela seção. */
+.budget-picker { display: contents; }
+.budget-picker .brand-button { border: 0; cursor: pointer; }
+.popular-services__cta:has(.budget-picker__menu:not([hidden])) { flex-wrap: wrap; }
+.budget-picker__menu {
+    width: 100%;
+    padding: .9rem .7rem .4rem 0;
+    border-top: 1px solid rgb(4 114 47 / .12);
+}
+.budget-picker__menu[hidden] { display: none; }
+.budget-picker__menu p { margin-bottom: .55rem; color: #275b3b; font-size: .8rem; }
+.budget-picker__menu ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    gap: .4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.budget-picker__menu li:last-child { grid-column: 1 / -1; }
+.budget-picker__menu a {
+    display: flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: .5rem .8rem;
+    border-radius: .65rem;
+    background: #f4fff9;
+    color: #01342b;
+    font-family: 'Poppins', sans-serif;
+    font-size: .92rem;
+    transition: background-color 180ms ease;
+}
+.budget-picker__menu a:hover { background: #dff3e4; }
+.budget-picker__menu a:focus-visible { outline: 3px solid #04722f; outline-offset: 2px; }
+.budget-picker__menu a svg { width: 1rem; height: 1rem; flex: 0 0 auto; color: #04722f; }
+.budget-picker__menu .budget-picker__general { min-height: 2.25rem; background: none; color: #04722f; font-family: inherit; font-size: .8rem; }

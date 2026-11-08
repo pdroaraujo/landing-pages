@@ -10,7 +10,7 @@ import { ctaLinkProps, ctaUrl, photos, site } from '@/lib/site-config';
 import './owner-hero.css';
 import './floating-contact.css';
 import './brand.css';
-import './history-catalog.css';
+import './history.css';
 
 export default function Home() {
     return (

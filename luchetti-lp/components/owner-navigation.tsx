@@ -7,12 +7,12 @@ import { ctaLinkProps, site } from '@/lib/site-config';
 const navigationItems = [
     { href: '#destaque', label: 'A Luchetti' },
     { href: '#historia', label: 'História' },
-    { href: '#catalogo', label: 'Catálogo' },
+    { href: '#servicos', label: 'Soluções' },
     { href: '#aplicacoes', label: 'Quem atendemos' },
     { href: '#duvidas', label: 'Dúvidas' },
 ];
 
-export function OwnerNavigation({ contactUrl }: { contactUrl: string }) {
+export function OwnerNavigation({ contactUrl, basePath = '' }: { contactUrl: string; basePath?: string }) {
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
@@ -41,7 +41,7 @@ export function OwnerNavigation({ contactUrl }: { contactUrl: string }) {
     return (
         <header className={`owner-nav${isOpen ? ' owner-nav--menu-open' : ''}`}>
             <div className="owner-nav__top">
-                <a href="#topo" className="owner-nav__brand" aria-label={`${site.name} — início`} onClick={closeMenu}>
+                <a href={`${basePath}#topo`} className="owner-nav__brand" aria-label={`${site.name} — início`} onClick={closeMenu}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src="/logo-luchetti-verde.webp" alt={site.fullName} width={245} height={95} />
                 </a>
@@ -70,7 +70,7 @@ export function OwnerNavigation({ contactUrl }: { contactUrl: string }) {
             </div>
 
             <nav aria-label="Navegação principal" className="owner-nav__links">
-                {navigationItems.map(item => <a className="owner-nav__section-link" key={item.href} href={item.href}>{item.label}</a>)}
+                {navigationItems.map(item => <a className="owner-nav__section-link" key={item.href} href={`${basePath}${item.href}`}>{item.label}</a>)}
             </nav>
 
             <div id="owner-mobile-menu" className="owner-nav__mobile-panel" aria-hidden={!isOpen}>
@@ -78,7 +78,7 @@ export function OwnerNavigation({ contactUrl }: { contactUrl: string }) {
                     <p className="owner-nav__mobile-eyebrow"><span aria-hidden="true">/</span> Navegação</p>
                     <nav className="owner-nav__mobile-links" aria-label="Navegação mobile">
                         {navigationItems.map((item, index) => (
-                            <a key={item.href} href={item.href} onClick={closeMenu} tabIndex={isOpen ? 0 : -1}>
+                            <a key={item.href} href={`${basePath}${item.href}`} onClick={closeMenu} tabIndex={isOpen ? 0 : -1}>
                                 <span>{item.label}</span>
                                 <small aria-hidden="true">0{index + 1}</small>
                             </a>

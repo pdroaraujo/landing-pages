@@ -4,21 +4,16 @@ import { WindIcon } from '@solar-icons/react/bold/wind';
 import { ShieldCheckIcon } from '@solar-icons/react/bold/shield-check';
 import { WaterdropIcon } from '@solar-icons/react/bold/waterdrop';
 import Image from 'next/image';
-import { CatalogSection } from './catalog-section';
+import { BudgetPicker } from './budget-picker';
 import { FaqSection } from './faq-section';
 import { HistorySection } from './history-section';
 import { ScrollRevealSection } from './scroll-reveal-section';
+import { SiteFooter } from './site-footer';
 import {
-    contactIsWhatsapp,
     ctaLinkProps,
     ctaUrl,
-    externalLink,
-    mapsUrl,
-    phoneUrl,
     photos,
     site,
-    whatsappLinkFor,
-    whatsappUrl,
     yearsInBusiness,
 } from '@/lib/site-config';
 
@@ -26,39 +21,43 @@ const contactUrl = ctaUrl;
 
 const services = [
     {
+        slug: 'hidraulica',
         title: 'Hidráulica',
         copy: 'Tubos, conexões, válvulas, registros, bombas, drenagem, PEAD, cisternas, fossas e biodigestores.',
         image: photos.hidraulica,
         alt: 'Estoque de tubos e conexões de PVC',
         position: 'center 40%',
-        cta: 'Orçar hidráulica',
+        cta: 'Ver soluções',
         icon: WaterdropIcon,
     },
     {
+        slug: 'impermeabilizacao',
         title: 'Impermeabilização',
         copy: 'Mantas asfálticas, membranas líquidas, selantes, grautes, aditivos, argamassas especiais e isolantes térmicos e acústicos.',
         image: photos.impermeabilizacaoReal,
         alt: 'Aplicação de manta asfáltica',
         position: 'center 50%',
-        cta: 'Orçar impermeabilização',
+        cta: 'Ver soluções',
         icon: ShieldCheckIcon,
     },
     {
+        slug: 'gas-e-pci',
         title: 'Gás e PCI',
         copy: 'Multicamadas, termofusão, reguladores e ferramentas para gás. Para incêndio: Amanco Fire, ranhurado, galvanizado e aço carbono.',
         image: photos.pciReal,
         alt: 'Tubulação vermelha de combate a incêndio com sprinklers',
         position: 'center 50%',
-        cta: 'Orçar gás e PCI',
+        cta: 'Ver soluções',
         icon: FireIcon,
     },
     {
+        slug: 'avac-e-acabamentos',
         title: 'AVAC e acabamentos',
         copy: 'Aquecimento, ventilação e ar-condicionado, além de louças, metais, revestimentos e soluções de acessibilidade.',
         image: photos.avacReal,
         alt: 'Duto e difusor de ar-condicionado',
         position: 'center 50%',
-        cta: 'Orçar AVAC e acabamentos',
+        cta: 'Ver soluções',
         icon: WindIcon,
     },
 ];
@@ -174,9 +173,8 @@ export function SiteSections() {
                         return (
                             <a
                                 className={`service-card${index === 3 ? ' service-card--featured' : ''}`}
-                                href={whatsappLinkFor(service.title.replace(/^\p{Lu}(?=\p{Ll})/u, (c) => c.toLowerCase()))}
-                                {...ctaLinkProps}
-                                aria-label={`Solicitar orçamento de ${service.title}`}
+                                href={`/solucoes/${service.slug}`}
+                                aria-label={`Ver soluções de ${service.title}`}
                                 key={service.title}
                             >
                                 <div className="service-card__media">
@@ -208,13 +206,9 @@ export function SiteSections() {
                         <small>Não sabe qual material especificar?</small>
                         <strong>Fale com nosso time e receba a indicação certa para a sua obra.</strong>
                     </span>
-                    <a className="brand-button" href={contactUrl} {...ctaLinkProps}>
-                        Solicitar orçamento <ArrowRightUpIcon />
-                    </a>
+                    <BudgetPicker />
                 </div>
             </ScrollRevealSection>
-
-            <CatalogSection />
 
             <ScrollRevealSection
                 id="aplicacoes"
@@ -349,105 +343,7 @@ export function SiteSections() {
 
             <FaqSection contactUrl={contactUrl} />
 
-            <footer className="site-footer">
-                <section className="footer-cta" aria-labelledby="footer-cta-title">
-                    <Image
-                        src={photos.footer}
-                        alt="Fachada de loja de materiais de construção ao entardecer"
-                        fill
-                        sizes="100vw"
-                        className="footer-cta__image"
-                    />
-                    <div className="footer-cta__shade" aria-hidden="true" />
-                    <svg
-                        className="footer-cta__top-curve"
-                        viewBox="0 0 1600 80"
-                        preserveAspectRatio="none"
-                        aria-hidden="true"
-                        focusable="false"
-                    >
-                        <path
-                            className="footer-cta__top-curve-surface"
-                            d="M0 0H526C548 0 557 5 571 16L590 31C600 39 612 42 628 42H972C988 42 1000 39 1010 31L1029 16C1043 5 1052 0 1074 0H1600V0H0Z"
-                        />
-                        <path
-                            className="footer-cta__top-curve-rim"
-                            d="M526 0C548 0 557 5 571 16L590 31C600 39 612 42 628 42H972C988 42 1000 39 1010 31L1029 16C1043 5 1052 0 1074 0"
-                        />
-                    </svg>
-                    <div className="footer-cta__content" data-scroll-reveal data-reveal="scale">
-                        <h2 id="footer-cta-title">
-                            <span className="footer-cta__title-main">Obra sem vazamento</span>
-                            <span>começa aqui.</span>
-                        </h2>
-                        <small>
-                            Fale com um representante e receba seu orçamento
-                            de hidráulica e impermeabilização.
-                        </small>
-                        <a href={contactUrl} {...ctaLinkProps}>
-                            <span className="footer-cta__button-label">Solicitar orçamento</span>
-                            <span className="footer-cta__button-icon" aria-hidden="true"><ArrowRightUpIcon /></span>
-                        </a>
-                    </div>
-                </section>
-
-                <div id="rodape" className="footer-main">
-                    <div className="footer-main__inner">
-                        <div className="footer-main__compact" data-scroll-reveal data-reveal="up">
-                            <div className="footer-brand">
-                                <a href="#topo" aria-label={`${site.name} — voltar ao início`} className="footer-brand__name footer-brand__logo">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src="/logo-luchetti-branco.webp" alt={site.fullName} width={245} height={95} />
-                                </a>
-                                <p>
-                                    Distribuidor técnico Amanco Wavin<br />
-                                    {site.city} · desde {site.since}
-                                </p>
-                            </div>
-
-                            <a
-                                id="contato"
-                                className="footer-contact"
-                                href={contactIsWhatsapp ? whatsappUrl : phoneUrl}
-                                {...(contactIsWhatsapp ? externalLink : {})}
-                            >
-                                <span className="footer-contact__copy">
-                                    <small>{contactIsWhatsapp ? 'WhatsApp e telefone' : 'Fale com a Luchetti'}</small>
-                                    <strong>{site.phone}</strong>
-                                    <span>{contactIsWhatsapp ? 'Chame no WhatsApp e receba seu orçamento.' : 'Toque para ligar e pedir seu orçamento.'}</span>
-                                </span>
-                                <span className="footer-contact__arrow" aria-hidden="true"><ArrowRightUpIcon /></span>
-                            </a>
-                        </div>
-
-                        <div className="footer-main__utility" data-scroll-reveal data-reveal="up" data-reveal-delay="1">
-                            <nav className="footer-nav" aria-label="Navegação do rodapé">
-                                <a href="#historia">Nossa história</a>
-                                <a href="#catalogo">Catálogo</a>
-                                <a href="#aplicacoes">Quem atendemos</a>
-                                <a href="#duvidas">Dúvidas</a>
-                                <a href={site.instagram} {...externalLink}>Instagram</a>
-                                <a href={site.facebook} {...externalLink}>Facebook</a>
-                                <a href={site.linkedin} {...externalLink}>LinkedIn</a>
-                                <a href={site.youtube} {...externalLink}>YouTube</a>
-                                <a href={`mailto:${site.email}`}>{site.email}</a>
-                            </nav>
-
-                            <a className="footer-location" href={mapsUrl} {...externalLink}>
-                                {site.address.street} · {site.address.district} · {site.address.city}/{site.address.state}
-                            </a>
-                            {site.storeHours ? <span className="footer-location">{site.storeHours}</span> : null}
-                        </div>
-
-                        <div id="rodape-fim" className="footer-main__bottom" data-scroll-reveal data-reveal="up" data-reveal-delay="2">
-                            <p>© {new Date().getFullYear()} {site.legalName} · CNPJ {site.cnpj}</p>
-                            <div>
-                                <a href="#topo">Voltar ao topo <ArrowRightUpIcon /></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            <SiteFooter />
         </>
     );
 }
