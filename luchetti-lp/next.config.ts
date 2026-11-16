@@ -12,6 +12,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+    // 90 só para a foto aérea do rodapé (foto antiga, sensível a recompressão).
+    images: { qualities: [75, 90] },
     async headers() {
         return [{ source: '/:path*', headers: securityHeaders }];
     },

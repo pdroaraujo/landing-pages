@@ -99,18 +99,11 @@
 .solution-hero__swoosh { width: clamp(180px, 20vw, 320px); height: clamp(12px, 1.1vw, 18px); margin-top: .9rem; }
 .history__swoosh { width: clamp(180px, 18vw, 300px); height: clamp(12px, 1.1vw, 18px); margin-top: 1rem; }
 
-/* Menu: barras e botão de orçamento */
+/* Menu: barras */
 .owner-nav__section-link::before { color: var(--luchetti-red); }
-.owner-home .owner-nav__contact-icon {
-    background: linear-gradient(145deg, #ff6b70, #ed1c24);
-    color: #fff;
-    box-shadow: 0 3px 0 #9e0f15, 0 5px 9px rgb(120 10 14 / .22), inset 0 2px 0 rgb(255 255 255 / .35);
-}
 
-/* Botões de ação (orçamento): seta em vermelho */
-.owner-home .owner-hero__cta-icon,
-.owner-home .mobile-hero__budget b,
-.owner-home .footer-cta__content > a > .footer-cta__button-icon,
+/* "Falar com a Luchetti" e WhatsApp do rodapé: seta em vermelho
+   (os botões "Solicitar orçamento" ficam no verde original) */
 .owner-home .faq-section__cta > a b,
 .owner-home .footer-main__compact .footer-contact__arrow {
     border-color: #ff8a8e;
@@ -126,10 +119,13 @@
 .feature-showcase__project a:hover > span { background: var(--luchetti-red-deep); }
 
 /* Linhas de produto */
-.service-card__cta svg { color: var(--luchetti-red); }
-.service-card:hover .service-card__icon,
-.service-card:focus-visible .service-card__icon { box-shadow: 0 0 0 3px var(--luchetti-red); }
-.popular-services__cta .brand-button svg,
+.service-card__icon {
+    border-color: #ffd3d5;
+    background: var(--luchetti-red);
+    box-shadow: 0 10px 24px rgb(237 28 36 / .22);
+}
+.service-card__cta,
+.service-card__cta svg { color: var(--luchetti-red-deep); }
 .solution-budget .brand-button svg { color: var(--luchetti-red-soft); }
 .popular-services__cta { border-left: 4px solid var(--luchetti-red); }
 .budget-picker__menu a svg { color: var(--luchetti-red); }

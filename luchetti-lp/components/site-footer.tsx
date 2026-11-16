@@ -22,6 +22,7 @@ export function SiteFooter({ basePath = '' }: { basePath?: string }) {
                     alt="Vista aérea da sede da Luchetti em São José dos Campos"
                     fill
                     sizes="100vw"
+                    quality={90}
                     className="footer-cta__image"
                 />
                 <div className="footer-cta__shade" aria-hidden="true" />
