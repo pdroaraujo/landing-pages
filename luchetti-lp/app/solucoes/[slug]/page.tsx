@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { FloatingContact } from '@/components/floating-contact';
 import { OwnerNavigation } from '@/components/owner-navigation';
+import { RedSwoosh } from '@/components/red-swoosh';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteMotion } from '@/components/site-motion';
 import { ctaLinkProps, ctaUrl, site, whatsappLinkFor } from '@/lib/site-config';
@@ -126,6 +127,7 @@ export default async function SolutionPage({ params }: PageProps) {
                         <span aria-current="page">{solution.title}</span>
                     </nav>
                     <h1>{solution.title}</h1>
+                    <RedSwoosh className="red-swoosh solution-hero__swoosh" />
                     <p>{solution.tagline}</p>
                 </div>
             </header>

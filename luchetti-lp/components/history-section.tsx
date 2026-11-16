@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { RedSwoosh } from './red-swoosh';
 import { essence, site, timeline, yearsInBusiness } from '@/lib/site-config';
 
 /** Nossa história (linha do tempo com acervo real) + Nossa essência. */
@@ -10,6 +11,7 @@ export function HistorySection() {
                     <div data-scroll-reveal data-reveal="left">
                         <p className="section-label section-label--dark"><span aria-hidden="true">/</span>Nossa história</p>
                         <h2 id="history-title">Construindo histórias desde {site.since}.</h2>
+                        <RedSwoosh className="red-swoosh history__swoosh" />
                     </div>
                     <p className="history__intro" data-scroll-reveal data-reveal="right" data-reveal-delay="1">
                         Tipicamente brasileira, a Luchetti é fruto do encontro de duas famílias de

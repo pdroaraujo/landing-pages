@@ -6,6 +6,7 @@ import { OwnerNavigation } from '@/components/owner-navigation';
 import { SiteMotion } from '@/components/site-motion';
 import { SiteSections } from '@/components/site-sections';
 import { MobileHero } from '@/components/mobile-hero';
+import { RedSwoosh } from '@/components/red-swoosh';
 import { ctaLinkProps, ctaUrl, photos, site } from '@/lib/site-config';
 import './owner-hero.css';
 import './floating-contact.css';
@@ -31,6 +32,7 @@ export default function Home() {
                         <span className="owner-hero__ribbon owner-hero__ribbon--second"><span>impermeabilização.</span></span>
                         <span className="owner-hero__title-line">Para a sua</span>
                         <span className="owner-hero__title-line">obra.</span>
+                        <RedSwoosh className="red-swoosh owner-hero__swoosh" />
                     </h1>
                     <p className="owner-hero__description">
                         Distribuidor técnico para construtoras, empreiteiras e profissionais. Quase 10 mil produtos e entrega rápida, desde {site.since}.

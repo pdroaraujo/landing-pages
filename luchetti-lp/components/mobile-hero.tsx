@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { ArrowRightUpIcon } from '@solar-icons/react/bold/arrow-right-up';
 import { ctaLinkProps, photos, site } from '@/lib/site-config';
+import { RedSwoosh } from './red-swoosh';
 
 const shortcuts = [
     { label: 'Linhas de produto', href: '#servicos', image: photos.hidraulica },
@@ -16,6 +17,7 @@ export function MobileHero({ contactUrl }: { contactUrl: string }) {
                     <span className="mobile-hero__ribbon">Hidráulica e</span>
                     <span className="mobile-hero__ribbon mobile-hero__ribbon--reverse">impermeabilização.</span>
                     <span className="mobile-hero__headline">Para a sua obra.</span>
+                    <RedSwoosh className="red-swoosh mobile-hero__swoosh" />
                 </h1>
                 <p>Distribuidor técnico em {site.city}, desde {site.since}.</p>
             </div>

@@ -172,7 +172,7 @@ export function SiteSections() {
                         const Icon = service.icon;
                         return (
                             <a
-                                className={`service-card${index === 3 ? ' service-card--featured' : ''}`}
+                                className="service-card"
                                 href={`/solucoes/${service.slug}`}
                                 aria-label={`Ver soluções de ${service.title}`}
                                 key={service.title}
