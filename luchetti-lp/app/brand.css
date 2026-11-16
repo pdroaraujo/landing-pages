@@ -107,22 +107,16 @@
     box-shadow: 0 3px 0 #9e0f15, 0 5px 9px rgb(120 10 14 / .22), inset 0 2px 0 rgb(255 255 255 / .35);
 }
 
-/* Foto principal */
+/* Botões de ação (orçamento): seta em vermelho */
 .owner-home .owner-hero__cta-icon,
 .owner-home .mobile-hero__budget b,
-.owner-home .footer-cta__content > a > .footer-cta__button-icon {
+.owner-home .footer-cta__content > a > .footer-cta__button-icon,
+.owner-home .faq-section__cta > a b {
     border-color: #ff8a8e;
     background: linear-gradient(145deg, #ff6b70 0%, #ed1c24 64%, #c8151d 100%);
     color: #fff;
     box-shadow: 0 3px 0 #9e0f15, 0 5px 9px rgb(120 10 14 / .22), inset 0 2px 0 rgb(255 255 255 / .35);
 }
-.owner-hero__callout circle { fill: var(--luchetti-red); stroke: rgb(255 255 255 / .55); }
-.owner-hero__callout--care > span { background: var(--luchetti-red-deep); color: #fff; }
-.owner-hero__proof { border-top: 3px solid var(--luchetti-red); }
-.owner-hero__proof > svg,
-.mobile-hero__proof svg { color: var(--luchetti-red-soft); }
-.mobile-hero__tag span::after { background: var(--luchetti-red) !important; }
-.owner-hero__project-arrow { color: var(--luchetti-red); }
 
 /* A Luchetti */
 .feature-showcase__divider::after { background: linear-gradient(var(--luchetti-red), #ff8a8e); }
