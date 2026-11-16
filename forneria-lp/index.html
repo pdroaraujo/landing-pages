@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Forneria Meet — pizzaria em Itabira</title>
+  <meta name="description" content="Forneria Meet: pizza de receita italiana, leve e saindo do forno, na Esplanada da Estação em Itabira. Todos os dias, das 17h às 22h30.">
+  <meta name="theme-color" content="#6b1416">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="img/pizza-margherita.webp" as="image" type="image/webp" fetchpriority="high">
+  <script type="module" crossorigin src="assets/index-ByRzbMc6.js"></script>
+  <link rel="stylesheet" crossorigin href="assets/index--pyNqtJO.css">
+</head>
+<body class="is-loading">
+  <a class="skip" href="#pedido" data-go="pedido" data-focus=".opt__link">Ir para o pedido</a>
+
+  <header class="nav" data-theme="claro">
+    <nav class="nav__links" aria-label="Seções">
+      <a class="lnk" href="#cardapio" data-go="cardapio" data-focus=".plate-hit">Cardápio</a>
+      <a class="lnk" href="#forno" data-go="forno">Forno</a>
+      <a class="lnk" href="#pedido" data-go="pedido" data-focus=".opt__link">Pedido</a>
+      <a class="lnk" href="#pedido" data-go="reservas" data-focus="#reservas .opt__link">Como chegar</a>
+    </nav>
+    <p class="nav__hours">Todo dia, 17h às 22h30</p>
+  </header>
+
+  <main>
+    <!-- O palco: um pin só, do hero ao card de pedido. A pizza atravessa todas as cenas. -->
+    <section class="film" id="topo" aria-label="Forneria Meet: do forno à caixa">
+      <div class="stage">
+        <div class="stage__bg" aria-hidden="true"></div>
+
+        <!-- camadas de trás: a palavra, os nomes dos sabores e a janela (forno, massa, caixa) -->
+        <h1 class="word" data-rise><span class="word__in">meet</span></h1>
+
+        <div class="names" aria-hidden="true">
+          <p class="name" data-rise data-i="0"><span class="name__in">Filetto</span></p>
+          <p class="name" data-rise data-i="1"><span class="name__in">Drummond</span></p>
+          <p class="name" data-rise data-i="2"><span class="name__in">Calabresa</span></p>
+          <p class="name" data-rise data-i="3"><span class="name__in">4 queijos</span></p>
+          <p class="name" data-rise data-i="4"><span class="name__in">Portuguesa</span></p>
+        </div>
+
+        <div class="win" aria-hidden="true">
+          <div class="win__layer win__layer--forno"><img src="img/forno.webp" alt="" width="1600" height="1067" decoding="async"></div>
+          <div class="win__layer win__layer--massa"><img src="img/massa.webp" alt="" width="1600" height="1067" decoding="async"></div>
+          <div class="win__layer win__layer--kraft"></div>
+          <div class="win__layer win__layer--caixa"><img src="img/caixa-base.webp" alt="" width="1200" height="1200" decoding="async"></div>
+          <i class="win__lip"></i>
+        </div>
+
+        <!-- a pizza: inteira, em fatias e no prato giratório do cardápio -->
+        <div class="pz" aria-hidden="true">
+          <i class="pz__shadow"></i>
+          <div class="pz__body">
+            <img class="pz__whole" src="img/pizza-margherita.webp" alt="" width="1400" height="1400" decoding="async">
+            <div class="pz__slices"></div>
+            <div class="pz__cuts"><i></i><i></i><i></i><i></i></div>
+            <i class="pz__fire"></i>
+          </div>
+        </div>
+
+        <div class="platter" aria-hidden="true">
+          <div class="plate"><i class="plate__shadow"></i><img src="img/pizza-margherita.webp" alt="" width="1400" height="1400" decoding="async"></div>
+          <div class="plate"><i class="plate__shadow"></i><img src="img/pizza-marinara.webp" alt="" width="1400" height="1400" decoding="async"></div>
+          <div class="plate"><i class="plate__shadow"></i><img src="img/pizza-calabresa.webp" alt="" width="1400" height="1400" decoding="async"></div>
+          <div class="plate"><i class="plate__shadow"></i><img src="img/pizza-4queijos.webp" alt="" width="1400" height="1400" decoding="async"></div>
+          <div class="plate"><i class="plate__shadow"></i><img src="img/pizza-portuguesa.webp" alt="" width="1400" height="1400" decoding="async"></div>
+        </div>
+
+        <!-- camadas da frente: a tampa da caixa e o card de pedido -->
+        <div class="lid" aria-hidden="true">
+          <div class="lid__flap">
+            <div class="lid__face lid__face--out"><span class="stamp">meet</span><i class="lid__shade"></i></div>
+            <div class="lid__face lid__face--in"><i class="lid__shade"></i></div>
+          </div>
+        </div>
+
+        <!-- textos de cada cena (entram e saem por marco) -->
+        <div class="loader" aria-hidden="true">
+          <p class="loader__count"><span class="loader__num">0</span>%</p>
+          <p class="loader__cap">receita italiana</p>
+        </div>
+
+        <div class="hero">
+          <p class="hero__left side">Pizza contemporânea,<br>com receita e insumos<br>vindos da Itália.</p>
+          <p class="hero__right side">Salão e retirada, sem delivery<br><a class="lnk" href="https://api.whatsapp.com/send/?phone=553137592321" target="_blank" rel="noopener">(31) 3759-2321</a></p>
+          <div class="cta-row"><a class="btn hero__cta" href="#pedido" data-go="pedido"><span class="btn__pill">Fazer pedido</span><span class="btn__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a></div>
+        </div>
+
+        <div class="corte">
+          <h2 class="corte__title title">Massa leve,<br>recheio farto.</h2>
+          <p class="corte__text side">35&nbsp;cm em oito fatias pra dividir, ou 25&nbsp;cm em quatro, só pra você.</p>
+        </div>
+
+        <section class="menu" id="cardapio" aria-label="Cardápio">
+          <h2 class="sr-only">Cardápio: cinco sabores</h2>
+          <button class="plate-hit" type="button" aria-label="Girar o prato para o próximo sabor"></button>
+          <ol class="menu__list">
+            <li class="flavor" data-i="0">
+              <h3 class="sr-only">Filetto crocante</h3>
+              <p class="flavor__step">Sabor 1 de 5</p>
+              <p class="flavor__desc side">Molho pomodoro, muçarela, iscas de filé mignon, creme de gorgonzola e cebola crispy.</p>
+              <p class="flavor__price"><span>R$&nbsp;74</span><small>25 cm · R$&nbsp;109 na de 35 cm</small></p>
+              <div class="cta-row"><a class="btn flavor__cta" href="#pedido" data-go="pedido"><span class="btn__pill">Pedir filetto crocante</span><span class="btn__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a></div>
+            </li>
+            <li class="flavor" data-i="1">
+              <h3 class="sr-only">Drummond</h3>
+              <p class="flavor__step">Sabor 2 de 5</p>
+              <p class="flavor__desc side">Pizza do mês, a Meia Maratona de Drummond: pomodoro, muçarela, carne de panela e gremolata de salsinha, biquinho, alho, limão siciliano e castanhas.</p>
+              <p class="flavor__price"><span>Do mês</span><small>Só em novembro</small></p>
+              <div class="cta-row"><a class="btn flavor__cta" href="#pedido" data-go="pedido"><span class="btn__pill">Pedir drummond</span><span class="btn__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a></div>
+            </li>
+            <li class="flavor" data-i="2">
+              <h3 class="sr-only">Calabresa</h3>
+              <p class="flavor__step">Sabor 3 de 5</p>
+              <p class="flavor__desc side">Das tradicionais do cardápio, na massa contemporânea da casa.</p>
+              <p class="flavor__price"><span>R$&nbsp;59</span><small>25 cm · R$&nbsp;79 na de 35 cm</small></p>
+              <div class="cta-row"><a class="btn flavor__cta" href="#pedido" data-go="pedido"><span class="btn__pill">Pedir calabresa</span><span class="btn__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a></div>
+            </li>
+            <li class="flavor" data-i="3">
+              <h3 class="sr-only">Quatro queijos</h3>
+              <p class="flavor__step">Sabor 4 de 5</p>
+              <p class="flavor__desc side">Das tradicionais, pra quem não abre mão de queijo.</p>
+              <p class="flavor__price"><span>R$&nbsp;69</span><small>25 cm · R$&nbsp;89 na de 35 cm</small></p>
+              <div class="cta-row"><a class="btn flavor__cta" href="#pedido" data-go="pedido"><span class="btn__pill">Pedir quatro queijos</span><span class="btn__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a></div>
+            </li>
+            <li class="flavor" data-i="4">
+              <h3 class="sr-only">Portuguesa</h3>
+              <p class="flavor__step">Sabor 5 de 5</p>
+              <p class="flavor__desc side">Das tradicionais, na mesma massa leve das especiais.</p>
+              <p class="flavor__price"><span>R$&nbsp;59</span><small>25 cm · R$&nbsp;79 na de 35 cm</small></p>
+              <div class="cta-row"><a class="btn flavor__cta" href="#pedido" data-go="pedido"><span class="btn__pill">Pedir portuguesa</span><span class="btn__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a></div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="forno" id="forno" aria-label="Forno">
+          <h2 class="forno__title title">Das <span class="forno__num">17</span>h<br><em>às 22h30.</em></h2>
+          <p class="forno__text side">Forneria vem disso: pizza saindo do forno. Todo dia, ou enquanto durarem as massas.</p>
+        </section>
+
+        <section class="massa" aria-label="Massa">
+          <h2 class="massa__num" data-rise><span class="massa__in">Leve</span></h2>
+          <p class="massa__cap">massa contemporânea</p>
+          <p class="massa__glass">Farinha, água, fermento, sal e tempo. Equilíbrio entre massa e recheio, com receita e ingredientes trazidos da Itália.</p>
+        </section>
+
+        <section class="order" id="pedido" aria-label="Pedido">
+          <div class="order__card">
+            <div class="order__head">
+              <span class="stamp order__stamp" aria-hidden="true">meet</span>
+              <h2 class="order__title title">Como vai<br>ser hoje?</h2>
+            </div>
+            <ul class="order__opts">
+              <li class="opt">
+                <a class="opt__link" href="https://api.whatsapp.com/send/?phone=553137592321" target="_blank" rel="noopener">
+                  <span class="opt__name">Pedir</span>
+                  <span class="opt__desc">Pelo WhatsApp, pra retirar no balcão. Não fazemos delivery.</span>
+                  <span class="opt__go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </a>
+              </li>
+              <li class="opt">
+                <a class="opt__link" href="https://drive.google.com/file/d/1P_FTocZhlOXWOEKViZevPg6yIIl4BeAI/view" target="_blank" rel="noopener">
+                  <span class="opt__name">Cardápio</span>
+                  <span class="opt__desc">Tradicionais, especiais da casa, vegetarianas e doces.</span>
+                  <span class="opt__go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </a>
+              </li>
+              <li class="opt" id="reservas">
+                <a class="opt__link" href="https://www.google.com/maps/place/?q=place_id:ChIJd5vEZbChpQARmP3regqP44M" target="_blank" rel="noopener">
+                  <span class="opt__name">Como chegar</span>
+                  <span class="opt__desc">Travessa Gonzaguinha, 8, Loja 03. Sem reservas: é só chegar.</span>
+                  <span class="opt__go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </section>
+        <i class="stage__dim" aria-hidden="true"></i>
+      </div>
+    </section>
+  </main>
+
+  <!-- Rodapé: o espelho da hero. A palavra cresce atrás dos morros da gravura. -->
+  <footer class="rodape">
+    <div class="rodape__tear" aria-hidden="true"></div>
+    <div class="rodape__top">
+      <p class="rodape__lead title">A pizza mais pizza<br>de Itabira.</p>
+      <a class="btn rodape__cta" href="#pedido" data-go="pedido"><span class="btn__pill">Fazer pedido</span><span class="btn__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a>
+    </div>
+    <div class="rodape__info">
+      <p><span class="rodape__k">Horário</span>Todo dia, 17h às 22h30</p>
+      <p><span class="rodape__k">Endereço</span>Tv. Gonzaguinha, 8 · Loja 03, Itabira</p>
+      <p><span class="rodape__k">Pedidos</span><a class="lnk" href="https://api.whatsapp.com/send/?phone=553137592321" target="_blank" rel="noopener">(31) 3759-2321</a></p>
+      <p><span class="rodape__k">Siga</span><a class="lnk" href="https://www.instagram.com/forneriameet/" target="_blank" rel="noopener">Instagram</a><span class="rodape__sep" aria-hidden="true">·</span><a class="lnk" href="https://linktr.ee/forneriameet" target="_blank" rel="noopener">Linktree</a></p>
+    </div>
+    <div class="rodape__scene">
+      <p class="rodape__word" data-rise aria-hidden="true"><span class="rodape__in">meet</span></p>
+      <img class="rodape__land" src="img/gravura.webp" alt="Gravura vermelha de campos de trigo, pés de tomate e uma casa com forno a lenha" width="2000" height="900" loading="lazy" decoding="async">
+    </div>
+    <div class="rodape__end">
+      <p>© 2026 Forneria Meet</p>
+      <a class="lnk" href="#topo" data-go="topo">Voltar ao topo ↑</a>
+    </div>
+  </footer>
+
+</body>
+</html>
