@@ -161,7 +161,7 @@
                 </a>
               </li>
               <li class="opt">
-                <a class="opt__link" href="https://drive.google.com/file/d/1P_FTocZhlOXWOEKViZevPg6yIIl4BeAI/view" target="_blank" rel="noopener">
+                <a class="opt__link" href="#cardapio-completo" data-go="completo" data-focus="#tab-trad">
                   <span class="opt__name">Cardápio</span>
                   <span class="opt__desc">Tradicionais, especiais da casa, vegetarianas e doces.</span>
                   <span class="opt__go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
@@ -185,6 +185,74 @@
   <!-- Rodapé: o espelho da hero. A palavra cresce atrás dos morros da gravura. -->
   <footer class="rodape">
     <div class="rodape__tear" aria-hidden="true"></div>
+
+    <!-- Cardápio completo -->
+    <section class="carta" id="cardapio-completo" aria-labelledby="carta-titulo">
+      <div class="carta__head">
+        <h2 class="carta__title title" id="carta-titulo">Cardápio</h2>
+        <ul class="carta__notes">
+          <li>25 cm individual (4 fatias) · 35 cm pra compartilhar (8 fatias)</li>
+          <li>Todas acompanham molho pomodoro especial da casa à parte · extra R$&nbsp;8</li>
+          <li>Meio a meio: cobrado o valor da pizza de maior preço</li>
+          <li><svg class="carta__veg" viewBox="0 0 24 24" aria-label="vegetariana" role="img"><path d="M5 19C5 10 11 5 20 4c0 9-5 15-14 15m0 0 7-7"/></svg> vegetariana · cobramos 10% de taxa de serviço</li>
+        </ul>
+      </div>
+      <div class="carta__tabs" role="tablist" aria-label="Categorias do cardápio">
+<button class="carta__tab" type="button" role="tab" id="tab-trad" aria-controls="painel-trad" aria-selected="true" tabindex="0">Tradicionais</button>
+<button class="carta__tab" type="button" role="tab" id="tab-esp" aria-controls="painel-esp" aria-selected="false" tabindex="-1">Especiais da casa</button>
+<button class="carta__tab" type="button" role="tab" id="tab-doce" aria-controls="painel-doce" aria-selected="false" tabindex="-1">Doces</button>
+<button class="carta__tab" type="button" role="tab" id="tab-beb" aria-controls="painel-beb" aria-selected="false" tabindex="-1">Bebidas</button>
+      </div>
+      <div class="carta__panels">
+<div class="carta__panel is-on" role="tabpanel" id="painel-trad" aria-labelledby="tab-trad"><p class="carta__hint">Preços: 25 cm / 35 cm</p><ul class="carta__list"><li class="carta__item"><p class="carta__row"><span class="carta__name">À moda</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;59 / 79</span></p><p class="carta__desc">molho pomodoro, muçarela, presunto, calabresa, milho, azeitona preta, pimentão verde e cebola roxa</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Calabresa</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;59 / 79</span></p><p class="carta__desc">molho pomodoro, muçarela, calabresa e cebola roxa · acréscimo de cheddar R$ 15</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Frango com catupiry</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;59 / 79</span></p><p class="carta__desc">molho pomodoro, muçarela, frango desfiado e requeijão cremoso</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Margherita especial<svg class="carta__veg" viewBox="0 0 24 24" aria-label="vegetariana" role="img"><path d="M5 19C5 10 11 5 20 4c0 9-5 15-14 15m0 0 7-7"/></svg></span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;64 / 84</span></p><p class="carta__desc">molho pomodoro, muçarela, cerejas de búfala, tomate-cereja confitado, pesto e folhas de manjericão</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Milho e bacon</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;64 / 84</span></p><p class="carta__desc">molho pomodoro, muçarela, bacon e milho</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Nova yorkina</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;54 / 74</span></p><p class="carta__desc">molho pomodoro e muçarela</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Pepperoni</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;64 / 84</span></p><p class="carta__desc">molho pomodoro, muçarela e pepperoni</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Portuguesa</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;59 / 79</span></p><p class="carta__desc">molho pomodoro, muçarela, presunto, cebola roxa, azeitona preta e ovo cozido</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Quatro queijos<svg class="carta__veg" viewBox="0 0 24 24" aria-label="vegetariana" role="img"><path d="M5 19C5 10 11 5 20 4c0 9-5 15-14 15m0 0 7-7"/></svg></span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;69 / 89</span></p><p class="carta__desc">base branca, muçarela, parmesão, gorgonzola e cerejas de búfala</p></li></ul></div>
+<div class="carta__panel" role="tabpanel" id="painel-esp" aria-labelledby="tab-esp"><p class="carta__hint">Preços: 25 cm / 35 cm</p><ul class="carta__list"><li class="carta__item"><p class="carta__row"><span class="carta__name">Baiana</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;69 / 89</span></p><p class="carta__desc">molho pomodoro, muçarela, carne de sol, banana-da-terra, requeijão cremoso e geleia de pimenta biquinho</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Brie e damasco<svg class="carta__veg" viewBox="0 0 24 24" aria-label="vegetariana" role="img"><path d="M5 19C5 10 11 5 20 4c0 9-5 15-14 15m0 0 7-7"/></svg></span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;69 / 89</span></p><p class="carta__desc">base branca, muçarela, queijo brie em fatias, geleia de damasco e amêndoas laminadas tostadas</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Camarão</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;74 / 109</span></p><p class="carta__desc">molho pomodoro, muçarela, camarões M, tomatinhos confitados e creme de queijo</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Capra e pesto<svg class="carta__veg" viewBox="0 0 24 24" aria-label="vegetariana" role="img"><path d="M5 19C5 10 11 5 20 4c0 9-5 15-14 15m0 0 7-7"/></svg></span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;69 / 89</span></p><p class="carta__desc">base branca, muçarela, queijo de cabra, pimenta-rosa, pesto de manjericão e manjericão fresco</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Filetto crocante</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;74 / 109</span></p><p class="carta__desc">molho pomodoro, muçarela, iscas de filé mignon, creme de gorgonzola e cebola crispy</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Forneria</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;69 / 89</span></p><p class="carta__desc">molho pomodoro, muçarela, frango desfiado, bacon, provolone, creme de queijo e cebola caramelizada</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Gorgonzola e pêras caramelizadas<svg class="carta__veg" viewBox="0 0 24 24" aria-label="vegetariana" role="img"><path d="M5 19C5 10 11 5 20 4c0 9-5 15-14 15m0 0 7-7"/></svg></span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;69 / 89</span></p><p class="carta__desc">base branca, muçarela, gorgonzola, pêras caramelizadas e raspas de laranja</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Linguiça artesanal</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;64 / 84</span></p><p class="carta__desc">molho pomodoro, muçarela, creme de queijo, gorgonzola, linguiça artesanal suína e mel</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Linguiça com provolone</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;64 / 84</span></p><p class="carta__desc">base branca, muçarela, provolone, linguiça artesanal suína e pesto de manjericão</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Mineira</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;64 / 84</span></p><p class="carta__desc">molho pomodoro, muçarela, costelinha suína defumada, molho de jabuticaba, alho e couve crispy</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Nordestina</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;69 / 89</span></p><p class="carta__desc">molho pomodoro, muçarela, queijo coalho, carne de sol, pimenta biquinho e cebolinha</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Palmito e alho-poró<svg class="carta__veg" viewBox="0 0 24 24" aria-label="vegetariana" role="img"><path d="M5 19C5 10 11 5 20 4c0 9-5 15-14 15m0 0 7-7"/></svg></span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;69 / 89</span></p><p class="carta__desc">base branca, muçarela, alho-poró, palmito, raspas de limão-siciliano e folhas de manjericão</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Pancetta artesanal</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;69 / 89</span></p><p class="carta__desc">molho pomodoro, muçarela, 4 pancettas temperadas artesanais da casa (limão-siciliano e mel, mix de pápricas, azeite e ervas, ao vinho tinto) e cebola caramelizada</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Peito de peru e geleia de frutas vermelhas</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;69 / 89</span></p><p class="carta__desc">base branca, muçarela, peito de peru, requeijão cremoso e geleia de frutas vermelhas</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Peito de peru e limão-siciliano</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;69 / 89</span></p><p class="carta__desc">base branca, muçarela, peito de peru, molho pesto, burrata “rasgada” e raspas de limão-siciliano</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Salmão ao pesto rosso</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;69 / 89</span></p><p class="carta__desc">base branca, muçarela, cebola roxa, cubos de salmão e pesto rosso de tomate seco</p></li></ul></div>
+<div class="carta__panel" role="tabpanel" id="painel-doce" aria-labelledby="tab-doce"><p class="carta__hint">Apenas 25 cm</p><ul class="carta__list"><li class="carta__item"><p class="carta__row"><span class="carta__name">Docim mineiro</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;59</span></p><p class="carta__desc">doce de leite, requeijão de raspa e flor de sal</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Pistache</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;69</span></p><p class="carta__desc">creme de pistache e praliné de castanhas</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Ganache de avelã</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;59</span></p><p class="carta__desc">escolha uma finalização: M&amp;M’s, Kit Kat, marshmallows ou praliné de castanhas</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Kopenhagen</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;74</span></p><p class="carta__desc">ganache de língua de gato, brownie em pedaços e língua de gato Kopenhagen</p></li></ul></div>
+<div class="carta__panel" role="tabpanel" id="painel-beb" aria-labelledby="tab-beb"><ul class="carta__list"><li class="carta__item"><p class="carta__row"><span class="carta__name">Água sem gás</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;5</span></p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Água com gás</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;5</span></p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Suco natural</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;12</span></p><p class="carta__desc">laranja ou limão</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Suco de polpa</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;12</span></p><p class="carta__desc">maracujá, acerola, abacaxi ou morango</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Suco especial</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;16</span></p><p class="carta__desc">2 sabores</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Suco lata</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;8</span></p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Refrigerante KS</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;7</span></p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">H2OH!</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;9</span></p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Soda italiana</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;22</span></p><p class="carta__desc">maçã verde, gengibre ou tangerina</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Chopp</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;12,90</span></p><p class="carta__desc">pilsen</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Long neck Heineken</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;14</span></p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Aperol spritz</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;44</span></p><p class="carta__desc">aperol e espumante brut</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Gin tônica</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;44</span></p><p class="carta__desc">gin, suco de limão, água tônica e gelo</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Gin tropical</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;44</span></p><p class="carta__desc">gin, Red Bull tropical e gelo</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Vinho em taça</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;29</span></p><p class="carta__desc">branco, rosé ou tinto</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Caipirinha</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;29</span></p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Caipi vodka</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;35</span></p><p class="carta__desc">limão ou morango</p></li>
+<li class="carta__item"><p class="carta__row"><span class="carta__name">Café espresso</span><i class="carta__dots" aria-hidden="true"></i><span class="carta__price">R$&nbsp;6</span></p></li></ul></div>
+      </div>
+    </section>
     <div class="rodape__top">
       <p class="rodape__lead title">A pizza mais pizza<br>de Itabira.</p>
       <a class="btn rodape__cta" href="#pedido" data-go="pedido"><span class="btn__pill">Fazer pedido</span><span class="btn__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></a>
@@ -205,5 +273,11 @@
     </div>
   </footer>
 
+  <script>
+  // abas do cardápio completo (setas esquerda/direita trocam de aba)
+  (function(){var tabs=[].slice.call(document.querySelectorAll('.carta__tab'));
+  function sel(i,focus){tabs.forEach(function(b,j){var on=i===j;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).classList.toggle('is-on',on)});if(focus)tabs[i].focus();dispatchEvent(new Event('resize'))}
+  tabs.forEach(function(b,i){b.addEventListener('click',function(){sel(i)});b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){e.preventDefault();sel((i+k+tabs.length)%tabs.length,true)}})})})();
+  </script>
 </body>
 </html>

@@ -26,3 +26,28 @@
 .pz__fire:before{content:"";position:absolute;inset:-1.5%;border-radius:50%;box-shadow:inset 0 0 40px 6px #ff8a3a40}
 @keyframes pz-flicker{0%{opacity:.22}30%{opacity:.4}55%{opacity:.27}80%{opacity:.45}100%{opacity:.3}}
 @media (prefers-reduced-motion:reduce){.pz__fire:after{animation:none}}
+
+/* Cardápio completo (rodapé) */
+.carta{padding:0 0 clamp(72px,12vh,140px);color:var(--tinta)}
+.carta__head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px 48px;flex-wrap:wrap;border-bottom:1.5px solid #15110e29;padding-bottom:24px}
+.carta__title{color:var(--tinta);text-transform:uppercase;font-weight:400;letter-spacing:0;font-size:clamp(44px,4.4vw + 8px,96px);margin:0}
+.carta__notes{list-style:none;margin:0;padding:0;font-size:14px;line-height:1.5;color:var(--tinta-2);max-width:520px}
+.carta__notes .carta__veg{width:14px;height:14px;margin:0 2px 0 0;vertical-align:-2px}
+.carta__tabs{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 8px}
+.carta__tab{font:700 15px/1 var(--f-text);color:var(--tinta);background:#0000;border:1.5px solid #15110e40;border-radius:999px;padding:12px 20px;cursor:pointer;transition:background-color .25s,color .25s,border-color .25s}
+.carta__tab:hover{border-color:var(--vermelho);color:var(--vermelho)}
+.carta__tab[aria-selected=true]{background:var(--vermelho);border-color:var(--vermelho);color:var(--creme)}
+.carta__tab:focus-visible{outline:2px solid var(--vermelho);outline-offset:3px}
+.carta__panel{display:none}
+.carta__panel.is-on{display:block;animation:carta-in .35s ease}
+@keyframes carta-in{from{opacity:0;transform:translateY(8px)}}
+.carta__hint{font-size:13px;font-weight:700;color:var(--vermelho);letter-spacing:.02em;margin:14px 0 4px}
+.carta__list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:4px clamp(28px,4vw,72px)}
+.carta__item{padding:16px 0;border-bottom:1px solid #15110e1a}
+.carta__row{display:flex;align-items:baseline;gap:10px;margin:0}
+.carta__name{font:700 clamp(16px,.35vw + 13px,19px)/1.2 var(--f-text);text-transform:uppercase;letter-spacing:.01em}
+.carta__dots{flex:1;border-bottom:1.5px dotted #15110e4d;transform:translateY(-4px);min-width:16px}
+.carta__price{font:700 clamp(15px,.3vw + 12px,18px)/1 var(--f-text);color:var(--vermelho);white-space:nowrap;font-variant-numeric:tabular-nums}
+.carta__desc{margin:6px 0 0;font-size:var(--t-body);line-height:1.4;color:var(--tinta-2);max-width:46ch}
+.carta__veg{width:16px;height:16px;margin-left:6px;vertical-align:-1px;fill:none;stroke:#3f6b2a;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (width<=759px),(aspect-ratio<=4/5){.carta{padding:8px 0 64px}.carta__title{font-size:44px}.carta__tabs{flex-wrap:nowrap;overflow-x:auto;margin:22px -18px 4px;padding:0 18px 4px;scrollbar-width:none}.carta__tab{flex:none;padding:11px 16px;font-size:14px}}
