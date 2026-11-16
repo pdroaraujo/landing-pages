@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ângela Rodrigues | Planos de Saúde e Seguros</title>
+<meta name="description" content="Ângela Rodrigues — especialista em planos de saúde para empresários e profissionais da área da saúde. +10 anos evitando decisões erradas.">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#041A31; --navy-2:#03132A; --navy-3:#0B2C47;
+  --gold:#06AAAC; --gold-2:#5CCFD1; --gold-soft:#E0F5F5; --teal-deep:#0B5D6E;
+  --ink:#333; --muted:#6B7280; --line:#E5E7EB; --bg:#fff; --bg-2:#F6F5F2;
+  --wa:#25D366; --radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Poppins,system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;font-weight:400}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.container{width:min(1140px,100% - 32px);margin-inline:auto}
+.gold{color:var(--gold)}
+.serif{font-family:Marcellus,Georgia,serif}
+h1,h2{font-family:Marcellus,Georgia,serif;font-weight:400;letter-spacing:.01em}
+h1,h2,h3{line-height:1.2;color:var(--navy)}
+h2{font-size:clamp(28px,4vw,37px)}
+.eyebrow{display:inline-block;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:#fff;font-weight:600;font-size:16px;padding:14px 28px;border-radius:999px;transition:.25s;border:0;cursor:pointer;font-family:inherit}
+.btn:hover{background:#0F8C90;transform:translateY(-2px);box-shadow:0 10px 24px rgba(20,169,173,.35)}
+.btn-outline{background:transparent;border:1.5px solid var(--gold);color:var(--gold)}
+.btn-outline:hover{background:var(--gold);color:#fff}
+section{padding:90px 0}
+
+/* NAV */
+header{position:sticky;top:0;z-index:50;background:#fff;box-shadow:0 1px 0 var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{height:42px;width:auto}
+.logo-txt{font-family:Marcellus,Georgia,serif;line-height:1;color:var(--navy);font-size:19px;letter-spacing:.06em;text-transform:uppercase}
+.logo-txt small{display:block;font-family:Poppins;font-size:10.5px;letter-spacing:.04em;text-transform:none;color:var(--gold);margin-top:5px}
+.menu{display:flex;gap:34px;list-style:none}
+.menu a{font-size:16px;color:var(--ink);transition:.2s}
+.menu a:hover,.menu a.active{color:var(--gold)}
+.burger{display:none;background:none;border:0;cursor:pointer;width:40px;height:40px}
+.burger span{display:block;height:2px;background:var(--navy);margin:6px 8px;transition:.3s}
+
+/* HERO */
+.hero{position:relative;padding:0;background:linear-gradient(110deg,#eef4f6 0%,#cfe2e6 30%,#0B3A55 62%,var(--navy-2) 100%);overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.55),transparent 45%),radial-gradient(circle at 85% 80%,rgba(20,169,173,.22),transparent 40%)}
+.hero-grid{position:relative;display:grid;grid-template-columns:1fr 1fr;align-items:center;min-height:540px;gap:40px}
+.hero-photo{align-self:end;justify-self:center;width:min(420px,100%);aspect-ratio:4/5;border-radius:220px 220px 0 0;background:#f3f8f9;position:relative;overflow:hidden;box-shadow:0 30px 60px rgba(30,37,53,.25)}
+.hero-photo img{width:100%;height:100%;object-fit:cover}
+.photo-ph{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--navy);font-family:Marcellus,Georgia,serif}
+.photo-ph img.arch{width:150px;margin:0 auto 14px;height:auto}
+.photo-ph span{font-family:Poppins;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.hero-copy{color:#fff;padding:60px 0}
+.hero-copy h1{color:#fff;font-size:clamp(32px,4.4vw,46px)}
+.hero-copy .tag{font-size:13px;opacity:.85;margin:14px 0 18px;letter-spacing:.04em}
+.hero-copy p{font-weight:300;max-width:470px;margin-bottom:28px}
+.badge-g1{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);padding:7px 14px 7px 7px;border-radius:999px;font-size:13px;margin-bottom:22px;backdrop-filter:blur(6px)}
+.badge-g1 i{font-style:normal;background:#C4170C;color:#fff;font-weight:700;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:13px}
+
+/* SERVICES STRIP (like operator cards) */
+.strip{padding:50px 0 70px}
+.strip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.card-s{border:1px solid var(--line);border-radius:var(--radius);padding:26px 22px;text-align:center;transition:.25s;background:#fff}
+.card-s:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:0 14px 30px rgba(38,46,64,.08)}
+.ico{width:58px;height:58px;border-radius:50%;background:var(--navy);display:grid;place-items:center;margin:0 auto 14px}
+.ico svg{width:26px;height:26px;stroke:var(--gold-2);fill:none;stroke-width:1.8}
+.card-s h3{font-size:17px;margin-bottom:4px}
+.card-s p{font-size:13.5px;color:var(--muted)}
+
+/* ABOUT */
+.about{background:var(--navy);color:#fff}
+.about-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center}
+.about h2{color:#fff;margin-bottom:24px}
+.about p{font-weight:300;margin-bottom:16px}
+.checks{list-style:none;margin:26px 0 32px;display:grid;gap:12px}
+.checks li{display:flex;gap:12px;align-items:flex-start;font-weight:300}
+.checks li::before{content:"";flex:0 0 22px;height:22px;border-radius:50%;background:var(--gold) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'%3E%3Cpath d='M5 12l5 5 9-9'/%3E%3C/svg%3E") center/13px no-repeat;margin-top:2px}
+.about-photo{border-radius:22px;box-shadow:0 24px 50px rgba(0,0,0,.35);aspect-ratio:4/5;background:linear-gradient(160deg,#fff,#e7ebf2);position:relative;overflow:hidden}
+.about-photo img{width:100%;height:100%;object-fit:cover}
+.stats{display:flex;gap:36px;margin-top:8px;flex-wrap:wrap}
+.stats b{display:block;font-size:34px;color:var(--gold);line-height:1}
+.stats span{font-size:13px;opacity:.75}
+
+/* PLANS */
+.plans{background:var(--bg-2)}
+.section-head{text-align:center;max-width:680px;margin:0 auto 50px}
+.section-head p{color:var(--muted);margin-top:12px}
+.plans-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.plan{background:#fff;border-radius:var(--radius);padding:34px 30px;border-top:4px solid var(--gold);box-shadow:0 8px 24px rgba(38,46,64,.06);display:flex;flex-direction:column}
+.plan h3{font-size:21px;margin-bottom:12px}
+.plan>p{color:var(--muted);font-size:15px;margin-bottom:18px}
+.plan dl{font-size:14.5px;margin-bottom:24px;flex:1}
+.plan dt{font-weight:600;color:var(--navy);margin-top:10px}
+.plan dd{color:var(--muted)}
+.plan .btn{align-self:flex-start;font-size:14.5px;padding:11px 22px}
+.plan.featured{background:var(--navy);color:#fff}
+.plan.featured h3,.plan.featured dt{color:#fff}
+.plan.featured>p,.plan.featured dd{color:rgba(255,255,255,.75)}
+.pill{display:inline-block;background:var(--gold-soft);color:#0B6E72;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;margin-bottom:14px;align-self:flex-start}
+
+/* MANIFESTO */
+.manifesto{padding:80px 0;background:linear-gradient(135deg,var(--teal-deep) 0%,var(--gold) 100%);color:#fff;text-align:center}
+.manifesto blockquote{font-family:Marcellus,Georgia,serif;font-style:italic;font-size:clamp(24px,3.4vw,36px);max-width:860px;margin:0 auto 18px;line-height:1.35}
+.manifesto p{opacity:.9;max-width:640px;margin:0 auto 28px;font-weight:300}
+.manifesto .btn{background:#fff;color:var(--navy)}
+.manifesto .btn:hover{background:var(--navy);color:#fff}
+
+/* BLOG / CONTEÚDOS */
+.posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.post{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:.25s;background:#fff}
+.post:hover{box-shadow:0 14px 30px rgba(38,46,64,.1);transform:translateY(-4px)}
+.post-cover{height:170px;background:linear-gradient(135deg,var(--navy),var(--navy-3));display:flex;align-items:flex-end;padding:20px;color:#fff;font-family:Marcellus,Georgia,serif;font-size:24px;line-height:1.15;position:relative}
+.post-cover::after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;border:18px solid rgba(20,169,173,.35)}
+.post-body{padding:22px 24px 26px;flex:1;display:flex;flex-direction:column}
+.post-body h3{font-size:17px;margin-bottom:10px}
+.post-body p{font-size:14.5px;color:var(--muted);flex:1;margin-bottom:16px}
+.post-body a{color:var(--gold);font-weight:600;font-size:14.5px}
+
+/* FAQ */
+.faq{background:var(--bg-2)}
+.faq-list{max-width:820px;margin:0 auto}
+.faq details{background:#fff;border-radius:12px;margin-bottom:12px;border:1px solid var(--line);overflow:hidden}
+.faq summary{list-style:none;cursor:pointer;padding:20px 56px 20px 24px;font-weight:500;color:var(--navy);position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:22px;top:50%;transform:translateY(-50%);font-size:24px;color:var(--gold);transition:.2s}
+.faq details[open] summary::after{content:"–"}
+.faq details p{padding:0 24px 22px;color:var(--muted);font-size:15px}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:50px;align-items:start}
+.contact-info h2{margin-bottom:14px}
+.contact-info>p{color:var(--muted);margin-bottom:28px}
+.info-item{display:flex;gap:14px;align-items:center;margin-bottom:18px}
+.info-item .ico{margin:0;width:46px;height:46px;flex:0 0 46px}
+.info-item .ico svg{width:20px;height:20px}
+.info-item b{display:block;color:var(--navy);font-size:15px}
+.info-item span{font-size:14px;color:var(--muted)}
+form{background:var(--navy);padding:38px 34px;border-radius:20px;color:#fff}
+form h3{color:#fff;font-size:22px;margin-bottom:6px}
+form>p{font-size:14px;opacity:.75;margin-bottom:22px;font-weight:300}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13.5px;margin-bottom:6px;opacity:.85}
+.field input,.field select,.field textarea{width:100%;padding:13px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-family:inherit;font-size:15px;outline:none;transition:.2s}
+.field select option{color:#222}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.terms{display:flex;gap:10px;font-size:13px;opacity:.8;margin:6px 0 20px;align-items:flex-start}
+.terms input{margin-top:4px;accent-color:var(--gold)}
+form .btn{width:100%;justify-content:center}
+
+/* FOOTER */
+footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;font-size:14px}
+.foot{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:center;padding-bottom:30px;border-bottom:1px solid rgba(255,255,255,.1)}
+.foot-logo{width:240px;height:auto}
+.foot .logo-txt{color:#fff}
+.foot ul{display:flex;gap:24px;list-style:none;flex-wrap:wrap}
+.foot ul a:hover{color:var(--gold)}
+.copy{text-align:center;padding-top:22px;font-size:13px;opacity:.6}
+
+/* OPERADORAS */
+.ops{padding:70px 0 20px}
+.ops-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;max-width:900px;margin:0 auto}
+.op{border:1px solid var(--line);border-radius:var(--radius);height:124px;display:grid;place-items:center;padding:18px;background:#fff;transition:.25s}
+.op:hover{border-color:var(--gold);box-shadow:0 12px 26px rgba(4,26,49,.08);transform:translateY(-3px)}
+.op img{max-height:72px;max-width:85%;width:auto;object-fit:contain}
+@media (max-width:640px){.ops-grid{grid-template-columns:repeat(2,1fr);gap:12px}.op{height:96px}.op img{max-height:56px}}
+
+/* IMAGE SLOTS */
+.img-slot{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:20px;border:2px dashed rgba(6,170,172,.55);border-radius:inherit;background:repeating-linear-gradient(45deg,rgba(6,170,172,.05) 0 12px,transparent 12px 24px),#f3f8f9;color:var(--navy)}
+.img-slot svg{width:42px;height:42px;stroke:var(--gold);fill:none;stroke-width:1.5}
+.img-slot b{font-weight:600;font-size:15px}
+.img-slot span{font-size:12.5px;color:var(--muted)}
+
+.slot-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;border-radius:inherit}
+
+/* INSTAGRAM */
+.insta-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:34px}
+.insta-item{position:relative;aspect-ratio:4/5;border-radius:14px;overflow:hidden;display:block}
+.insta-item .img-slot{gap:6px;padding:10px}
+.insta-item .img-slot svg{width:28px;height:28px}
+.insta-item .img-slot b{font-size:12.5px}
+.insta-item::after{content:"";position:absolute;inset:0;z-index:3;background:rgba(4,26,49,0);transition:.25s}
+.insta-item:hover::after{background:rgba(4,26,49,.35)}
+.insta-head{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:10px;color:var(--muted);font-size:15px}
+.insta-head img{width:44px;height:44px;border-radius:50%;border:2px solid var(--gold);padding:4px;background:#fff;object-fit:contain}
+@media (max-width:980px){.insta-grid{grid-template-columns:repeat(3,1fr)}}
+
+/* G1 */
+.g1{background:#fff}
+.g1-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:60px;align-items:center}
+.g1-media{position:relative;aspect-ratio:4/3;border-radius:20px;overflow:hidden}
+.g1-media img{width:100%;height:100%;object-fit:cover}
+.g1-tag{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.g1-tag i{font-style:normal;background:#C4170C;color:#fff;font-weight:700;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:15px}
+.g1-tag span{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.g1 h2{margin-bottom:18px}
+.g1 blockquote{border-left:3px solid var(--gold);padding:4px 0 4px 20px;margin:0 0 24px;font-family:Marcellus,Georgia,serif;font-size:20px;color:var(--navy);line-height:1.45}
+.diffs{list-style:none;counter-reset:d;display:grid;gap:14px;margin-bottom:28px}
+.diffs li{counter-increment:d;display:flex;gap:14px;font-size:15px;color:var(--ink)}
+.diffs li::before{content:counter(d);flex:0 0 30px;height:30px;border-radius:50%;background:var(--navy);color:var(--gold-2);display:grid;place-items:center;font-size:13px;font-weight:600}
+.diffs b{color:var(--navy)}
+.g1-note{font-size:12px;color:var(--muted);margin-top:14px}
+.creds{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 6px}
+.creds span{border:1px solid rgba(255,255,255,.22);padding:6px 14px;border-radius:999px;font-size:13px;font-weight:300}
+
+/* WHATSAPP FLOAT */
+.wa-float{position:fixed;right:22px;bottom:22px;width:60px;height:60px;border-radius:50%;background:var(--wa);display:grid;place-items:center;box-shadow:0 10px 24px rgba(0,0,0,.25);z-index:60;transition:.25s}
+.wa-float:hover{transform:scale(1.08)}
+.wa-float svg{width:32px;height:32px;fill:#fff}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* RESPONSIVE */
+@media (max-width:980px){
+  .strip-grid{grid-template-columns:repeat(2,1fr)}
+  .plans-grid,.posts-grid{grid-template-columns:1fr 1fr}
+  .about-grid,.contact-grid,.g1-grid{grid-template-columns:1fr}
+  .about-photo{max-width:420px}
+}
+@media (max-width:820px){
+  .burger{display:block}
+  .menu{position:absolute;top:72px;left:0;right:0;background:#fff;flex-direction:column;gap:0;padding:8px 16px 18px;box-shadow:0 12px 20px rgba(0,0,0,.08);display:none}
+  .menu.open{display:flex}
+  .menu a{display:block;padding:12px 4px;border-bottom:1px solid var(--line)}
+  .hero-grid{grid-template-columns:1fr;min-height:auto;gap:0}
+  .hero{background:linear-gradient(180deg,#eef4f6 0%,#0B3A55 45%,var(--navy-2) 100%)}
+  .hero-photo{order:-1;width:min(300px,80%);margin-top:40px}
+  .hero-copy{padding:40px 0 56px}
+}
+@media (max-width:640px){
+  section{padding:64px 0}
+  .plans-grid,.posts-grid,.strip-grid,.row2{grid-template-columns:1fr}
+  form{padding:28px 20px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a href="#inicio" class="logo" aria-label="Angela Rodrigues">
+      <img class="logo-mark" src="img/logo-monograma.png" alt="">
+      <div class="logo-txt">Ângela Rodrigues<small>Especialista em Planos de Saúde e Seguros</small></div>
+    </a>
+    <button class="burger" aria-label="Abrir menu" onclick="document.querySelector('.menu').classList.toggle('open')"><span></span><span></span><span></span></button>
+    <ul class="menu">
+      <li><a href="#inicio" class="active">Home</a></li>
+      <li><a href="#operadoras">Operadoras</a></li>
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#planos">Planos</a></li>
+      <li><a href="#g1">No G1</a></li>
+      <li><a href="#conteudos">Conteúdos</a></li>
+      <li><a href="#instagram">Instagram</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="container hero-grid">
+    <div class="hero-photo">
+      <!-- IMAGEM 1: salve a foto como img/angela-hero.jpg (aparece automaticamente) -->
+      <img class="slot-img" src="img/angela-hero.jpg" alt="Ângela Rodrigues" onerror="this.remove()">
+      <div class="img-slot"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><b>Foto da Ângela</b><span>Retrato vertical 4:5 · fundo limpo</span></div>
+    </div>
+    <div class="hero-copy">
+      <a href="#g1" class="badge-g1"><i>g1</i> Destaque no G1 · Vale do Paraíba</a>
+      <h1>Plano de saúde não se escolhe pelo preço.<br><span class="gold">Se escolhe pela sua realidade.</span></h1>
+      <div class="tag">O melhor da saúde em nossas mãos · Planos Empresariais · CNPJ / MEI · Profissionais da Saúde · Família</div>
+      <p>Sou a Ângela: farmacêutica, corretora certificada SUSEP e há mais de 10 anos orientando empresas, famílias e profissionais da saúde a contratar com segurança — e sem surpresas depois.</p>
+      <a href="#contato" class="btn">Quero minha análise sem custo</a>
+    </div>
+  </div>
+</section>
+
+<!-- OPERADORAS -->
+<section class="ops" id="operadoras">
+  <div class="container">
+    <div class="section-head reveal" style="margin-bottom:34px">
+      <span class="eyebrow">Operadoras</span>
+      <h2>As operadoras que você conhece, com quem entende delas</h2>
+    </div>
+    <div class="ops-grid">
+      <div class="op reveal"><img src="img/operadoras/santacasa.png" alt="Santa Casa Saúde"></div>
+      <div class="op reveal"><img src="img/operadoras/sulamerica.png" alt="SulAmérica"></div>
+      <div class="op reveal"><img src="img/operadoras/porto.png" alt="Porto Saúde"></div>
+      <div class="op reveal"><img src="img/operadoras/unimed-sjc.png" alt="Unimed São José dos Campos"></div>
+      <div class="op reveal"><img src="img/operadoras/amil.png" alt="Amil"></div>
+      <div class="op reveal"><img src="img/operadoras/hapvida.png" alt="Hapvida"></div>
+      <div class="op reveal"><img src="img/operadoras/seguros-unimed.png" alt="Seguros Unimed"></div>
+      <div class="op reveal"><img src="img/operadoras/bradesco.png" alt="Bradesco Saúde"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVIÇOS -->
+<section class="strip" id="servicos">
+  <div class="container strip-grid">
+    <div class="card-s reveal">
+      <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+      <h3>Planos de Saúde</h3><p>Empresariais, por adesão, individuais e familiares</p>
+    </div>
+    <div class="card-s reveal">
+      <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></div>
+      <h3>Para Empresas</h3><p>Benefício que retém talentos — a partir de 1 vida, inclusive MEI</p>
+    </div>
+    <div class="card-s reveal">
+      <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-11a7 7 0 0114 0c0 6.5-7 11-7 11z"/><path d="M9 10c1.5 2 4.5 2 6 0"/></svg></div>
+      <h3>Seguros</h3><p>Vida, pecúlio e prestamista para proteger quem depende de você</p>
+    </div>
+    <div class="card-s reveal">
+      <div class="ico"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/></svg></div>
+      <h3>Consórcio</h3><p>Imóvel ou veículo com planejamento e sem juros de financiamento</p>
+    </div>
+  </div>
+</section>
+
+<!-- SOBRE -->
+<section class="about" id="sobre">
+  <div class="container about-grid">
+    <div class="reveal">
+      <span class="eyebrow">Sobre mim</span>
+      <h2>Prazer, sou a Ângela</h2>
+      <p><span class="gold">O prejuízo raramente está no plano.</span> Está em como ele foi escolhido — com pressa, sem análise e olhando só para a mensalidade.</p>
+      <p>Por isso meu trabalho começa antes da cotação. Sou <span class="gold">farmacêutica, formada em seguros de pessoas e certificada pela SUSEP</span>. Passei pela Qualicorp, onde aprendi o mercado por dentro ao lado das grandes seguradoras, e hoje levo essa visão para cada empresa, família e profissional que atendo.</p>
+      <p>Toda a minha carteira veio de indicação. Não por acaso: eu escuto, explico cada detalhe e continuo por perto quando o cliente mais precisa — depois da assinatura.</p>
+      <div class="creds"><span>Farmacêutica</span><span>Certificação SUSEP</span><span>Ex-Qualicorp</span><span>Capacitações Einstein · Sírio-Libanês</span></div>
+      <ul class="checks">
+        <li>Diagnóstico do perfil de quem vai usar, antes de qualquer cotação</li>
+        <li>Modalidades empresariais que a maioria das pessoas nem sabe que existem</li>
+        <li>Coberturas, carências e reajustes explicados sem letras miúdas</li>
+        <li>Suporte no pós-venda: reembolso, rede credenciada e o que mais surgir</li>
+      </ul>
+      <div class="stats">
+        <div><b>+10</b><span>anos de mercado</span></div>
+        <div><b>100%</b><span>da carteira por indicação</span></div>
+        <div><b>SUSEP</b><span>corretora certificada</span></div>
+      </div>
+      <br><a href="#contato" class="btn">Conversar com a Ângela</a>
+    </div>
+    <div class="about-photo reveal">
+      <!-- IMAGEM 2: salve a foto como img/angela-sobre.jpg (aparece automaticamente) -->
+      <img class="slot-img" src="img/angela-sobre.jpg" alt="Ângela Rodrigues" onerror="this.remove()">
+      <div class="img-slot"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><b>Foto da Ângela no escritório</b><span>Vertical 4:5</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANOS -->
+<section class="plans" id="planos">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Modalidades</span>
+      <h2>Cada perfil pede um tipo de plano</h2>
+      <p>Ter CNPJ abre portas, mas não decide sozinho. Eu comparo as modalidades e mostro qual faz sentido para você — com números na mesa.</p>
+    </div>
+    <div class="plans-grid">
+      <div class="plan featured reveal">
+        <span class="pill">Mais procurado</span>
+        <h3>Plano Empresarial</h3>
+        <p>Mais do que um benefício: uma decisão que protege a equipe, valoriza a marca empregadora e prepara a empresa para crescer.</p>
+        <dl>
+          <dt>Para quem?</dt><dd>Empresários, MEIs e PMEs — a partir de 1 vida.</dd>
+          <dt>Vantagens</dt><dd>Condições diferenciadas, dependentes inclusos e equipe mais engajada.</dd>
+        </dl>
+        <a href="#contato" class="btn">Simular para minha empresa</a>
+      </div>
+      <div class="plan reveal">
+        <span class="pill">Saúde</span>
+        <h3>Profissionais da Saúde</h3>
+        <p>Médicos, dentistas, fisioterapeutas e outros profissionais da área contam com opções pensadas para a categoria.</p>
+        <dl>
+          <dt>Para quem?</dt><dd>Profissionais liberais da área da saúde, com ou sem CNPJ.</dd>
+          <dt>Vantagens</dt><dd>Adesão ou PJ, com mensalidades mais competitivas.</dd>
+        </dl>
+        <a href="#contato" class="btn btn-outline">Quero saber mais</a>
+      </div>
+      <div class="plan reveal">
+        <span class="pill">Família</span>
+        <h3>Individual ou Familiar</h3>
+        <p>Para cuidar de quem você ama com acesso a bons hospitais, laboratórios e clínicas.</p>
+        <dl>
+          <dt>Para quem?</dt><dd>Quem quer proteção para si e para a família.</dd>
+          <dt>Vantagens</dt><dd>Rede credenciada de qualidade e suporte especializado.</dd>
+        </dl>
+        <a href="#contato" class="btn btn-outline">Quero saber mais</a>
+      </div>
+      <div class="plan reveal">
+        <span class="pill">Global</span>
+        <h3>Plano Internacional</h3>
+        <p>Proteção de alto padrão com cobertura global, para quem vive, viaja ou se trata fora do Brasil.</p>
+        <dl>
+          <dt>Para quem?</dt><dd>Executivos, famílias e quem busca cobertura no exterior.</dd>
+          <dt>Vantagens</dt><dd>Rede mundial e atendimento de excelência.</dd>
+        </dl>
+        <a href="#contato" class="btn btn-outline">Quero saber mais</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- G1 -->
+<section class="g1" id="g1">
+  <div class="container g1-grid">
+    <div class="g1-media reveal">
+      <!-- IMAGEM 3: salve como img/angela-g1.jpg (aparece automaticamente) -->
+      <img class="slot-img" src="img/angela-g1.jpg" alt="Ângela Rodrigues no G1" onerror="this.remove()">
+      <div class="img-slot"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><b>Imagem da matéria no G1</b><span>Print da matéria ou foto · horizontal 4:3</span></div>
+    </div>
+    <div class="reveal">
+      <div class="g1-tag"><i>g1</i><span>Vale do Paraíba e Região</span></div>
+      <h2>Uma trajetória contada no G1</h2>
+      <blockquote>“Escolher um plano de saúde ou seguro é uma decisão séria, que exige orientação profissional.”</blockquote>
+      <p style="color:var(--muted);margin-bottom:20px">Na matéria, a Ângela fala sobre sua história e os cinco pilares do seu atendimento:</p>
+      <ul class="diffs">
+        <li><div><b>Experiência de mercado</b> — mais de uma década no setor, com passagem pela Qualicorp.</div></li>
+        <li><div><b>Olhar da saúde</b> — como farmacêutica, explica coberturas com profundidade e clareza.</div></li>
+        <li><div><b>Consultoria sob medida</b> — cada proposta parte da realidade de quem vai usar.</div></li>
+        <li><div><b>100% por indicação</b> — clientes satisfeitos trazem os próximos.</div></li>
+        <li><div><b>Presença no pós-venda</b> — acompanhamento do começo ao fim.</div></li>
+      </ul>
+      <a href="https://g1.globo.com/sp/vale-do-paraiba-regiao/especial-publicitario/grupo-futuro-sa-corretores-que-fazem-a-diferenca/noticia/2025/08/08/a-trajetoria-de-angela-rodrigues-no-setor-de-saude-e-seguros.ghtml" target="_blank" rel="noopener" class="btn">Ler a matéria no G1</a>
+      <p class="g1-note">Especial publicitário Grupo Futuro SA · g1 Vale do Paraíba, ago/2025</p>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTO / CTA -->
+<section class="manifesto">
+  <div class="container reveal">
+    <span class="eyebrow" style="color:#fff;opacity:.85">O melhor da saúde em nossas mãos</span>
+    <blockquote>“Cuidar de pessoas é mais do que minha profissão — é meu propósito de vida.”</blockquote>
+    <p>Para sua empresa ou sua família: mande <b>ESTRATÉGIA</b> no WhatsApp e eu analiso com você as opções que fazem sentido de verdade.</p>
+    <a class="btn wa-link" href="#" data-msg="ESTRATÉGIA">Enviar ESTRATÉGIA</a>
+  </div>
+</section>
+
+<!-- CONTEÚDOS -->
+<section id="conteudos">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Conteúdos</span>
+      <h2>Antes de contratar, leia isto</h2>
+    </div>
+    <div class="posts-grid">
+      <article class="post reveal">
+        <div class="post-cover">O erro que impede sua empresa de crescer</div>
+        <div class="post-body">
+          <h3>Benefício não é coisa “pra depois”</h3>
+          <p>Muita empresa deixa os benefícios para quando crescer. Mas é justamente a estrutura certa que ajuda o crescimento a acontecer.</p>
+          <a href="https://www.instagram.com/angelarodrigues.consultora/" target="_blank" rel="noopener">Ver no Instagram →</a>
+        </div>
+      </article>
+      <article class="post reveal">
+        <div class="post-cover">Mais barato nem sempre é economia</div>
+        <div class="post-body">
+          <h3>O jeito certo de comparar planos</h3>
+          <p>Mensalidade é só uma parte da conta. Perfil de uso, cobertura e rede pesam tanto quanto o preço.</p>
+          <a href="https://www.instagram.com/angelarodrigues.consultora/" target="_blank" rel="noopener">Ver no Instagram →</a>
+        </div>
+      </article>
+      <article class="post reveal">
+        <div class="post-cover">Tem CNPJ? Leia isto antes de renovar</div>
+        <div class="post-body">
+          <h3>Do individual para o empresarial</h3>
+          <p>Com CNPJ, novas modalidades podem ficar disponíveis — e muitas vezes saem mais em conta que o plano atual.</p>
+          <a href="https://www.instagram.com/angelarodrigues.consultora/" target="_blank" rel="noopener">Ver no Instagram →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- INSTAGRAM -->
+<section id="instagram" style="padding-top:0">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Instagram</span>
+      <h2>Confira meu Instagram</h2>
+      <div class="insta-head"><img src="img/logo-monograma.png" alt=""> @angelarodrigues.consultora</div>
+    </div>
+    <!-- POSTS: salve 6 prints como img/insta-1.jpg ... img/insta-6.jpg (aparecem automaticamente) -->
+    <div class="insta-grid">
+      <a class="insta-item reveal" href="https://www.instagram.com/angelarodrigues.consultora/" target="_blank" rel="noopener"><div class="img-slot"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><b>Post 1</b><span>insta-1.jpg</span></div><img class="slot-img" src="img/insta-1.jpg" alt="Post do Instagram da Ângela" onerror="this.remove()"></a>
+      <a class="insta-item reveal" href="https://www.instagram.com/angelarodrigues.consultora/" target="_blank" rel="noopener"><div class="img-slot"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><b>Post 2</b><span>insta-2.jpg</span></div><img class="slot-img" src="img/insta-2.jpg" alt="Post do Instagram da Ângela" onerror="this.remove()"></a>
+      <a class="insta-item reveal" href="https://www.instagram.com/angelarodrigues.consultora/" target="_blank" rel="noopener"><div class="img-slot"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><b>Post 3</b><span>insta-3.jpg</span></div><img class="slot-img" src="img/insta-3.jpg" alt="Post do Instagram da Ângela" onerror="this.remove()"></a>
+      <a class="insta-item reveal" href="https://www.instagram.com/angelarodrigues.consultora/" target="_blank" rel="noopener"><div class="img-slot"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><b>Post 4</b><span>insta-4.jpg</span></div><img class="slot-img" src="img/insta-4.jpg" alt="Post do Instagram da Ângela" onerror="this.remove()"></a>
+      <a class="insta-item reveal" href="https://www.instagram.com/angelarodrigues.consultora/" target="_blank" rel="noopener"><div class="img-slot"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><b>Post 5</b><span>insta-5.jpg</span></div><img class="slot-img" src="img/insta-5.jpg" alt="Post do Instagram da Ângela" onerror="this.remove()"></a>
+      <a class="insta-item reveal" href="https://www.instagram.com/angelarodrigues.consultora/" target="_blank" rel="noopener"><div class="img-slot"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><b>Post 6</b><span>insta-6.jpg</span></div><img class="slot-img" src="img/insta-6.jpg" alt="Post do Instagram da Ângela" onerror="this.remove()"></a>
+    </div>
+    <div style="text-align:center"><a class="btn" href="https://www.instagram.com/angelarodrigues.consultora/" target="_blank" rel="noopener">Seguir no Instagram</a></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Dúvidas</span>
+      <h2>Dúvidas comuns</h2>
+    </div>
+    <div class="faq-list reveal">
+      <details><summary>Minha empresa é pequena. Posso ter plano empresarial?</summary><p>Sim. Muitas operadoras aceitam contratação a partir de 1 vida, inclusive para MEI. O ideal é analisar o perfil da equipe para ver qual modalidade compensa mais.</p></details>
+      <details><summary>Tenho CNPJ. O plano empresarial é sempre melhor?</summary><p>Não automaticamente. Ter CNPJ dá acesso a modalidades que muita gente nem conhece, mas a melhor escolha depende de quem vai usar, da região e da rede desejada.</p></details>
+      <details><summary>Sou profissional da saúde. Existe plano específico para mim?</summary><p>Existem opções por adesão (via entidades de classe) e opções PJ. Faço a comparação das duas para você decidir com segurança.</p></details>
+      <details><summary>Por que não escolher simplesmente o plano mais barato?</summary><p>Porque o barato pode sair caro: rede limitada, coparticipação alta ou coberturas que não atendem sua necessidade. O melhor plano é o que faz sentido para sua realidade.</p></details>
+      <details><summary>O que é carência?</summary><p>É o período após a contratação em que alguns procedimentos ainda não podem ser usados. Em algumas situações, como portabilidade ou planos empresariais, é possível reduzir ou isentar carências.</p></details>
+      <details><summary>Como funciona o reajuste?</summary><p>Planos individuais seguem o índice da ANS; planos empresariais e por adesão têm reajuste anual negociado com a operadora, além do reajuste por faixa etária. Eu explico tudo antes de você assinar.</p></details>
+      <details><summary>Você trabalha com plano de saúde internacional?</summary><p>Sim. Como corretora credenciada do Grupo Futuro, tenho acesso a produtos internacionais de alto padrão, com proteção global.</p></details>
+      <details><summary>Vocês também trabalham com seguros e consórcio?</summary><p>Sim. Além de planos de saúde, ofereço seguro de vida, pecúlio, seguro prestamista e consórcio — uma alternativa planejada e sem juros de financiamento para conquistar imóvel ou veículo.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section id="contato">
+  <div class="container contact-grid">
+    <div class="contact-info reveal">
+      <span class="eyebrow">Contato</span>
+      <h2>Vamos conversar?</h2>
+      <p>Conte o que você precisa e eu monto uma análise feita para o seu caso. Atendo online e presencialmente, com horário marcado.</p>
+      <a class="info-item wa-link" href="#" data-msg="Olá Ângela! Vim pelo site e gostaria de uma análise de plano de saúde.">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.4 1.8.7 2.7a2 2 0 01-.5 2.1L8 9.8a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.7.7a2 2 0 011.7 2z"/></svg></div>
+        <div><b>WhatsApp</b><span>(12) 98809-7416</span></div>
+      </a>
+      <a class="info-item" href="https://www.instagram.com/angelarodrigues.consultora/" target="_blank" rel="noopener">
+        <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8"/></svg></div>
+        <div><b>Instagram</b><span>@angelarodrigues.consultora</span></div>
+      </a>
+      <div class="info-item">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6-7-11a7 7 0 0114 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <div><b>Atendimento</b><span>Online e presencial com agendamento</span></div>
+      </div>
+    </div>
+
+    <form id="simForm" class="reveal">
+      <h3>Peça sua simulação</h3>
+      <p>Preencha em 1 minuto — eu te respondo pelo WhatsApp com as opções certas.</p>
+      <div class="field"><label for="nome">Nome</label><input id="nome" required></div>
+      <div class="row2">
+        <div class="field"><label for="tel">Telefone</label><input id="tel" type="tel" required></div>
+        <div class="field"><label for="email">E-mail</label><input id="email" type="email"></div>
+      </div>
+      <div class="field"><label for="tipo">Tipo da simulação</label>
+        <select id="tipo" required>
+          <option value="">Selecione...</option>
+          <option>Plano Empresarial (CNPJ / MEI)</option>
+          <option>Plano para Profissional da Saúde</option>
+          <option>Plano Individual / Familiar</option>
+          <option>Plano p/ 59+</option>
+          <option>Seguros</option>
+          <option>Consórcio</option>
+        </select>
+      </div>
+      <div class="field"><label for="vidas">Quantas pessoas no plano?</label><input id="vidas" type="number" min="1" placeholder="Ex.: 3"></div>
+      <div class="field"><label for="msg">Mensagem</label><textarea id="msg" rows="3"></textarea></div>
+      <label class="terms"><input type="checkbox" required> Li e estou de acordo com a Política de Privacidade.</label>
+      <button class="btn" type="submit">Enviar pelo WhatsApp</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot">
+      <img class="foot-logo" src="img/logo-branco.png" alt="Ângela Rodrigues — Especialista em Planos de Saúde e Seguros">
+      <ul>
+        <li><a href="#inicio">Home</a></li><li><a href="#servicos">Serviços</a></li><li><a href="#sobre">Sobre</a></li>
+        <li><a href="#planos">Planos</a></li><li><a href="#faq">FAQ</a></li><li><a href="#contato">Contato</a></li>
+      </ul>
+    </div>
+    <div class="copy">Ângela Rodrigues © <span id="yr"></span> – Todos os direitos reservados. Site desenvolvido por Agência S7</div>
+  </div>
+</footer>
+
+<a class="wa-float wa-link" href="#" data-msg="Olá Ângela! Vim pelo site." aria-label="WhatsApp">
+  <svg viewBox="0 0 32 32"><path d="M16 3a13 13 0 00-11.2 19.6L3 29l6.6-1.7A13 13 0 1016 3zm0 23.7a10.7 10.7 0 01-5.5-1.5l-.4-.2-3.9 1 1-3.8-.2-.4A10.7 10.7 0 1116 26.7zm5.9-8c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1a8.8 8.8 0 01-4.4-3.8c-.3-.6.3-.5.9-1.7a.6.6 0 000-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 00-.9.4 3.6 3.6 0 00-1.1 2.7 6.3 6.3 0 001.3 3.3 14.4 14.4 0 005.5 4.9c2 .9 2.8.9 3.8.8a3.3 3.3 0 002.2-1.5 2.7 2.7 0 00.2-1.5c-.1-.2-.3-.3-.6-.4z"/></svg>
+</a>
+
+<script>
+const WA = "5512988097416";
+const waUrl = m => `https://wa.me/${WA}?text=${encodeURIComponent(m)}`;
+document.querySelectorAll('.wa-link').forEach(a=>{a.href=waUrl(a.dataset.msg);a.target="_blank";a.rel="noopener"});
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+document.getElementById('simForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const v = id => document.getElementById(id).value.trim();
+  const msg = `Olá Ângela! Quero uma simulação.\n\nNome: ${v('nome')}\nTelefone: ${v('tel')}\nE-mail: ${v('email')||'-'}\nTipo: ${v('tipo')}\nVidas: ${v('vidas')||'-'}\nMensagem: ${v('msg')||'-'}`;
+  window.open(waUrl(msg), '_blank');
+});
+
+// menu ativo + fechar no mobile
+const links=[...document.querySelectorAll('.menu a')];
+links.forEach(l=>l.addEventListener('click',()=>document.querySelector('.menu').classList.remove('open')));
+const secs=links.map(l=>document.querySelector(l.getAttribute('href')));
+addEventListener('scroll',()=>{let i=0;secs.forEach((s,k)=>{if(s&&s.getBoundingClientRect().top<120)i=k});links.forEach((l,k)=>l.classList.toggle('active',k===i))},{passive:true});
+
+// reveal
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

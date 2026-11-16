@@ -1,0 +1,16 @@
+SITE ÂNGELA RODRIGUES — como subir
+
+1. Suba TODO o conteúdo desta pasta (index.html + pasta img) na raiz da hospedagem (public_html, Hostinger, Netlify, Vercel etc.).
+2. Mantenha a estrutura de pastas igual.
+
+FOTOS — salve na pasta img/ com estes nomes exatos e elas aparecem sozinhas no site
+(sem mexer no código; enquanto não existirem, aparece o espaço tracejado):
+
+- img/angela-hero.jpg   -> foto do topo (vertical 4:5)
+- img/angela-sobre.jpg  -> foto da seção "Sobre" (vertical 4:5)
+- img/angela-g1.jpg     -> print/foto da matéria do G1 (horizontal 4:3)
+- img/insta-1.jpg até img/insta-6.jpg -> prints dos posts do Instagram (vertical 4:5)
+
+Use a extensão .jpg (minúscula). Se a foto for .png/.jpeg, renomeie para .jpg.
+
+WhatsApp usado no site: 5512988097416 (variável WA no final do index.html).
