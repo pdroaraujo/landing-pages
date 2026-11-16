@@ -18,8 +18,8 @@ export function SiteFooter({ basePath = '' }: { basePath?: string }) {
         <footer className="site-footer">
             <section className="footer-cta" aria-labelledby="footer-cta-title">
                 <Image
-                    src={photos.footer}
-                    alt="Fachada de loja de materiais de construção ao entardecer"
+                    src={photos.footerCta}
+                    alt="Vista aérea da sede da Luchetti em São José dos Campos"
                     fill
                     sizes="100vw"
                     className="footer-cta__image"

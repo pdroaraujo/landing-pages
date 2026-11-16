@@ -87,6 +87,8 @@ export const photos = {
     banheiros: '/fotos/obra-banheiros.jpg',
     lajes: '/fotos/obra-lajes.jpg',
     footer: '/fotos/footer-panorama.jpg',
+    // Vista aérea da sede (Google Maps da Luchetti), tratada e recortada em 1983×793.
+    footerCta: '/fotos/footer-aerea.jpg',
     // Fotos reais do acervo da Luchetti (luchetti.com.br).
     impermeabilizacaoReal: '/fotos/linha-impermeabilizacao-real.webp',
     pciReal: '/fotos/linha-pci-real.webp',

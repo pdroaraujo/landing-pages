@@ -111,7 +111,8 @@
 .owner-home .owner-hero__cta-icon,
 .owner-home .mobile-hero__budget b,
 .owner-home .footer-cta__content > a > .footer-cta__button-icon,
-.owner-home .faq-section__cta > a b {
+.owner-home .faq-section__cta > a b,
+.owner-home .footer-main__compact .footer-contact__arrow {
     border-color: #ff8a8e;
     background: linear-gradient(145deg, #ff6b70 0%, #ed1c24 64%, #c8151d 100%);
     color: #fff;
