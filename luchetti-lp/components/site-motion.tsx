@@ -26,6 +26,9 @@ export function SiteMotion() {
             frame = 0;
             const viewportHeight = window.innerHeight;
             const triggerLine = viewportHeight * 0.9;
+            // No fim da página o último bloco (rodapé) nunca alcança a linha de 90%:
+            // revela tudo o que já está visível na tela.
+            const atPageEnd = window.scrollY + viewportHeight >= document.documentElement.scrollHeight - 4;
 
             pending.forEach((element) => {
                 if (!element.isConnected) {
@@ -34,7 +37,7 @@ export function SiteMotion() {
                 }
 
                 const rect = element.getBoundingClientRect();
-                const reachedReadingArea = rect.top <= triggerLine;
+                const reachedReadingArea = rect.top <= triggerLine || (atPageEnd && rect.top < viewportHeight);
                 const isStillOnScreen = rect.bottom >= 0;
 
                 if (reachedReadingArea && isStillOnScreen) reveal(element);

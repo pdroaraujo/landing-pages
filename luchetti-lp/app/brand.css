@@ -144,3 +144,15 @@
 .solution-lines li::before { content: ''; display: inline-block; width: .42rem; height: .42rem; margin-right: .5rem; border-radius: 50%; background: var(--luchetti-red); vertical-align: .1em; }
 .solution-block__copy h2::after { content: ''; display: block; width: 3.5rem; height: 4px; margin-top: .9rem; border-radius: 4px; background: var(--luchetti-red); }
 .solution-others a svg { color: var(--luchetti-red); }
+
+/* Crédito da agência no rodapé */
+.footer-main__bottom .footer-credit { display: inline; text-decoration: underline; text-underline-offset: 3px; }
+
+/* Menu do rodapé: itens sem quebra de linha no desktop (agora com Política de privacidade) */
+@media (min-width: 900px) {
+    .footer-main__utility .footer-nav { flex-wrap: wrap; gap: .7rem clamp(1rem, 2.1vw, 2.2rem); }
+    .footer-main__utility .footer-nav a { white-space: nowrap; }
+}
+
+/* Copyright + crédito: contraste legível (antes 42% de opacidade) */
+.footer-main__bottom { color: rgba(214, 236, 218, 0.74); }

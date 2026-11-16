@@ -93,6 +93,7 @@ export function SiteFooter({ basePath = '' }: { basePath?: string }) {
                             <a href={`${basePath}#servicos`}>Soluções</a>
                             <a href={`${basePath}#aplicacoes`}>Quem atendemos</a>
                             <a href={`${basePath}#duvidas`}>Dúvidas</a>
+                            <a href="/politica-de-privacidade">Política de privacidade</a>
                             <a href={site.instagram} {...externalLink}>Instagram</a>
                             <a href={site.facebook} {...externalLink}>Facebook</a>
                             <a href={site.linkedin} {...externalLink}>LinkedIn</a>
@@ -107,7 +108,11 @@ export function SiteFooter({ basePath = '' }: { basePath?: string }) {
                     </div>
 
                     <div id="rodape-fim" className="footer-main__bottom" data-scroll-reveal data-reveal="up" data-reveal-delay="2">
-                        <p>© {new Date().getFullYear()} {site.legalName} · CNPJ {site.cnpj}</p>
+                        <p>
+                            © {new Date().getFullYear()} {site.legalName} · CNPJ {site.cnpj}. Todos os direitos
+                            reservados. Feito por{' '}
+                            <a className="footer-credit" href="https://agencias7.com.br" {...externalLink}>Agência S7</a>
+                        </p>
                         <div>
                             <a href="/politica-de-privacidade">Política de privacidade</a>
                             <a href="/politica-de-privacidade#cookies">Cookies</a>
