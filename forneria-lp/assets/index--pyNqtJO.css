@@ -51,3 +51,8 @@
 .carta__desc{margin:6px 0 0;font-size:var(--t-body);line-height:1.4;color:var(--tinta-2);max-width:46ch}
 .carta__veg{width:16px;height:16px;margin-left:6px;vertical-align:-1px;fill:none;stroke:#3f6b2a;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media (width<=759px),(aspect-ratio<=4/5){.carta{padding:8px 0 64px}.carta__title{font-size:44px}.carta__tabs{flex-wrap:nowrap;overflow-x:auto;margin:22px -18px 4px;padding:0 18px 4px;scrollbar-width:none}.carta__tab{flex:none;padding:11px 16px;font-size:14px}}
+
+/* nome do sabor legível abaixo de "Sabor X de 5" */
+.flavor__name{left:var(--gutter);top:calc(var(--wb) + 6.6vh + 26px);margin:0;visibility:hidden;position:absolute;font-family:var(--f-display);text-transform:uppercase;font-weight:400;letter-spacing:.01em;line-height:1;font-size:clamp(26px,1.4vw + 10px,40px);color:var(--tinta);max-width:min(30vw,460px)}
+.flavor__desc{top:calc(var(--wb) + 6.6vh + 26px + clamp(26px,1.4vw + 10px,40px) + 16px)}
+@media (width<=759px),(aspect-ratio<=4/5){.flavor__name{top:calc(var(--m-bot) + 44px);left:18px;font-size:26px;max-width:56%}.flavor__desc{top:calc(var(--m-bot) + 82px)}}
