@@ -36,6 +36,17 @@ export const site = {
     brands: ['Amanco Wavin', 'Deca', 'Celite', 'Acqualimp', 'Bidim'],
 } as const;
 
+/**
+ * LGPD: canal do titular e data da política. ⚠️ Confirmar com a Luchetti quem é o
+ * encarregado (DPO) e qual e-mail deve receber pedidos de titulares.
+ */
+export const privacy = {
+    email: site.email,
+    updatedAt: '16 de novembro de 2026',
+    /** Chave do armazenamento local que lembra que o aviso foi visto (não é cookie). */
+    noticeKey: 'luchetti-aviso-privacidade',
+} as const;
+
 export const yearsInBusiness = new Date().getFullYear() - site.since;
 
 const phoneDigits = site.phone.replace(/\D/g, '');

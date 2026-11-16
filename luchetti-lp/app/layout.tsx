@@ -5,6 +5,8 @@ import '@fontsource/poppins/600.css';
 import '@fontsource/open-sans/400.css';
 import '@fontsource/open-sans/600.css';
 import './globals.css';
+import './cookie-notice.css';
+import { CookieNotice } from '@/components/cookie-notice';
 import { SmoothScrollProvider } from '@/components/smooth-scroll-provider';
 import { site } from '@/lib/site-config';
 
@@ -84,6 +86,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     Pular para o conteúdo
                 </a>
                 <SmoothScrollProvider>{children}</SmoothScrollProvider>
+                <CookieNotice />
             </body>
         </html>
     );

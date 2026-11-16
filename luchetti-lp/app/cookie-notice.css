@@ -1,0 +1,61 @@
+/* Aviso de privacidade (fixo, discreto, não bloqueia a navegação) */
+.cookie-notice {
+    position: fixed;
+    z-index: 80;
+    left: clamp(1rem, 2vw, 2rem);
+    bottom: max(clamp(1rem, 3vh, 2rem), env(safe-area-inset-bottom));
+    display: flex;
+    width: min(30rem, calc(100vw - 2rem));
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1rem 1rem 1.2rem;
+    border: 1px solid rgba(137, 221, 153, 0.18);
+    border-left: 4px solid #ed1c24;
+    border-radius: 1rem;
+    background: #01231c;
+    box-shadow: 0 1.2rem 2.6rem rgba(0, 23, 18, 0.3);
+    color: rgba(236, 248, 239, 0.88);
+    font-size: .85rem;
+    line-height: 1.5;
+    animation: cookie-notice-in 420ms cubic-bezier(.22, 1, .36, 1) both;
+}
+.cookie-notice p { margin: 0; }
+.cookie-notice a { color: #89dd99; text-decoration: underline; text-underline-offset: 3px; }
+.cookie-notice button {
+    flex: 0 0 auto;
+    min-height: 2.75rem;
+    padding: .55rem 1.1rem;
+    border: 0;
+    border-radius: .6rem;
+    background: linear-gradient(145deg, #9be7a9 0%, #69c87d 64%, #47b062 100%);
+    color: #012821;
+    font-family: 'Poppins', sans-serif;
+    font-size: .88rem;
+    cursor: pointer;
+}
+.cookie-notice button:hover { filter: brightness(1.05); }
+.cookie-notice a:focus-visible,
+.cookie-notice button:focus-visible { outline: 3px solid #89dd99; outline-offset: 3px; }
+
+@keyframes cookie-notice-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* No celular fica acima do botão flutuante do WhatsApp */
+@media (max-width: 700px) {
+    .cookie-notice {
+        right: 1rem;
+        left: 1rem;
+        bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 5.5rem);
+        width: auto;
+        gap: .75rem;
+        padding: .75rem .75rem .75rem 1rem;
+        font-size: .78rem;
+        line-height: 1.45;
+    }
+    .cookie-notice button { padding-inline: .9rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cookie-notice { animation: none; }
+}

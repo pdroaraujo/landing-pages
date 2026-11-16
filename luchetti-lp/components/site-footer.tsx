@@ -109,6 +109,8 @@ export function SiteFooter({ basePath = '' }: { basePath?: string }) {
                     <div id="rodape-fim" className="footer-main__bottom" data-scroll-reveal data-reveal="up" data-reveal-delay="2">
                         <p>© {new Date().getFullYear()} {site.legalName} · CNPJ {site.cnpj}</p>
                         <div>
+                            <a href="/politica-de-privacidade">Política de privacidade</a>
+                            <a href="/politica-de-privacidade#cookies">Cookies</a>
                             <a href={`${basePath}#topo`}>Voltar ao topo <ArrowRightUpIcon /></a>
                         </div>
                     </div>
