@@ -199,8 +199,9 @@
 }
 .owner-hero__ribbon--first { animation-delay: 220ms; }
 .owner-hero__ribbon--second { animation-delay: 330ms; }
+.owner-hero__title-line:nth-of-type(1) { animation-delay: 220ms; }
+.owner-hero__title-line:nth-of-type(2) { animation-delay: 330ms; }
 .owner-hero__title-line:nth-of-type(3) { animation-delay: 450ms; }
-.owner-hero__title-line:nth-of-type(4) { animation-delay: 540ms; }
 .owner-hero__description { animation-delay: 650ms; }
 .owner-hero__thumbnails { animation-delay: 780ms; }
 .owner-hero__cta { animation-delay: 880ms; }
@@ -1013,7 +1014,7 @@
     .mobile-hero__headline {
         display: block;
         padding-top: 3px;
-        font-size: clamp(25px, 8.4vw, 40px);
+        font-size: clamp(26px, 9.6vw, 46px);
         letter-spacing: -.055em;
         white-space: nowrap;
     }
@@ -1096,25 +1097,6 @@
         background: #8cec9f;
         box-shadow: 0 0 0 3px rgb(214 250 219 / .32);
     }
-    .mobile-hero__shortcuts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
-    .mobile-hero__shortcuts a {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        min-width: 0;
-        min-height: 44px;
-        padding: 3px;
-        border: 1px solid #c0eac6;
-        border-radius: 7px;
-        background: linear-gradient(#fff, #e5f5e7);
-        box-shadow: inset 0 0 0 2px rgb(255 255 255 / .8);
-        color: #012f27;
-        font-size: clamp(9px, 2.55vw, 12px);
-        text-decoration: none;
-    }
-    .mobile-hero__shortcuts img { width: 29%; min-width: 0; flex-shrink: 0; height: 36px; border-radius: 4px; object-fit: cover; }
-    .mobile-hero__shortcuts a { gap: 3px; }
-    .mobile-hero__shortcuts b { display: grid; place-items: center; width: 17px; height: 20px; margin-left: auto; flex-shrink: 0; border-radius: 50%; background: #d1f5d6; color: #489358; font-size: 18px; font-weight: 400; }
     .mobile-hero__budget {
         position: relative;
         isolation: isolate;
@@ -1164,9 +1146,8 @@
     .mobile-hero__budget svg { width: 22px; height: 22px; }
     .mobile-hero__budget:active { transform: translateY(3px); box-shadow: 0 4px 9px rgb(0 23 18 / .18), inset 0 1px 0 #fff; }
     .mobile-hero a:focus-visible { outline: 3px solid #89dd99; outline-offset: 3px; }
-    .mobile-hero__intro, .mobile-hero__scene, .mobile-hero__shortcuts, .mobile-hero__budget { animation: mobile-hero-enter 650ms cubic-bezier(.22, 1, .36, 1) backwards; }
+    .mobile-hero__intro, .mobile-hero__scene, .mobile-hero__budget { animation: mobile-hero-enter 650ms cubic-bezier(.22, 1, .36, 1) backwards; }
     .mobile-hero__scene { animation-delay: 100ms; }
-    .mobile-hero__shortcuts { animation-delay: 180ms; }
     .mobile-hero__budget { animation-delay: 240ms; }
 }
 
@@ -1181,12 +1162,9 @@
 
 @media (max-width: 340px) {
     .mobile-hero { padding-inline: 12px; }
-    .mobile-hero__shortcuts { gap: 5px; }
-    .mobile-hero__shortcuts a { font-size: 8px; gap: 2px; }
-    .mobile-hero__shortcuts b { width: 13px; height: 18px; }
     .mobile-hero__headline { font-size: 7.8vw; }
 }
 
 @media (max-width: 700px) and (prefers-reduced-motion: reduce) {
-    .mobile-hero__intro, .mobile-hero__scene, .mobile-hero__shortcuts, .mobile-hero__budget { animation: none; }
+    .mobile-hero__intro, .mobile-hero__scene, .mobile-hero__budget { animation: none; }
 }

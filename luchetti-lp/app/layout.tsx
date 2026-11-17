@@ -73,10 +73,20 @@ const localBusiness = {
     },
 };
 
+const scrollToTopOnLoad = `(function(){try{if('scrollRestoration' in history)history.scrollRestoration='manual';}catch(e){}
+function top(){if(!location.hash)window.scrollTo(0,0);}
+top();
+window.addEventListener('load',function(){top();setTimeout(top,0);});})();`;
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="pt-BR" className="site-motion-ready">
             <body>
+                {/* Ao atualizar a página (desktop e celular), volta sempre ao início em vez de restaurar a rolagem. Links com âncora (#) continuam funcionando. */}
+                <script
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: scrollToTopOnLoad }}
+                />
                 <script
                     type="application/ld+json"
                     // eslint-disable-next-line react/no-danger

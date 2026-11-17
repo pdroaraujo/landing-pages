@@ -3,20 +3,15 @@ import { ArrowRightUpIcon } from '@solar-icons/react/bold/arrow-right-up';
 import { ctaLinkProps, photos, site } from '@/lib/site-config';
 import { RedSwoosh } from './red-swoosh';
 
-const shortcuts = [
-    { label: 'Linhas de produto', href: '#servicos', image: photos.hidraulica },
-    { label: 'Quem atendemos', href: '#aplicacoes', image: photos.construtoras },
-    { label: 'Dúvidas', href: '#duvidas', image: photos.lajes },
-];
 
 export function MobileHero({ contactUrl }: { contactUrl: string }) {
     return (
         <div className="mobile-hero">
             <div className="mobile-hero__intro">
                 <h1>
-                    <span className="mobile-hero__ribbon">Hidráulica e</span>
-                    <span className="mobile-hero__ribbon mobile-hero__ribbon--reverse">impermeabilização.</span>
-                    <span className="mobile-hero__headline">Para a sua obra.</span>
+                    <span className="mobile-hero__headline">Hidráulica e</span>
+                    <span className="mobile-hero__headline">impermeabilização</span>
+                    <span className="mobile-hero__headline">para a sua obra.</span>
                     <RedSwoosh className="red-swoosh mobile-hero__swoosh" />
                 </h1>
                 <p>Distribuidor técnico em {site.city}, desde {site.since}.</p>
@@ -33,14 +28,6 @@ export function MobileHero({ contactUrl }: { contactUrl: string }) {
                 </div>
             </div>
 
-            <nav className="mobile-hero__shortcuts" aria-label="Explore o site">
-                {shortcuts.map(({ label, href, image }) => (
-                    <a key={href} href={href}>
-                        <Image src={image} alt="" width={42} height={42} />
-                        <span>{label}</span><b aria-hidden="true">›</b>
-                    </a>
-                ))}
-            </nav>
             <a className="mobile-hero__budget" href={contactUrl} {...ctaLinkProps}>
                 <span>Solicitar orçamento</span><b><ArrowRightUpIcon aria-hidden="true" /></b>
             </a>

@@ -28,10 +28,9 @@ export default function Home() {
 
                 <div className="owner-hero__copy">
                     <h1 id="owner-hero-title">
-                        <span className="owner-hero__ribbon owner-hero__ribbon--first"><span>Hidráulica e</span></span>
-                        <span className="owner-hero__ribbon owner-hero__ribbon--second"><span>impermeabilização.</span></span>
-                        <span className="owner-hero__title-line">Para a sua</span>
-                        <span className="owner-hero__title-line">obra.</span>
+                        <span className="owner-hero__title-line">Hidráulica e</span>
+                        <span className="owner-hero__title-line">impermeabilização</span>
+                        <span className="owner-hero__title-line">para a sua obra.</span>
                         <RedSwoosh className="red-swoosh owner-hero__swoosh" />
                     </h1>
                     <p className="owner-hero__description">
