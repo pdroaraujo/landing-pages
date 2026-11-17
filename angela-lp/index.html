@@ -33,7 +33,7 @@ h2{font-size:clamp(28px,4vw,37px)}
 .btn:hover{background:#0F8C90;transform:translateY(-2px);box-shadow:0 10px 24px rgba(20,169,173,.35)}
 .btn-outline{background:transparent;border:1.5px solid var(--gold);color:var(--gold)}
 .btn-outline:hover{background:var(--gold);color:#fff}
-section{padding:90px 0;scroll-margin-top:88px}
+section{padding:90px 0}
 
 /* NAV */
 header{position:sticky;top:0;z-index:50;background:#fff;box-shadow:0 1px 0 var(--line)}
@@ -272,6 +272,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
 @media (max-width:640px){
   section{padding:64px 0}
   .plans-grid,.posts-grid,.strip-grid,.row2{grid-template-columns:1fr}
+  .row2{gap:0}
   form{padding:28px 20px}
 }
 
@@ -289,7 +290,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
   .ar-aviso{padding:14px 16px;font-size:12.5px;gap:10px;bottom:84px}
   .ar-aviso .btn{font-size:13px;padding:9px 12px}
   .wa-float{width:54px;height:54px;right:16px;bottom:16px}
-  html,body{overflow-x:hidden}
+  html,body{overflow-x:clip}
 }
 </style>
 </head>
@@ -588,7 +589,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
       </ul>
     </div>
     <div class="foot-legal"><a href="mailto:angelaplanosdesaudesjc@gmail.com">angelaplanosdesaudesjc@gmail.com</a><span>·</span><a href="politica-de-privacidade.html">Política de Privacidade</a><span>·</span><a href="politica-de-privacidade.html#cookies">Política de Cookies</a><span>·</span><a href="#" id="cookiePrefs">Preferências de cookies</a></div>
-    <div class="copy">Ângela Rodrigues © <span id="yr"></span> · Todos os direitos reservados. Site feito por <a href="https://agencias7.com.br" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px">Agência S7</a></div>
+    <div class="copy">Ângela Rodrigues © <span id="yr"></span> · Todos os direitos reservados. Feito por <a href="https://agencias7.com.br" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px">Agência S7</a></div>
   </div>
 </footer>
 
@@ -605,10 +606,17 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
 const WA = "5512988097416";
 const waUrl = m => `https://wa.me/${WA}?text=${encodeURIComponent(m)}`;
 // botões de WhatsApp levam ao formulário (o envio do formulário abre o WhatsApp)
+function goTo(el){
+  const head=document.querySelector('header').offsetHeight;
+  let y=0,n=el;while(n){y+=n.offsetTop;n=n.offsetParent}y-=head+gapFor(el);  // posição real, sem o deslocamento da animação
+  scrollTo({top:Math.max(0,y),behavior:'smooth'});
+}
+// destino do "Contato": no computador, o topo da seção (titulo + formulario lado a lado);
+// no celular, o proprio formulario, alinhado logo abaixo do cabecalho
+function contatoTarget(){return innerWidth<=980?document.getElementById('simForm'):document.getElementById('contato')}
+const gapFor=el=>el.id==='simForm'?12:0;
 document.querySelectorAll('.wa-link').forEach(a=>{a.href='#contato';a.addEventListener('click',e=>{
-  e.preventDefault();
-  const f=document.getElementById('simForm');f.scrollIntoView({behavior:'smooth',block:'center'});
-  setTimeout(()=>document.getElementById('nome').focus({preventScroll:true}),600);
+  e.preventDefault();goTo(contatoTarget());
 })});
 document.getElementById('yr').textContent = new Date().getFullYear();
 
@@ -647,7 +655,8 @@ if(location.hash){history.replaceState(null,'',location.pathname+location.search
 addEventListener('load',()=>scrollTo(0,0));
 document.querySelectorAll('a[href^="#"]:not(.wa-link)').forEach(a=>a.addEventListener('click',e=>{
   const id=a.getAttribute('href');if(id.length<2)return;const t=document.querySelector(id);if(!t)return;
-  e.preventDefault();t.scrollIntoView({behavior:'smooth'});
+  e.preventDefault();goTo(id==='#contato'?contatoTarget():t);
+  document.querySelector('.menu').classList.remove('open');
 }));
 
 // reveal
