@@ -271,7 +271,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
   <div class="container hero-grid">
     <div class="hero-photo">
       <!-- IMAGEM 1: img/angela-hero.webp -->
-      <img class="slot-img" src="img/angela-hero.webp" alt="Ângela Rodrigues" width="1280" height="1282" fetchpriority="high">
+      <img class="slot-img" src="img/angela-hero.webp" alt="Ângela Rodrigues" width="1000" height="1002" fetchpriority="high">
       <div class="img-slot"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><b>Foto da Ângela</b><span>Retrato vertical 4:5 · fundo limpo</span></div>
     </div>
     <div class="hero-copy">
@@ -555,7 +555,6 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
         </select>
       </div>
       <div class="field"><label for="vidas">Quantas pessoas no plano?</label><input id="vidas" type="number" min="1" placeholder="Ex.: 3"></div>
-      <div class="field"><label for="msg">Mensagem</label><textarea id="msg" rows="3"></textarea></div>
       <label class="terms"><input type="checkbox" required> Li e estou de acordo com a Política de Privacidade.</label>
       <button class="btn" type="submit">Enviar pelo WhatsApp</button>
     </form>
@@ -586,7 +585,7 @@ const waUrl = m => `https://wa.me/${WA}?text=${encodeURIComponent(m)}`;
 document.querySelectorAll('.wa-link').forEach(a=>{a.href='#contato';a.addEventListener('click',e=>{
   e.preventDefault();
   const f=document.getElementById('simForm');f.scrollIntoView({behavior:'smooth',block:'center'});
-  const m=document.getElementById('msg');if(a.dataset.msg==='ESTRATÉGIA'&&!m.value)m.value='ESTRATÉGIA';
+  if(a.dataset.msg==='ESTRATÉGIA')window.__estrategia=true;
   setTimeout(()=>document.getElementById('nome').focus({preventScroll:true}),600);
 })});
 document.getElementById('yr').textContent = new Date().getFullYear();
@@ -594,7 +593,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 document.getElementById('simForm').addEventListener('submit', e=>{
   e.preventDefault();
   const v = id => document.getElementById(id).value.trim();
-  const msg = `Olá Ângela! Quero uma simulação.\n\nNome: ${v('nome')}\nTelefone: ${v('tel')}\nE-mail: ${v('email')||'-'}\nTipo: ${v('tipo')}\nVidas: ${v('vidas')||'-'}\nMensagem: ${v('msg')||'-'}`;
+  const msg = `Olá Ângela! Quero uma simulação.\n\nNome: ${v('nome')}\nTelefone: ${v('tel')}\nE-mail: ${v('email')||'-'}\nTipo: ${v('tipo')}\nVidas: ${v('vidas')||'-'}${window.__estrategia?'\n\nESTRATÉGIA':''}`;
   window.open(waUrl(msg), '_blank');
 });
 
