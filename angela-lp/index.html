@@ -198,7 +198,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
 /* G1 */
 .g1{background:#fff}
 .g1-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:60px;align-items:center}
-.g1-media{position:relative;aspect-ratio:4/3;border-radius:20px;overflow:hidden}
+.g1-media{position:relative;aspect-ratio:4/5;max-width:460px;width:100%;justify-self:center;border-radius:20px;overflow:hidden}
 .g1-media img{width:100%;height:100%;object-fit:cover}
 .g1-tag{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
 .g1-tag i{font-style:normal;background:#C4170C;color:#fff;font-weight:700;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:15px}
@@ -270,8 +270,8 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
 <section class="hero" id="inicio">
   <div class="container hero-grid">
     <div class="hero-photo">
-      <!-- IMAGEM 1: salve a foto como img/angela-hero.jpg (aparece automaticamente) -->
-      <img class="slot-img" src="img/angela-hero.jpg" alt="Ângela Rodrigues" onerror="this.remove()">
+      <!-- IMAGEM 1: img/angela-hero.webp -->
+      <img class="slot-img" src="img/angela-hero.webp" alt="Ângela Rodrigues" width="1280" height="1282" fetchpriority="high">
       <div class="img-slot"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><b>Foto da Ângela</b><span>Retrato vertical 4:5 · fundo limpo</span></div>
     </div>
     <div class="hero-copy">
@@ -292,14 +292,14 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
       <h2>As operadoras que você conhece, com quem entende delas</h2>
     </div>
     <div class="ops-grid">
-      <div class="op reveal"><img src="img/operadoras/santacasa.png" alt="Santa Casa Saúde"></div>
-      <div class="op reveal"><img src="img/operadoras/sulamerica.png" alt="SulAmérica"></div>
       <div class="op reveal"><img src="img/operadoras/porto.png" alt="Porto Saúde"></div>
-      <div class="op reveal"><img src="img/operadoras/unimed-sjc.png" alt="Unimed São José dos Campos"></div>
-      <div class="op reveal"><img src="img/operadoras/amil.png" alt="Amil"></div>
-      <div class="op reveal"><img src="img/operadoras/hapvida.png" alt="Hapvida"></div>
-      <div class="op reveal"><img src="img/operadoras/seguros-unimed.png" alt="Seguros Unimed"></div>
       <div class="op reveal"><img src="img/operadoras/bradesco.png" alt="Bradesco Saúde"></div>
+      <div class="op reveal"><img src="img/operadoras/amil.png" alt="Amil"></div>
+      <div class="op reveal"><img src="img/operadoras/sulamerica.png" alt="SulAmérica"></div>
+      <div class="op reveal"><img src="img/operadoras/santacasa.png" alt="Santa Casa Saúde"></div>
+      <div class="op reveal"><img src="img/operadoras/unimed-sjc.png" alt="Unimed São José dos Campos"></div>
+      <div class="op reveal"><img src="img/operadoras/seguros-unimed.png" alt="Seguros Unimed"></div>
+      <div class="op reveal"><img src="img/operadoras/hapvida.png" alt="Hapvida"></div>
     </div>
   </div>
 </section>
@@ -414,8 +414,8 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
 <section class="g1" id="g1">
   <div class="container g1-grid">
     <div class="g1-media reveal">
-      <!-- IMAGEM 3: salve como img/angela-g1.jpg (aparece automaticamente) -->
-      <img class="slot-img" src="img/angela-g1.jpg" alt="Ângela Rodrigues no G1" onerror="this.remove()">
+      <!-- IMAGEM 3: img/angela-g1.webp -->
+      <img class="slot-img" src="img/angela-g1.webp" alt="Ângela Rodrigues celebrando 10 anos de carreira" width="1000" height="1498" loading="lazy" style="object-position:50% 30%">
       <div class="img-slot"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><b>Imagem da matéria no G1</b><span>Print da matéria ou foto · horizontal 4:3</span></div>
     </div>
     <div class="reveal">
