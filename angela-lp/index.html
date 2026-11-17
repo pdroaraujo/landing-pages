@@ -573,7 +573,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
         <li><a href="#planos">Planos</a></li><li><a href="#faq">FAQ</a></li><li><a href="#contato">Contato</a></li>
       </ul>
     </div>
-    <div class="copy">Ângela Rodrigues © <span id="yr"></span> – Todos os direitos reservados. Site desenvolvido por Agência S7</div>
+    <div class="copy">Ângela Rodrigues © <span id="yr"></span> – Todos os direitos reservados. Site desenvolvido por <a href="https://agencias7.com.br" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px">Agência S7</a></div>
   </div>
 </footer>
 
@@ -584,7 +584,13 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
 <script>
 const WA = "5512988097416";
 const waUrl = m => `https://wa.me/${WA}?text=${encodeURIComponent(m)}`;
-document.querySelectorAll('.wa-link').forEach(a=>{a.href=waUrl(a.dataset.msg);a.target="_blank";a.rel="noopener"});
+// botões de WhatsApp levam ao formulário (o envio do formulário abre o WhatsApp)
+document.querySelectorAll('.wa-link').forEach(a=>{a.href='#contato';a.addEventListener('click',e=>{
+  e.preventDefault();
+  const f=document.getElementById('simForm');f.scrollIntoView({behavior:'smooth',block:'center'});
+  const m=document.getElementById('msg');if(a.dataset.msg==='ESTRATÉGIA'&&!m.value)m.value='ESTRATÉGIA';
+  setTimeout(()=>document.getElementById('nome').focus({preventScroll:true}),600);
+})});
 document.getElementById('yr').textContent = new Date().getFullYear();
 
 document.getElementById('simForm').addEventListener('submit', e=>{
