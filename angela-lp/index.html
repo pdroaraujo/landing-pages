@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ângela Rodrigues | Planos de Saúde e Seguros</title>
-<meta name="description" content="Ângela Rodrigues — especialista em planos de saúde para empresários e profissionais da área da saúde. +10 anos evitando decisões erradas.">
+<meta name="description" content="Ângela Rodrigues, especialista em planos de saúde para empresários e profissionais da área da saúde. +10 anos evitando decisões erradas.">
 <link rel="icon" type="image/png" href="img/favicon.png">
 <link rel="apple-touch-icon" href="img/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,7 +33,7 @@ h2{font-size:clamp(28px,4vw,37px)}
 .btn:hover{background:#0F8C90;transform:translateY(-2px);box-shadow:0 10px 24px rgba(20,169,173,.35)}
 .btn-outline{background:transparent;border:1.5px solid var(--gold);color:var(--gold)}
 .btn-outline:hover{background:var(--gold);color:#fff}
-section{padding:90px 0}
+section{padding:90px 0;scroll-margin-top:88px}
 
 /* NAV */
 header{position:sticky;top:0;z-index:50;background:#fff;box-shadow:0 1px 0 var(--line)}
@@ -155,6 +155,21 @@ form>p{font-size:14px;opacity:.75;margin-bottom:22px;font-weight:300}
 .terms input{margin-top:4px;accent-color:var(--gold)}
 form .btn{width:100%;justify-content:center}
 
+/* CHIPS (tipo da simulação) */
+.chips-field{border:0;padding:0;min-width:0}
+.chips-field legend{font-size:14px;margin-bottom:8px;padding:0}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.chip{position:relative;cursor:pointer}
+.chip input{position:absolute;opacity:0;width:1px;height:1px}
+.chip span{display:flex;flex-direction:column;gap:2px;height:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);transition:.2s}
+.chip b{font-size:14px;font-weight:600;color:#fff;line-height:1.3}
+.chip small{font-size:12px;color:rgba(255,255,255,.6);line-height:1.35}
+.chip:hover span{border-color:rgba(92,207,209,.6);background:rgba(255,255,255,.1)}
+.chip input:checked+span{border-color:var(--gold);background:rgba(6,170,172,.18);box-shadow:inset 0 0 0 1px var(--gold)}
+.chip input:checked+span small{color:var(--gold-2)}
+.chip input:focus-visible+span{outline:2px solid var(--gold-2);outline-offset:2px}
+@media (max-width:640px){.chips{grid-template-columns:1fr 1fr}}
+
 /* FOOTER */
 footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;font-size:14px}
 .foot{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:center;padding-bottom:30px;border-bottom:1px solid rgba(255,255,255,.1)}
@@ -259,6 +274,23 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
   .plans-grid,.posts-grid,.strip-grid,.row2{grid-template-columns:1fr}
   form{padding:28px 20px}
 }
+
+/* MOBILE FINO */
+@media (max-width:820px){
+  .nav{gap:12px;height:76px}
+  .menu{top:76px}
+  .logo{min-width:0;gap:8px}
+  .logo-mark{height:40px}
+  .logo-txt{font-size:15px;letter-spacing:.04em}
+  .logo-txt small{font-size:9.5px;white-space:normal}
+  .burger{flex-shrink:0;margin-right:-8px}
+}
+@media (max-width:640px){
+  .cookie-bar{padding:14px 16px;font-size:12.5px;gap:10px;bottom:84px}
+  .cookie-bar .btn{font-size:13px;padding:9px 12px}
+  .wa-float{width:54px;height:54px;right:16px;bottom:16px}
+  html,body{overflow-x:hidden}
+}
 </style>
 </head>
 <body>
@@ -327,7 +359,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
     </div>
     <div class="card-s reveal">
       <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></div>
-      <h3>Para Empresas</h3><p>Benefício que retém talentos — a partir de 1 vida, inclusive MEI</p>
+      <h3>Para Empresas</h3><p>Benefício que retém talentos, a partir de 1 vida, inclusive MEI</p>
     </div>
     <div class="card-s reveal">
       <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-11a7 7 0 0114 0c0 6.5-7 11-7 11z"/><path d="M9 10c1.5 2 4.5 2 6 0"/></svg></div>
@@ -346,9 +378,9 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
     <div class="reveal">
       <span class="eyebrow">Sobre mim</span>
       <h2>Prazer, sou a Ângela</h2>
-      <p><span class="gold">O prejuízo raramente está no plano.</span> Está em como ele foi escolhido — com pressa, sem análise e olhando só para a mensalidade.</p>
+      <p><span class="gold">O prejuízo raramente está no plano.</span> Está em como ele foi escolhido, com pressa, sem análise e olhando só para a mensalidade.</p>
       <p>Por isso meu trabalho começa antes da cotação. Sou <span class="gold">farmacêutica, formada em seguros de pessoas e certificada pela SUSEP</span>. Passei pela Qualicorp, onde aprendi o mercado por dentro ao lado das grandes seguradoras, e hoje levo essa visão para cada empresa, família e profissional que atendo.</p>
-      <p>Toda a minha carteira veio de indicação. Não por acaso: eu escuto, explico cada detalhe e continuo por perto quando o cliente mais precisa — depois da assinatura.</p>
+      <p>Toda a minha carteira veio de indicação. Não por acaso: eu escuto, explico cada detalhe e continuo por perto quando o cliente mais precisa, depois da assinatura.</p>
       <div class="creds"><span>Farmacêutica</span><span>Certificação SUSEP</span><span>Ex-Qualicorp</span><span>Capacitações Einstein · Sírio-Libanês</span></div>
       <ul class="checks">
         <li>Diagnóstico do perfil de quem vai usar, antes de qualquer cotação</li>
@@ -375,7 +407,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
     <div class="section-head reveal">
       <span class="eyebrow">Modalidades</span>
       <h2>Cada perfil pede um tipo de plano</h2>
-      <p>Ter CNPJ abre portas, mas não decide sozinho. Eu comparo as modalidades e mostro qual faz sentido para você — com números na mesa.</p>
+      <p>Ter CNPJ abre portas, mas não decide sozinho. Eu comparo as modalidades e mostro qual faz sentido para você, com números na mesa.</p>
     </div>
     <div class="plans-grid">
       <div class="plan featured reveal">
@@ -383,7 +415,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
         <h3>Plano Empresarial</h3>
         <p>Mais do que um benefício: uma decisão que protege a equipe, valoriza a marca empregadora e prepara a empresa para crescer.</p>
         <dl>
-          <dt>Para quem?</dt><dd>Empresários, MEIs e PMEs — a partir de 1 vida.</dd>
+          <dt>Para quem?</dt><dd>Empresários, MEIs e PMEs, a partir de 1 vida.</dd>
           <dt>Vantagens</dt><dd>Condições diferenciadas, dependentes inclusos e equipe mais engajada.</dd>
         </dl>
         <a href="#contato" class="btn">Simular para minha empresa</a>
@@ -436,11 +468,11 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
       <blockquote>“Escolher um plano de saúde ou seguro é uma decisão séria, que exige orientação profissional.”</blockquote>
       <p style="color:var(--muted);margin-bottom:20px">Na matéria, a Ângela fala sobre sua história e os cinco pilares do seu atendimento:</p>
       <ul class="diffs">
-        <li><div><b>Experiência de mercado</b> — mais de uma década no setor, com passagem pela Qualicorp.</div></li>
-        <li><div><b>Olhar da saúde</b> — como farmacêutica, explica coberturas com profundidade e clareza.</div></li>
-        <li><div><b>Consultoria sob medida</b> — cada proposta parte da realidade de quem vai usar.</div></li>
-        <li><div><b>100% por indicação</b> — clientes satisfeitos trazem os próximos.</div></li>
-        <li><div><b>Presença no pós-venda</b> — acompanhamento do começo ao fim.</div></li>
+        <li><div><b>Experiência de mercado</b>: mais de uma década no setor, com passagem pela Qualicorp.</div></li>
+        <li><div><b>Olhar da saúde</b>: como farmacêutica, explica coberturas com profundidade e clareza.</div></li>
+        <li><div><b>Consultoria sob medida</b>: cada proposta parte da realidade de quem vai usar.</div></li>
+        <li><div><b>100% por indicação</b>: clientes satisfeitos trazem os próximos.</div></li>
+        <li><div><b>Presença no pós-venda</b>: acompanhamento do começo ao fim.</div></li>
       </ul>
       <a href="https://g1.globo.com/sp/vale-do-paraiba-regiao/especial-publicitario/grupo-futuro-sa-corretores-que-fazem-a-diferenca/noticia/2025/08/08/a-trajetoria-de-angela-rodrigues-no-setor-de-saude-e-seguros.ghtml" target="_blank" rel="noopener" class="btn">Ler a matéria no G1</a>
       <p class="g1-note">Especial publicitário Grupo Futuro SA · g1 Vale do Paraíba, ago/2025</p>
@@ -452,7 +484,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
 <section class="manifesto">
   <div class="container reveal">
     <span class="eyebrow" style="color:#fff;opacity:.85">O melhor da saúde em nossas mãos</span>
-    <blockquote>“Cuidar de pessoas é mais do que minha profissão — é meu propósito de vida.”</blockquote>
+    <blockquote>“Cuidar de pessoas é mais do que minha profissão, é meu propósito de vida.”</blockquote>
     <p>Para sua empresa ou sua família: preencha o formulário e eu analiso com você as opções que fazem sentido de verdade.</p>
     <a class="btn wa-link" href="#contato">Quero minha análise</a>
   </div>
@@ -503,23 +535,22 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
 
     <form id="simForm" class="reveal">
       <h3>Peça sua simulação</h3>
-      <p>Preencha em 1 minuto — eu te respondo pelo WhatsApp com as opções certas.</p>
+      <p>Preencha em 1 minuto e eu te respondo pelo WhatsApp com as opções certas.</p>
       <div class="field"><label for="nome">Nome</label><input id="nome" required></div>
       <div class="row2">
         <div class="field"><label for="tel">Telefone</label><input id="tel" type="tel" required></div>
         <div class="field"><label for="email">E-mail</label><input id="email" type="email"></div>
       </div>
-      <div class="field"><label for="tipo">Tipo da simulação</label>
-        <select id="tipo" required>
-          <option value="">Selecione...</option>
-          <option>Plano Empresarial (CNPJ / MEI)</option>
-          <option>Plano para Profissional da Saúde</option>
-          <option>Plano Individual / Familiar</option>
-          <option>Plano p/ 59+</option>
-          <option>Seguros</option>
-          <option>Consórcio</option>
-        </select>
-      </div>
+      <fieldset class="field chips-field"><legend>Tipo da simulação</legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="tipo" value="Plano Empresarial (CNPJ / MEI)" required><span><b>Empresarial</b><small>CNPJ / MEI</small></span></label>
+          <label class="chip"><input type="radio" name="tipo" value="Plano para Profissional da Saúde"><span><b>Profissional da Saúde</b><small>Adesão ou PJ</small></span></label>
+          <label class="chip"><input type="radio" name="tipo" value="Plano Individual / Familiar"><span><b>Individual / Familiar</b><small>Para você e sua família</small></span></label>
+          <label class="chip"><input type="radio" name="tipo" value="Plano 59+"><span><b>Plano 59+</b><small>Para quem tem 59 anos ou mais</small></span></label>
+          <label class="chip"><input type="radio" name="tipo" value="Seguros"><span><b>Seguros</b><small>Vida, pecúlio e mais</small></span></label>
+          <label class="chip"><input type="radio" name="tipo" value="Consórcio"><span><b>Consórcio</b><small>Planeje sua conquista</small></span></label>
+        </div>
+      </fieldset>
       <div class="field"><label for="vidas">Quantas pessoas no plano?</label><input id="vidas" type="number" min="1" placeholder="Ex.: 3"></div>
       <label class="terms"><input type="checkbox" required> <span>Li e estou de acordo com a <a href="politica-de-privacidade.html" target="_blank" style="text-decoration:underline">Política de Privacidade</a>.</span></label>
       <button class="btn" type="submit">Enviar pelo WhatsApp</button>
@@ -542,7 +573,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
       <details><summary>O que é carência?</summary><p>É o período após a contratação em que alguns procedimentos ainda não podem ser usados. Em algumas situações, como portabilidade ou planos empresariais, é possível reduzir ou isentar carências.</p></details>
       <details><summary>Como funciona o reajuste?</summary><p>Planos individuais seguem o índice da ANS; planos empresariais e por adesão têm reajuste anual negociado com a operadora, além do reajuste por faixa etária. Eu explico tudo antes de você assinar.</p></details>
       <details><summary>Você trabalha com plano de saúde internacional?</summary><p>Sim. Como corretora credenciada do Grupo Futuro, tenho acesso a produtos internacionais de alto padrão, com proteção global.</p></details>
-      <details><summary>Vocês também trabalham com seguros e consórcio?</summary><p>Sim. Além de planos de saúde, ofereço seguro de vida, pecúlio, seguro prestamista e consórcio — uma alternativa planejada e sem juros de financiamento para conquistar imóvel ou veículo.</p></details>
+      <details><summary>Vocês também trabalham com seguros e consórcio?</summary><p>Sim. Além de planos de saúde, ofereço seguro de vida, pecúlio, seguro prestamista e consórcio, uma alternativa planejada e sem juros de financiamento para conquistar imóvel ou veículo.</p></details>
     </div>
   </div>
 </section>
@@ -550,7 +581,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
 <footer>
   <div class="container">
     <div class="foot">
-      <img class="foot-logo" src="img/logo-branco.png" alt="Ângela Rodrigues — Especialista em Planos de Saúde e Seguros">
+      <img class="foot-logo" src="img/logo-branco.png" alt="Ângela Rodrigues, Especialista em Planos de Saúde e Seguros">
       <ul>
         <li><a href="#inicio">Home</a></li><li><a href="#servicos">Serviços</a></li><li><a href="#sobre">Sobre</a></li>
         <li><a href="#planos">Planos</a></li><li><a href="#faq">FAQ</a></li><li><a href="#contato">Contato</a></li>
@@ -584,7 +615,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 document.getElementById('simForm').addEventListener('submit', e=>{
   e.preventDefault();
   const v = id => document.getElementById(id).value.trim();
-  const msg = `Olá Ângela! Quero uma simulação.\n\nNome: ${v('nome')}\nTelefone: ${v('tel')}\nE-mail: ${v('email')||'-'}\nTipo: ${v('tipo')}\nVidas: ${v('vidas')||'-'}`;
+  const msg = `Olá Ângela! Quero uma simulação.\n\nNome: ${v('nome')}\nTelefone: ${v('tel')}\nE-mail: ${v('email')||'-'}\nTipo: ${(document.querySelector('input[name=tipo]:checked')||{}).value||'-'}\nVidas: ${v('vidas')||'-'}`;
   window.open(waUrl(msg), '_blank');
 });
 
@@ -601,7 +632,7 @@ function loadInsta(){const v=document.getElementById('instaVitrine');if(!v||v.da
 document.getElementById('instaLoad').addEventListener('click',()=>{setConsent('all');loadInsta()});
 
 // Cookies / LGPD
-const CK='ar_cookie_consent';
+const CK='ar_cookie_consent_v2';
 function getConsent(){try{return localStorage.getItem(CK)}catch(e){return null}}
 function setConsent(v){try{localStorage.setItem(CK,v)}catch(e){};document.getElementById('cookieBar').hidden=true}
 const cb=document.getElementById('cookieBar');
@@ -609,6 +640,15 @@ if(!getConsent())cb.hidden=false; else if(getConsent()==='all')loadInsta();
 document.getElementById('ckAll').addEventListener('click',()=>{setConsent('all');loadInsta()});
 document.getElementById('ckNec').addEventListener('click',()=>setConsent('necessary'));
 document.getElementById('cookiePrefs').addEventListener('click',e=>{e.preventDefault();cb.hidden=false});
+
+// abre sempre no topo e navega sem deixar #ancora na URL
+if('scrollRestoration' in history)history.scrollRestoration='manual';
+if(location.hash){history.replaceState(null,'',location.pathname+location.search);}
+addEventListener('load',()=>scrollTo(0,0));
+document.querySelectorAll('a[href^="#"]:not(.wa-link)').forEach(a=>a.addEventListener('click',e=>{
+  const id=a.getAttribute('href');if(id.length<2)return;const t=document.querySelector(id);if(!t)return;
+  e.preventDefault();t.scrollIntoView({behavior:'smooth'});
+}));
 
 // reveal
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});

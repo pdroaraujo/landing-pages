@@ -88,7 +88,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);text-align:center;font-
   <table>
     <thead><tr><th>Tipo</th><th>Para que serve</th><th>Precisa de consentimento?</th></tr></thead>
     <tbody>
-      <tr><td><b>Essencial</b><br><small>ar_cookie_consent (armazenamento local)</small></td><td>Lembrar a sua escolha sobre cookies.</td><td>Não</td></tr>
+      <tr><td><b>Essencial</b><br><small>ar_cookie_consent_v2 (armazenamento local)</small></td><td>Lembrar a sua escolha sobre cookies.</td><td>Não</td></tr>
       <tr><td><b>Terceiros: Instagram</b></td><td>Exibir a vitrine de posts do perfil @angelarodrigues.consultora. O Instagram (Meta) pode definir cookies próprios.</td><td>Sim. Só carrega se você aceitar.</td></tr>
     </tbody>
   </table>
@@ -105,7 +105,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);text-align:center;font-
 </main>
 <footer>Ângela Rodrigues · Planos de Saúde e Seguros</footer>
 <script>
-document.getElementById('reset').addEventListener('click',()=>{try{localStorage.removeItem('ar_cookie_consent')}catch(e){};document.getElementById('ok').hidden=false});
+document.getElementById('reset').addEventListener('click',()=>{try{localStorage.removeItem('ar_cookie_consent_v2')}catch(e){};document.getElementById('ok').hidden=false});
 </script>
 </body>
 </html>
