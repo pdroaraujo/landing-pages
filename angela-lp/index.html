@@ -240,13 +240,13 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
 .foot-legal a{text-decoration:underline;text-underline-offset:3px}
 .foot-legal a:hover{color:var(--gold)}
 .copy{padding-top:12px}
-.cookie-bar{position:fixed;left:16px;right:96px;bottom:16px;z-index:70;max-width:760px;background:var(--navy);color:#fff;border-radius:16px;padding:18px 20px;display:flex;gap:16px;align-items:center;box-shadow:0 16px 40px rgba(0,0,0,.3);font-size:14px}
-.cookie-bar[hidden]{display:none}
-.cookie-bar a{color:var(--gold-2);text-decoration:underline}
-.cookie-actions{display:flex;gap:10px;flex-shrink:0}
-.cookie-bar .btn{font-size:14px;padding:10px 18px}
-.cookie-bar .btn-outline{color:#fff;border-color:rgba(255,255,255,.5)}
-@media (max-width:720px){.cookie-bar{flex-direction:column;align-items:stretch;right:16px;bottom:90px}.cookie-actions .btn{flex:1;justify-content:center}}
+.ar-aviso{position:fixed;left:16px;right:96px;bottom:16px;z-index:70;max-width:760px;background:var(--navy);color:#fff;border-radius:16px;padding:18px 20px;display:flex;gap:16px;align-items:center;box-shadow:0 16px 40px rgba(0,0,0,.3);font-size:14px}
+.ar-aviso[hidden]{display:none}
+.ar-aviso a{color:var(--gold-2);text-decoration:underline}
+.ar-aviso-acoes{display:flex;gap:10px;flex-shrink:0}
+.ar-aviso .btn{font-size:14px;padding:10px 18px}
+.ar-aviso .btn-outline{color:#fff;border-color:rgba(255,255,255,.5)}
+@media (max-width:720px){.ar-aviso{flex-direction:column;align-items:stretch;right:16px;bottom:90px}.ar-aviso-acoes .btn{flex:1;justify-content:center}}
 
 /* REVEAL */
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
@@ -286,8 +286,8 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
   .burger{flex-shrink:0;margin-right:-8px}
 }
 @media (max-width:640px){
-  .cookie-bar{padding:14px 16px;font-size:12.5px;gap:10px;bottom:84px}
-  .cookie-bar .btn{font-size:13px;padding:9px 12px}
+  .ar-aviso{padding:14px 16px;font-size:12.5px;gap:10px;bottom:84px}
+  .ar-aviso .btn{font-size:13px;padding:9px 12px}
   .wa-float{width:54px;height:54px;right:16px;bottom:16px}
   html,body{overflow-x:hidden}
 }
@@ -592,9 +592,9 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:50px 0 24px;fo
   </div>
 </footer>
 
-<div class="cookie-bar" id="cookieBar" role="dialog" aria-live="polite" aria-label="Aviso de cookies" hidden>
+<div class="ar-aviso" id="arAviso" role="dialog" aria-live="polite" aria-label="Aviso de privacidade" hidden>
   <p>Usamos cookies essenciais para o site funcionar e, com sua permissão, cookies de terceiros (Instagram) para exibir a vitrine de posts. Saiba mais na <a href="politica-de-privacidade.html#cookies">Política de Cookies</a>.</p>
-  <div class="cookie-actions"><button type="button" class="btn btn-outline" id="ckNec">Só essenciais</button><button type="button" class="btn" id="ckAll">Aceitar todos</button></div>
+  <div class="ar-aviso-acoes"><button type="button" class="btn btn-outline" id="ckNec">Só essenciais</button><button type="button" class="btn" id="ckAll">Aceitar todos</button></div>
 </div>
 
 <a class="wa-float wa-link" href="#" data-msg="Olá Ângela! Vim pelo site." aria-label="WhatsApp">
@@ -634,8 +634,8 @@ document.getElementById('instaLoad').addEventListener('click',()=>{setConsent('a
 // Cookies / LGPD
 const CK='ar_cookie_consent_v2';
 function getConsent(){try{return localStorage.getItem(CK)}catch(e){return null}}
-function setConsent(v){try{localStorage.setItem(CK,v)}catch(e){};document.getElementById('cookieBar').hidden=true}
-const cb=document.getElementById('cookieBar');
+function setConsent(v){try{localStorage.setItem(CK,v)}catch(e){};document.getElementById('arAviso').hidden=true}
+const cb=document.getElementById('arAviso');
 if(!getConsent())cb.hidden=false; else if(getConsent()==='all')loadInsta();
 document.getElementById('ckAll').addEventListener('click',()=>{setConsent('all');loadInsta()});
 document.getElementById('ckNec').addEventListener('click',()=>setConsent('necessary'));
